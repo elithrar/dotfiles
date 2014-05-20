@@ -1,0 +1,7 @@
+[user]
+	name = Matt Silverlock
+	email = matt@eatsleeprepeat.net
+[core]
+	editor = vim
+[push]
+	default = simple
