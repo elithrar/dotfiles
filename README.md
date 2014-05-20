@@ -1,4 +1,4 @@
 dotfiles
 ========
 
-elithrar/dotfiles using Thoughtbot's rcm to manage them.
+elithrar/dotfiles using [rcm](https://github.com/thoughtbot/rcm) to manage them.
