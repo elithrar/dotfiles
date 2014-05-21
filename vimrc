@@ -8,6 +8,7 @@ set showcmd       " display incomplete commands
 set incsearch     " do incremental searching
 set laststatus=2  " Always display the status line
 set number
+set clipboard=unnamed " Use system clipboard
 
 filetype on
 
@@ -20,7 +21,7 @@ Bundle 'gmarik/vundle'
 
 " Bundles
 Bundle 'tpope/vim-sensible'
-Bundle 'tpope/vim-surround' 
+Bundle 'tpope/vim-surround'
 Bundle 'Lokaltog/powerline'
 Bundle 'kien/ctrlp.vim'
 Bundle 'groenewege/vim-less'
@@ -30,7 +31,7 @@ Bundle 'jnwhiteh/vim-golang'
 Bundle 'scrooloose/syntastic'
 Bundle 'saltstack/salt-vim'
 Bundle 'nsf/gocode', {'rtp': 'vim/'}
-Bundle 'scrooloose/nerdtree'
+Bundle 'scrooloose/nerdtree' 
 
 " NERDTree
 map <C-t> :NERDTreeToggle<CR>
