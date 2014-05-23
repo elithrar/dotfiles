@@ -1,3 +1,4 @@
+filetype on
 set nocompatible  " Use Vim settings, rather then Vi settings
 set nobackup
 set nowritebackup
@@ -9,8 +10,6 @@ set incsearch     " do incremental searching
 set laststatus=2  " Always display the status line
 set number
 set clipboard=unnamed " Use system clipboard
-
-filetype on
 
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
@@ -39,8 +38,12 @@ map <C-t> :NERDTreeToggle<CR>
 " Colorscheme
 colorscheme Tomorrow-Night
 
-" Go
-set runtimepath+=$GOROOT/misc/vim
+" goimports
+let g:gofmt_command ="goimports"
+" gofmt on save
+autocmd FileType go autocmd BufWritePre <buffer> Fmt
+" Go complier
+autocmd FileType go compiler go
 
 " Taken from http://dougblack.io/words/a-good-vimrc.html
 set wildmenu            " visual autocomplete for command menu
