@@ -1,5 +1,6 @@
-filetype on
+filetype off 
 set nocompatible  " Use Vim settings, rather then Vi settings
+
 set nobackup
 set nowritebackup
 set noswapfile    " http://robots.thoughtbot.com/post/18739402579/global-gitignore#comment-458413287
@@ -11,26 +12,26 @@ set laststatus=2  " Always display the status line
 set number
 set clipboard=unnamed " Use system clipboard
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+" Vundle
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'gmarik/Vundle.vim'
 
-" let Vundle manage Vundle
-" required! 
-Bundle 'gmarik/vundle'
+" Plugins
+Plugin 'tpope/vim-sensible'
+Plugin 'tpope/vim-surround'
+Plugin 'nsf/gocode', {'rtp': 'vim/'}
+Plugin 'Lokaltog/powerline'
+Plugin 'kien/ctrlp.vim'
+Plugin 'groenewege/vim-less'
+Plugin 'flazz/vim-colorschemes'
+Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
+Plugin 'scrooloose/syntastic'
+Plugin 'saltstack/salt-vim'
+Plugin 'scrooloose/nerdtree' 
 
-" Bundles
-Bundle 'tpope/vim-sensible'
-Bundle 'tpope/vim-surround'
-Bundle 'Lokaltog/powerline'
-Bundle 'kien/ctrlp.vim'
-Bundle 'groenewege/vim-less'
-Bundle 'flazz/vim-colorschemes'
-Bundle 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
-Bundle 'jnwhiteh/vim-golang'
-Bundle 'scrooloose/syntastic'
-Bundle 'saltstack/salt-vim'
-Bundle 'nsf/gocode', {'rtp': 'vim/'}
-Bundle 'scrooloose/nerdtree' 
+call vundle#end()
+filetype plugin indent on
 
 " NERDTree
 map <C-t> :NERDTreeToggle<CR>
