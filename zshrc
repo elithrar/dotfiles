@@ -100,11 +100,15 @@ export PATH="/usr/local/packer:$PATH"
 alias bower='noglob bower'
 
 # app-specific vars
-export WWG_SETTINGS="/Users/matt/Dropbox/code/workwithgo/dev-sql.toml"
+export WWG_SETTINGS="/Users/matt/Dropbox/code/workwithgo.com/dev-new.toml"
 
 # golang
 export GOPATH=$HOME/.go
-export PATH=$HOME/.go/bin:$PATH
+export GOBIN=$GOPATH/bin
+export PATH=$GOBIN:$PATH
+
+# tmuxinator
+source ~/.tmuxinator.zsh
 
 # editor
 export EDITOR='vim'

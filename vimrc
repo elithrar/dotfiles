@@ -21,6 +21,7 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-surround'
 Plugin 'nsf/gocode', {'rtp': 'vim/'}
+Plugin 'tpope/vim-markdown'
 Plugin 'Lokaltog/powerline'
 Plugin 'kien/ctrlp.vim'
 Plugin 'groenewege/vim-less'
@@ -29,6 +30,7 @@ Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
 Plugin 'scrooloose/syntastic'
 Plugin 'saltstack/salt-vim'
 Plugin 'scrooloose/nerdtree' 
+Plugin 'valloric/MatchTagAlways'
 
 call vundle#end()
 filetype plugin indent on
@@ -43,8 +45,14 @@ colorscheme Tomorrow-Night
 let g:gofmt_command ="goimports"
 " gofmt on save
 autocmd FileType go autocmd BufWritePre <buffer> Fmt
-" Go complier
+" Go compiler
 autocmd FileType go compiler go
+" Go html/template
+au BufNewFile,BufRead *.tmpl set filetype=html
+
+" Markdown
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+let g:markdown_fenced_languages = ['go', 'css', 'ruby']
 
 " Taken from http://dougblack.io/words/a-good-vimrc.html
 set wildmenu            " visual autocomplete for command menu
