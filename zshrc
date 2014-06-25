@@ -33,6 +33,7 @@ alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(
 	brew
+    fabric
 	gem
 	git
 	github
@@ -52,7 +53,6 @@ if which tmux 2>&1 >/dev/null; then
 fi
 
 # irssi + tmux (via http://alexyu.se/comment/35)
-
 IRSSI_PATH=`which irssi`
 
 source $ZSH/oh-my-zsh.sh
@@ -72,7 +72,7 @@ env-update() { export PATH=$PATH; }
 MANPATH=/usr/share/man:/usr/local/share/man:/usr/X11/share/man:/usr/X11/man:/usr/local/man
 
 # cd directly into these directories
-cdpath=($HOME/Dropbox/code $HOME/Dropbox/uni)
+cdpath=($HOME/Dropbox/code) 
 
 # Homebrew
 PATH="/usr/local/bin:/usr/local/sbin:$PATH"
@@ -86,9 +86,6 @@ export PATH="/usr/local/heroku/bin:$PATH"
 # node.js path
 export NODE_PATH="/usr/local/lib/node"
 export PATH="/usr/local/share/npm/bin:$PATH"
-
-# virtualenvwrapper
-export WORKON_HOME=~/.envs
 
 # DigitalOcean
 export SSL_CERT_FILE=/usr/local/opt/curl-ca-bundle/share/ca-bundle.crt
