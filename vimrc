@@ -28,9 +28,11 @@ Plugin 'groenewege/vim-less'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
 Plugin 'scrooloose/syntastic'
+Plugin 'guns/vim-clojure-static'
 Plugin 'saltstack/salt-vim'
 Plugin 'scrooloose/nerdtree' 
 Plugin 'valloric/MatchTagAlways'
+Plugin 'wting/rust.vim'
 
 call vundle#end()
 filetype plugin indent on
@@ -41,12 +43,18 @@ map <C-t> :NERDTreeToggle<CR>
 " Colorscheme
 colorscheme Tomorrow-Night
 
+" Go
+if exists("g:did_load_filetypes")
+  filetype off
+  filetype plugin indent off
+endif
+set runtimepath+=$GOROOT/misc/vim 
+filetype plugin indent on
+syntax on
 " goimports
 let g:gofmt_command ="goimports"
 " gofmt on save
 autocmd FileType go autocmd BufWritePre <buffer> Fmt
-" Go compiler
-autocmd FileType go compiler go
 " Go html/template
 au BufNewFile,BufRead *.tmpl set filetype=html
 

@@ -99,8 +99,9 @@ alias bower='noglob bower'
 # app-specific vars
 export WWG_SETTINGS="/Users/matt/Dropbox/code/workwithgo.com/dev-new.toml"
 
-# golang
+# Go 
 export GOPATH=$HOME/.go
+export GOROOT=$(go env GOROOT)
 export GOBIN=$GOPATH/bin
 export PATH=$GOBIN:$PATH
 
