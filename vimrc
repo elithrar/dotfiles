@@ -29,13 +29,18 @@ Plugin 'flazz/vim-colorschemes'
 Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
 Plugin 'scrooloose/syntastic'
 Plugin 'guns/vim-clojure-static'
+Plugin 'chase/vim-ansible-yaml'
 Plugin 'saltstack/salt-vim'
 Plugin 'scrooloose/nerdtree' 
 Plugin 'valloric/MatchTagAlways'
+Plugin 'nginx.vim'
 Plugin 'wting/rust.vim'
 
 call vundle#end()
 filetype plugin indent on
+
+" Write as sudo
+cmap w!! w !sudo tee > /dev/null %
 
 " NERDTree
 map <C-t> :NERDTreeToggle<CR>
@@ -62,6 +67,12 @@ au BufNewFile,BufRead *.tmpl set filetype=html
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['go', 'css', 'ruby']
 
+" CtrlP
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_working_path_mode = 'c'
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " Linux/MacOSX
+
 " Taken from http://dougblack.io/words/a-good-vimrc.html
 set wildmenu            " visual autocomplete for command menu
 set showmatch           " highlight matching [{()}]
@@ -70,6 +81,11 @@ set hlsearch            " highlight matches
 set ignorecase
 set smartcase
 
+" Softtabs, 2 spaces
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set wrap
 set hidden
 set backspace=indent,eol,start
 
@@ -98,18 +114,12 @@ endif
 
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
-if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
-  syntax on
-endif
+"if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
+"  syntax on
+"endif
 
 " Autocompletion
 filetype plugin indent on
 set ofu=syntaxcomplete#Complete
 let g:neocomplete#enable_at_startup = 1
-
-" Softtabs, 2 spaces
-set tabstop=4
-set shiftwidth=4
-set expandtab
-set wrap
 

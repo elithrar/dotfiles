@@ -12,6 +12,7 @@ alias vi="vim"
 alias zshconfig="nano ~/.zshrc"
 alias lsa="ls -alh"
 alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
+alias sloc="find . -name '*.go' | xargs cat | awk '/[a-zA-Z0-9]/ {i++} END{print i}'"
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -101,9 +102,9 @@ export WWG_SETTINGS="/Users/matt/Dropbox/code/workwithgo.com/dev-new.toml"
 
 # Go 
 export GOPATH=$HOME/.go
-export GOROOT=$(go env GOROOT)
 export GOBIN=$GOPATH/bin
 export PATH=$GOBIN:$PATH
+export GOROOT=$(go env GOROOT)
 
 # tmuxinator
 source ~/.tmuxinator.zsh
