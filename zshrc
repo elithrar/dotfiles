@@ -78,6 +78,9 @@ cdpath=($HOME/Dropbox/code)
 # Homebrew
 PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 
+# Ansible
+export ANSIBLE_CONFIG=$HOME/.ansible.cfg
+
 # rbenv
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 
