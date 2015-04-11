@@ -31,10 +31,12 @@ Plugin 'scrooloose/syntastic'
 Plugin 'guns/vim-clojure-static'
 Plugin 'chase/vim-ansible-yaml'
 Plugin 'saltstack/salt-vim'
+Plugin 'fatih/vim-go'
 Plugin 'scrooloose/nerdtree' 
 Plugin 'valloric/MatchTagAlways'
 Plugin 'nginx.vim'
 Plugin 'wting/rust.vim'
+Plugin 'ryanss/vim-hackernews'
 
 call vundle#end()
 filetype plugin indent on
@@ -53,13 +55,12 @@ if exists("g:did_load_filetypes")
   filetype off
   filetype plugin indent off
 endif
-set runtimepath+=$GOROOT/misc/vim 
 filetype plugin indent on
 syntax on
 " goimports
-let g:gofmt_command ="goimports"
+"let g:gofmt_command ="goimports"
 " gofmt on save
-autocmd FileType go autocmd BufWritePre <buffer> Fmt
+"autocmd FileType go autocmd BufWritePre <buffer> Fmt
 " Go html/template
 au BufNewFile,BufRead *.tmpl set filetype=html
 

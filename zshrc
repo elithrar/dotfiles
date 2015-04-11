@@ -106,8 +106,8 @@ export WWG_SETTINGS="/Users/matt/Dropbox/code/workwithgo.com/dev-new.toml"
 # Go 
 export GOPATH=$HOME/.go
 export GOBIN=$GOPATH/bin
-export PATH=$GOBIN:$PATH
-export GOROOT=$(go env GOROOT)
+export PATH=$GOBIN:$PATH:/usr/local/opt/go/libexec/bin
+export GOROOT=/usr/local/opt/go/libexec
 
 # tmuxinator
 source ~/.tmuxinator.zsh
