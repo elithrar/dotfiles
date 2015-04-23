@@ -9,6 +9,8 @@ ZSH_THEME="simple"
 
 # aliases
 alias vi="vim"
+# Follow symbolic links
+alias cd="cd -P"
 alias zshconfig="nano ~/.zshrc"
 alias lsa="ls -alh"
 alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"

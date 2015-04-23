@@ -52,9 +52,36 @@ map <C-t> :NERDTreeToggle<CR>
 let g:airline#extensions#whitespace#checks=[]
 let g:airline#extensions#tagbar#enabled = 1
 
-
 " Tagbar
-map <F8> :TagbarToggle<CR>
+map <F2> :TagbarToggle<CR>
+
+let g:tagbar_type_go = {
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : {
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
+    \ },
+    \ 'scope2kind' : {
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+\ }
 
 " Colorscheme
 colorscheme Tomorrow-Night
@@ -127,6 +154,10 @@ endif
 "if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
 "  syntax on
 "endif
+
+" Column highlighting
+set textwidth=80
+set colorcolumn=+5
 
 " Autocompletion
 filetype plugin indent on
