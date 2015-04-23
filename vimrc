@@ -3,15 +3,28 @@ set nocompatible  " Use Vim settings, rather then Vi settings
 
 set nobackup
 set nowritebackup
-set noswapfile    " http://robots.thoughtbot.com/post/18739402579/global-gitignore#comment-458413287
+set noswapfile          " http://robots.thoughtbot.com/post/18739402579/global-gitignore#comment-458413287
+set autoread
+set encoding=utf-8 fileencoding=utf-8 termencoding=utf-8  
 set history=50
-set ruler         " show the cursor position all the time
-set showcmd       " display incomplete commands
-set incsearch     " do incremental searching
-set laststatus=2  " Always display the status line
-set noshowmode    " Don't show the mode
-set number
-set clipboard=unnamed " Use system clipboard
+set ruler                                       " Show the cursor position all the time
+set showcmd                                     " Display incomplete commands
+set hlsearch incsearch ignorecase smartcase     " Search
+set nofoldenable                                " No code folding
+set laststatus=2                                " Always display the status line
+set cursorline                                  " Show current line
+set noshowmode                                  " Don't show the mode
+set number                                      " Show absolute line number
+set clipboard=unnamed                           " Use system clipboard
+
+" Colorscheme
+colorscheme Tomorrow-Night
+set background=dark
+
+" Column highlighting
+set textwidth=80
+highlight ColorColumn ctermbg=240
+let &colorcolumn="80,".join(range(120,255),",")
 
 " Vundle
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -83,9 +96,6 @@ let g:tagbar_type_go = {
     \ 'ctagsargs' : '-sort -silent'
 \ }
 
-" Colorscheme
-colorscheme Tomorrow-Night
-
 " Go
 if exists("g:did_load_filetypes")
   filetype off
@@ -154,10 +164,6 @@ endif
 "if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
 "  syntax on
 "endif
-
-" Column highlighting
-set textwidth=80
-set colorcolumn=+5
 
 " Autocompletion
 filetype plugin indent on
