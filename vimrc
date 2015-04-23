@@ -9,6 +9,7 @@ set ruler         " show the cursor position all the time
 set showcmd       " display incomplete commands
 set incsearch     " do incremental searching
 set laststatus=2  " Always display the status line
+set noshowmode    " Don't show the mode
 set number
 set clipboard=unnamed " Use system clipboard
 
@@ -25,18 +26,18 @@ Plugin 'tpope/vim-markdown'
 Plugin 'Lokaltog/powerline'
 Plugin 'kien/ctrlp.vim'
 Plugin 'groenewege/vim-less'
+Plugin 'tpope/vim-fugitive'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
 Plugin 'scrooloose/syntastic'
-Plugin 'guns/vim-clojure-static'
 Plugin 'chase/vim-ansible-yaml'
-Plugin 'saltstack/salt-vim'
 Plugin 'fatih/vim-go'
 Plugin 'scrooloose/nerdtree' 
 Plugin 'valloric/MatchTagAlways'
+Plugin 'bling/vim-airline'
+Plugin 'majutsushi/tagbar'
 Plugin 'nginx.vim'
 Plugin 'wting/rust.vim'
-Plugin 'ryanss/vim-hackernews'
 
 call vundle#end()
 filetype plugin indent on
@@ -46,6 +47,14 @@ cmap w!! w !sudo tee > /dev/null %
 
 " NERDTree
 map <C-t> :NERDTreeToggle<CR>
+
+" Airline
+let g:airline#extensions#whitespace#checks=[]
+let g:airline#extensions#tagbar#enabled = 1
+
+
+" Tagbar
+map <F8> :TagbarToggle<CR>
 
 " Colorscheme
 colorscheme Tomorrow-Night
@@ -58,7 +67,7 @@ endif
 filetype plugin indent on
 syntax on
 " goimports
-"let g:gofmt_command ="goimports"
+let g:gofmt_command ="goimports"
 " gofmt on save
 "autocmd FileType go autocmd BufWritePre <buffer> Fmt
 " Go html/template
