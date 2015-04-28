@@ -111,6 +111,9 @@ export GOBIN=$GOPATH/bin
 export PATH=$GOBIN:$PATH:/usr/local/opt/go/libexec/bin
 export GOROOT=/usr/local/opt/go/libexec
 
+# gb > go
+alias gb=$GOPATH/bin/gb
+
 # tmuxinator
 source ~/.tmuxinator.zsh
 

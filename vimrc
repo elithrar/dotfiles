@@ -3,7 +3,7 @@ set nocompatible  " Use Vim settings, rather then Vi settings
 
 set nobackup
 set nowritebackup
-set noswapfile          " http://robots.thoughtbot.com/post/18739402579/global-gitignore#comment-458413287
+set noswapfile     
 set autoread
 set encoding=utf-8 fileencoding=utf-8 termencoding=utf-8  
 set history=50
@@ -19,12 +19,11 @@ set clipboard=unnamed                           " Use system clipboard
 
 " Colorscheme
 colorscheme Tomorrow-Night
-set background=dark
 
 " Column highlighting
 set textwidth=80
 highlight ColorColumn ctermbg=240
-let &colorcolumn="80,".join(range(120,255),",")
+let &colorcolumn="80,".join(range(120,255),",") " Render a line at 80 cols
 
 " Vundle
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -43,12 +42,13 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
 Plugin 'scrooloose/syntastic'
-Plugin 'chase/vim-ansible-yaml'
 Plugin 'fatih/vim-go'
 Plugin 'scrooloose/nerdtree' 
 Plugin 'valloric/MatchTagAlways'
 Plugin 'bling/vim-airline'
 Plugin 'majutsushi/tagbar'
+Plugin 'docker/docker' , {'rtp': '/contrib/syntax/vim'}
+Plugin 'chase/vim-ansible-yaml'
 Plugin 'nginx.vim'
 Plugin 'wting/rust.vim'
 
@@ -104,7 +104,7 @@ endif
 filetype plugin indent on
 syntax on
 " goimports
-let g:gofmt_command ="goimports"
+let g:go_fmt_command ="goimports"
 " gofmt on save
 "autocmd FileType go autocmd BufWritePre <buffer> Fmt
 " Go html/template
