@@ -17,6 +17,22 @@ set noshowmode                                  " Don't show the mode
 set number                                      " Show absolute line number
 set clipboard=unnamed                           " Use system clipboard
 
+" Taken from http://dougblack.io/words/a-good-vimrc.html
+set wildmenu            " visual autocomplete for command menu
+set showmatch           " highlight matching [{()}]
+set incsearch           " search as characters are entered
+set hlsearch            " highlight matches
+set ignorecase
+set smartcase
+
+" Softtabs, 2 spaces
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set wrap
+set hidden
+set backspace=indent,eol,start
+
 " Colorscheme
 colorscheme Tomorrow-Night
 
@@ -31,6 +47,7 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 
 " Plugins
+Plugin 'Shougo/neocomplete.vim'
 Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-surround'
 Plugin 'nsf/gocode', {'rtp': 'vim/'}
@@ -120,22 +137,6 @@ let g:ctrlp_cmd = 'CtrlP'
 let g:ctrlp_working_path_mode = 'c'
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " Linux/MacOSX
 
-" Taken from http://dougblack.io/words/a-good-vimrc.html
-set wildmenu            " visual autocomplete for command menu
-set showmatch           " highlight matching [{()}]
-set incsearch           " search as characters are entered
-set hlsearch            " highlight matches
-set ignorecase
-set smartcase
-
-" Softtabs, 2 spaces
-set tabstop=4
-set shiftwidth=4
-set expandtab
-set wrap
-set hidden
-set backspace=indent,eol,start
-
 " vim splits
 set splitbelow
 set splitright
@@ -143,21 +144,6 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
-
-" PuTTY Fix
-if &term =~ "xterm"
-    "256 color --
-    let &t_Co=256
-    " restore screen after quitting
-    set t_ti=ESC7ESC[rESC[?47h t_te=ESC[?47lESC8
-    if has("terminfo")
-        let &t_Sf="\ESC[3%p1%dm"
-        let &t_Sb="\ESC[4%p1%dm"
-    else
-        let &t_Sf="\ESC[3%dm"
-        let &t_Sb="\ESC[4%dm"
-    endif
-endif
 
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.

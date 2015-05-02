@@ -55,9 +55,6 @@ if which tmux 2>&1 >/dev/null; then
     test -z "$TMUX" && (tmux attach || tmux new-session)
 fi
 
-# irssi + tmux (via http://alexyu.se/comment/35)
-IRSSI_PATH=`which irssi`
-
 source $ZSH/oh-my-zsh.sh
 
 # PATH related settings
@@ -92,9 +89,6 @@ export PATH="/usr/local/heroku/bin:$PATH"
 # node.js path
 export NODE_PATH="/usr/local/lib/node"
 export PATH="/usr/local/share/npm/bin:$PATH"
-
-# DigitalOcean
-export SSL_CERT_FILE=/usr/local/opt/curl-ca-bundle/share/ca-bundle.crt
 
 # Packer
 export PATH="/usr/local/packer:$PATH"
