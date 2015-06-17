@@ -5,3 +5,7 @@
 	editor = vim
 [push]
 	default = simple
+[rebase]
+	autosquash = true
+[log]
+	decorate = true

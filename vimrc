@@ -61,7 +61,6 @@ Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
 Plugin 'scrooloose/syntastic'
 Plugin 'fatih/vim-go'
 Plugin 'scrooloose/nerdtree' 
-Plugin 'valloric/MatchTagAlways'
 Plugin 'bling/vim-airline'
 Plugin 'majutsushi/tagbar'
 Plugin 'docker/docker' , {'rtp': '/contrib/syntax/vim'}
