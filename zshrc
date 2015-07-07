@@ -7,14 +7,6 @@ ZSH=$HOME/.oh-my-zsh
 # time that oh-my-zsh is loaded.
 ZSH_THEME="simple"
 
-# aliases
-alias vi="vim"
-# Follow symbolic links
-alias cd="cd -P"
-alias zshconfig="nano ~/.zshrc"
-alias lsa="ls -alh"
-alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
-alias sloc="find . -name '*.go' | xargs cat | awk '/[a-zA-Z0-9]/ {i++} END{print i}'"
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -49,8 +41,19 @@ plugins=(
 	vagrant
 	)
 
+# aliases
+alias vi="vim"
+# Follow symbolic links
+alias cd="cd -P"
+alias gl="git log --oneline --decorate"
+alias zshconfig="nano ~/.zshrc"
+alias lsa="ls -alh"
+alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
+alias sloc="find . -name '*.go' | xargs cat | awk '/[a-zA-Z0-9]/ {i++} END{print i}'"
+alias rebuild-scss="cd $GOPATH/src/github.com/workwithgo/workwithgo && sass -t compressed scss/styles.scss static/css/styles.css"
+
 # tmux
-alias tmux="tmux -2"
+alias tmux="tmux -2 -u"
 if which tmux 2>&1 >/dev/null; then
     test -z "$TMUX" && (tmux attach || tmux new-session)
 fi
@@ -104,6 +107,7 @@ export GOPATH=$HOME/.go
 export GOBIN=$GOPATH/bin
 export PATH=$GOBIN:$PATH:/usr/local/opt/go/libexec/bin
 export GOROOT=/usr/local/opt/go/libexec
+alias todo="godoc -notes="TODO" ."
 
 # gb > go
 alias gb=$GOPATH/bin/gb
@@ -114,3 +118,6 @@ export EDITOR='vim'
 export PATH
 trim_path
 
+
+# added by travis gem
+[ -f /Users/matt/.travis/travis.sh ] && source /Users/matt/.travis/travis.sh

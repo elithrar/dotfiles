@@ -60,6 +60,8 @@ Plugin 'flazz/vim-colorschemes'
 Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
 Plugin 'scrooloose/syntastic'
 Plugin 'fatih/vim-go'
+Plugin 'tpope/vim-abolish'
+Plugin 'Shougo/neosnippet'
 Plugin 'scrooloose/nerdtree' 
 Plugin 'bling/vim-airline'
 Plugin 'majutsushi/tagbar'

@@ -8,4 +8,5 @@
 [rebase]
 	autosquash = true
 [log]
-	decorate = true
+    decorate = true
+    oneline = true

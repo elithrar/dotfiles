@@ -1,4 +1,3 @@
-# Prompt of [host] user@dbname=# (or => for regular users)
 \set PROMPT1 '%[%033[1m%]%M %n@%/%R%[%033[0m%]%# '
 \set PROMPT2 '[more] %R > '
 \pset null '[null]'
