@@ -9,4 +9,4 @@
 	autosquash = true
 [log]
     decorate = true
-    oneline = true
+    pretty = oneline

@@ -1,4 +1,4 @@
-\set PROMPT1 '%[%033[1m%]%M %n@%/%R%[%033[0m%]%# '
+\set PROMPT1 '%M:%> %n@%/%R%#%x '
 \set PROMPT2 '[more] %R > '
 \pset null '[null]'
 \pset pager off
