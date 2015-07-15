@@ -41,11 +41,13 @@ plugins=(
 	vagrant
 	)
 
+source $ZSH/oh-my-zsh.sh
+
 # aliases
 alias vi="vim"
 # Follow symbolic links
 alias cd="cd -P"
-alias gl="git log --oneline --decorate"
+alias gl="git --no-pager log --oneline --decorate -n 10"
 alias zshconfig="nano ~/.zshrc"
 alias lsa="ls -alh"
 alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
@@ -57,8 +59,6 @@ alias tmux="tmux -2 -u"
 if which tmux 2>&1 >/dev/null; then
     test -z "$TMUX" && (tmux attach || tmux new-session)
 fi
-
-source $ZSH/oh-my-zsh.sh
 
 # PATH related settings
 
@@ -98,9 +98,6 @@ export PATH="/usr/local/packer:$PATH"
 
 # Bower
 alias bower='noglob bower'
-
-# app-specific vars
-export WWG_SETTINGS="/Users/matt/Dropbox/code/workwithgo.com/dev-new.toml"
 
 # Go 
 export GOPATH=$HOME/.go

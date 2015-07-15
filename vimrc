@@ -37,7 +37,7 @@ set backspace=indent,eol,start
 colorscheme Tomorrow-Night
 
 " Column highlighting
-set textwidth=80
+set textwidth=100
 highlight ColorColumn ctermbg=240
 let &colorcolumn="80,".join(range(120,255),",") " Render a line at 80 cols
 
@@ -48,6 +48,8 @@ Plugin 'gmarik/Vundle.vim'
 
 " Plugins
 Plugin 'Shougo/neocomplete.vim'
+Plugin 'Shougo/neosnippet'
+Plugin 'Shougo/neosnippet-snippets'
 Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-surround'
 Plugin 'nsf/gocode', {'rtp': 'vim/'}
@@ -61,7 +63,6 @@ Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
 Plugin 'scrooloose/syntastic'
 Plugin 'fatih/vim-go'
 Plugin 'tpope/vim-abolish'
-Plugin 'Shougo/neosnippet'
 Plugin 'scrooloose/nerdtree' 
 Plugin 'bling/vim-airline'
 Plugin 'majutsushi/tagbar'
@@ -114,6 +115,24 @@ let g:tagbar_type_go = {
     \ 'ctagsargs' : '-sort -silent'
 \ }
 
+" Snippets
+imap <C-k>  <Plug>(neosnippet_expand_or_jump)
+smap <C-k>  <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>  <Plug>(neosnippet_expand_target)
+
+" SuperTab like snippets behavior.
+imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)"
+\: pumvisible() ? "\<C-n>" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)"
+\: "\<TAB>"
+
+" For conceal markers.
+if has('conceal')
+  set conceallevel=2 concealcursor=niv
+endif
+
 " Go
 if exists("g:did_load_filetypes")
   filetype off
@@ -122,9 +141,9 @@ endif
 filetype plugin indent on
 syntax on
 " goimports
-let g:go_fmt_command ="goimports"
-" gofmt on save
-"autocmd FileType go autocmd BufWritePre <buffer> Fmt
+let g:go_fmt_command = "goimports"
+" snippet plugin
+let g:go_snippet_engine = "neosnippet"
 " Go html/template
 au BufNewFile,BufRead *.tmpl set filetype=html
 
