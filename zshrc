@@ -105,7 +105,10 @@ export GOBIN=$GOPATH/bin
 export PATH=$GOBIN:$PATH:/usr/local/opt/go/libexec/bin
 export GOROOT=/usr/local/opt/go/libexec
 alias todo="godoc -notes="TODO" ."
-
+alias vendor-list="go list ./... | grep -v /vendor/ | xargs "
+alias gtv="go test -v"
+alias gtvc="go test -v -cover"
+alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverage.out -o coverage.html"
 # gb > go
 alias gb=$GOPATH/bin/gb
 

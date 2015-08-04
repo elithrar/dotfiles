@@ -32,12 +32,13 @@ set expandtab
 set wrap
 set hidden
 set backspace=indent,eol,start
+set textwidth=81
+set formatoptions+=t
 
 " Colorscheme
 colorscheme Tomorrow-Night
 
 " Column highlighting
-set textwidth=100
 highlight ColorColumn ctermbg=240
 let &colorcolumn="80,".join(range(120,255),",") " Render a line at 80 cols
 
