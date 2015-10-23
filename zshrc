@@ -7,6 +7,8 @@ ZSH=$HOME/.oh-my-zsh
 # time that oh-my-zsh is loaded.
 ZSH_THEME="simple"
 
+# Homebrew
+PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -77,9 +79,6 @@ MANPATH=/usr/share/man:/usr/local/share/man:/usr/X11/share/man:/usr/X11/man:/usr
 # cd directly into these directories
 cdpath=($HOME/Dropbox/code) 
 
-# Homebrew
-PATH="/usr/local/bin:/usr/local/sbin:$PATH"
-
 # Ansible
 export ANSIBLE_CONFIG=$HOME/.ansible.cfg
 
@@ -109,6 +108,7 @@ alias vendor-list="go list ./... | grep -v /vendor/ | xargs "
 alias gtv="go test -v"
 alias gtvc="go test -v -cover"
 alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverage.out -o coverage.html"
+
 # gb > go
 alias gb=$GOPATH/bin/gb
 
@@ -117,7 +117,6 @@ export EDITOR='vim'
 
 export PATH
 trim_path
-
 
 # added by travis gem
 [ -f /Users/matt/.travis/travis.sh ] && source /Users/matt/.travis/travis.sh

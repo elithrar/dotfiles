@@ -57,7 +57,6 @@ Plugin 'nsf/gocode', {'rtp': 'vim/'}
 Plugin 'tpope/vim-markdown'
 Plugin 'Lokaltog/powerline'
 Plugin 'kien/ctrlp.vim'
-Plugin 'groenewege/vim-less'
 Plugin 'tpope/vim-fugitive'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
@@ -67,10 +66,10 @@ Plugin 'tpope/vim-abolish'
 Plugin 'scrooloose/nerdtree' 
 Plugin 'bling/vim-airline'
 Plugin 'majutsushi/tagbar'
-Plugin 'docker/docker' , {'rtp': '/contrib/syntax/vim'}
-Plugin 'chase/vim-ansible-yaml'
+Plugin 'pangloss/vim-javascript'
+Plugin 'wookiehangover/jshint.vim'
+Plugin 'mxw/vim-jsx'
 Plugin 'nginx.vim'
-Plugin 'wting/rust.vim'
 
 call vundle#end()
 filetype plugin indent on
@@ -147,10 +146,15 @@ let g:go_fmt_command = "goimports"
 let g:go_snippet_engine = "neosnippet"
 " Go html/template
 au BufNewFile,BufRead *.tmpl set filetype=html
+" Syntastic fix per https://github.com/scrooloose/syntastic/issues/1436
+let g:syntastic_go_go_build_args = "-o /tmp/go-build-artifact"
 
 " Markdown
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['go', 'css', 'ruby']
+
+" ESLint (JavaScript)
+let g:syntastic_javascript_checkers = ['eslint']
 
 " CtrlP
 let g:ctrlp_map = '<c-p>'
