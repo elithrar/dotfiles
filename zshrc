@@ -53,7 +53,7 @@ alias gl="git --no-pager log --oneline --decorate -n 10"
 alias zshconfig="nano ~/.zshrc"
 alias lsa="ls -alh"
 alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
-alias sloc="find . -name '*.go' | xargs cat | awk '/[a-zA-Z0-9]/ {i++} END{print i}'"
+alias sloc="find . -name '*.go' | xargs wc -l"
 alias rebuild-scss="cd $GOPATH/src/github.com/workwithgo/workwithgo && sass -t compressed scss/styles.scss static/css/styles.css"
 
 # tmux
@@ -107,6 +107,7 @@ alias todo="godoc -notes="TODO" ."
 alias vendor-list="go list ./... | grep -v /vendor/ | xargs "
 alias gtv="go test -v"
 alias gtvc="go test -v -cover"
+alias godoc-this="godoc -http=:6060; open http://localhost:6060/pkg"
 alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverage.out -o coverage.html"
 
 # gb > go

@@ -84,6 +84,9 @@ map <C-t> :NERDTreeToggle<CR>
 let g:airline#extensions#whitespace#checks=[]
 let g:airline#extensions#tagbar#enabled = 1
 
+" vim-fugitive (Git)
+set diffopt+=vertical
+
 " Tagbar
 map <F2> :TagbarToggle<CR>
 
