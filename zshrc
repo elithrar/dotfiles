@@ -47,6 +47,7 @@ source $ZSH/oh-my-zsh.sh
 
 # aliases
 alias vi="vim"
+alias vim="nvim"
 # Follow symbolic links
 alias cd="cd -P"
 alias gl="git --no-pager log --oneline --decorate -n 10"

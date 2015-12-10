@@ -1,11 +1,9 @@
 filetype off 
-set nocompatible  " Use Vim settings, rather then Vi settings
 
 set nobackup
 set nowritebackup
 set noswapfile     
 set autoread
-set encoding=utf-8 fileencoding=utf-8 termencoding=utf-8  
 set history=50
 set ruler                                       " Show the cursor position all the time
 set showcmd                                     " Display incomplete commands
@@ -48,9 +46,7 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 
 " Plugins
-Plugin 'Shougo/neocomplete.vim'
-Plugin 'Shougo/neosnippet'
-Plugin 'Shougo/neosnippet-snippets'
+Plugin 'Valloric/YouCompleteMe'
 Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-surround'
 Plugin 'nsf/gocode', {'rtp': 'vim/'}
@@ -118,18 +114,7 @@ let g:tagbar_type_go = {
     \ 'ctagsargs' : '-sort -silent'
 \ }
 
-" Snippets
-imap <C-k>  <Plug>(neosnippet_expand_or_jump)
-smap <C-k>  <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>  <Plug>(neosnippet_expand_target)
 
-" SuperTab like snippets behavior.
-imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)"
-\: pumvisible() ? "\<C-n>" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)"
-\: "\<TAB>"
 
 " For conceal markers.
 if has('conceal')
@@ -145,8 +130,6 @@ filetype plugin indent on
 syntax on
 " goimports
 let g:go_fmt_command = "goimports"
-" snippet plugin
-let g:go_snippet_engine = "neosnippet"
 " Go html/template
 au BufNewFile,BufRead *.tmpl set filetype=html
 " Syntastic fix per https://github.com/scrooloose/syntastic/issues/1436
@@ -182,5 +165,4 @@ nnoremap <C-H> <C-W><C-H>
 " Autocompletion
 filetype plugin indent on
 set ofu=syntaxcomplete#Complete
-let g:neocomplete#enable_at_startup = 1
 
