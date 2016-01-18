@@ -56,6 +56,7 @@ alias lsa="ls -alh"
 alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
 alias sloc="find . -name '*.go' | xargs wc -l"
 alias rebuild-scss="cd $GOPATH/src/github.com/workwithgo/workwithgo && sass -t compressed scss/styles.scss static/css/styles.css"
+alias unixts="date +%s"
 
 # tmux
 alias tmux="tmux -2 -u"
@@ -78,7 +79,11 @@ env-update() { export PATH=$PATH; }
 MANPATH=/usr/share/man:/usr/local/share/man:/usr/X11/share/man:/usr/X11/man:/usr/local/man
 
 # cd directly into these directories
-cdpath=($HOME/Dropbox/code) 
+cdpath=(
+    $HOME/Dropbox/code
+    $HOME/Google\ Drive/code
+    $HOME/Google\ Drive
+    )
 
 # Ansible
 export ANSIBLE_CONFIG=$HOME/.ansible.cfg
@@ -115,7 +120,10 @@ alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverag
 alias gb=$GOPATH/bin/gb
 
 # editor
-export EDITOR='vim'
+export EDITOR='nvim'
+
+# Docker
+eval $(docker-machine env default)
 
 export PATH
 trim_path

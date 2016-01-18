@@ -2,7 +2,7 @@
 	name = Matt Silverlock
 	email = matt@eatsleeprepeat.net
 [core]
-	editor = vim
+	editor = nvim
 [push]
 	default = simple
 [rebase]
@@ -10,3 +10,5 @@
 [log]
     decorate = true
     pretty = oneline
+[credential]
+	helper = osxkeychain
