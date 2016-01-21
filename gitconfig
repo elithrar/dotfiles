@@ -3,6 +3,7 @@
 	email = matt@eatsleeprepeat.net
 [core]
 	editor = nvim
+	excludesfile = ~/.gitignore
 [push]
 	default = simple
 [rebase]
