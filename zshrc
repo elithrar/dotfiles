@@ -59,8 +59,8 @@ alias rebuild-scss="cd $GOPATH/src/github.com/workwithgo/workwithgo && sass -t c
 alias unixts="date +%s"
 
 # helper functions
-hour-ago() {
-    echo `expr $(unixts) - 3600`
+hours-ago() {
+    echo `expr $(unixts) - 3600 \* $1`
 }
 
 yesterday() {
