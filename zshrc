@@ -58,6 +58,15 @@ alias sloc="find . -name '*.go' | xargs wc -l"
 alias rebuild-scss="cd $GOPATH/src/github.com/workwithgo/workwithgo && sass -t compressed scss/styles.scss static/css/styles.css"
 alias unixts="date +%s"
 
+# helper functions
+hour-ago() {
+    echo `expr $(unixts) - 3600`
+}
+
+yesterday() {
+    echo `expr $(unixts) - 86400`
+}
+
 # tmux
 alias tmux="tmux -2 -u"
 if which tmux 2>&1 >/dev/null; then
