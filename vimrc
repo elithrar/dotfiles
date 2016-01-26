@@ -137,7 +137,8 @@ let g:syntastic_go_go_build_args = "-o /tmp/go-build-artifact"
 
 " Markdown
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-let g:markdown_fenced_languages = ['go', 'css', 'ruby']
+let g:markdown_fenced_languages = ['go', 'css', 'ruby', 'javascript', 'sh', 'json', 'diff', 'html', 'vim']
+au FileType markdown setlocal textwidth=100
 
 " ESLint (JavaScript)
 let g:syntastic_javascript_checkers = ['eslint']
