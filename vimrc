@@ -62,6 +62,7 @@ Plugin 'tpope/vim-abolish'
 Plugin 'scrooloose/nerdtree' 
 Plugin 'bling/vim-airline'
 Plugin 'majutsushi/tagbar'
+Plugin 'pearofducks/ansible-vim'
 Plugin 'pangloss/vim-javascript'
 Plugin 'wookiehangover/jshint.vim'
 Plugin 'mxw/vim-jsx'
@@ -139,6 +140,9 @@ let g:syntastic_go_go_build_args = "-o /tmp/go-build-artifact"
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['go', 'css', 'ruby', 'javascript', 'sh', 'json', 'diff', 'html', 'vim']
 au FileType markdown setlocal textwidth=100
+
+" JSON
+autocmd BufNewFile,BufRead *.json set conceallevel=0 
 
 " ESLint (JavaScript)
 let g:syntastic_javascript_checkers = ['eslint']
