@@ -57,8 +57,13 @@ alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A
 alias sloc="find . -name '*.go' | xargs wc -l"
 alias rebuild-scss="cd $GOPATH/src/github.com/workwithgo/workwithgo && sass -t compressed scss/styles.scss static/css/styles.css"
 alias unixts="date +%s"
+unalias gb
 
 # helper functions
+mins-ago() {
+    echo `expr $(unixts) - 60 \* $1`
+}
+
 hours-ago() {
     echo `expr $(unixts) - 3600 \* $1`
 }
@@ -124,15 +129,13 @@ alias gtv="go test -v"
 alias gtvc="go test -v -cover"
 alias godoc-this="godoc -http=:6060; open http://localhost:6060/pkg"
 alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverage.out -o coverage.html"
-
-# gb > go
-alias gb=$GOPATH/bin/gb
+export GO15VENDOREXPERIMENT=1 # Remove this in Go 1.6
 
 # editor
 export EDITOR='nvim'
 
 # Docker
-eval $(docker-machine env default)
+# eval $(docker-machine env default)
 
 export PATH
 trim_path

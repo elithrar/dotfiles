@@ -141,6 +141,9 @@ autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['go', 'css', 'ruby', 'javascript', 'sh', 'json', 'diff', 'html', 'vim']
 au FileType markdown setlocal textwidth=100
 
+" JSON
+autocmd BufNewFile,BufRead *.json set conceallevel=0 
+
 " ESLint (JavaScript)
 let g:syntastic_javascript_checkers = ['eslint']
 
