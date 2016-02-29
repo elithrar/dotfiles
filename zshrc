@@ -72,6 +72,11 @@ yesterday() {
     echo `expr $(unixts) - 86400`
 }
 
+time-at() {
+    # ruby -e "puts Time.at($1)"
+    date -r $1
+}
+
 # tmux
 alias tmux="tmux -2 -u"
 if which tmux 2>&1 >/dev/null; then

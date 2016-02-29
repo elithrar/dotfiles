@@ -1,5 +1,4 @@
 filetype off 
-
 set nobackup
 set nowritebackup
 set noswapfile     
@@ -52,16 +51,18 @@ Plugin 'tpope/vim-surround'
 Plugin 'nsf/gocode', {'rtp': 'vim/'}
 Plugin 'tpope/vim-markdown'
 Plugin 'Lokaltog/powerline'
-Plugin 'kien/ctrlp.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'flazz/vim-colorschemes'
+Plugin 'kien/ctrlp.vim'         " fuzzy search
+Plugin 'tpope/vim-fugitive'     " git
+Plugin 'flazz/vim-colorschemes' " color scheme
+Plugin 'joshdick/onedark.vim'   " color scheme
 Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
 Plugin 'scrooloose/syntastic'
 Plugin 'fatih/vim-go'
 Plugin 'tpope/vim-abolish'
-Plugin 'scrooloose/nerdtree' 
-Plugin 'bling/vim-airline'
-Plugin 'majutsushi/tagbar'
+Plugin 'scrooloose/nerdtree'    " file nav. tree 
+Plugin 'bling/vim-airline'      " status bar
+Plugin 'tpope/vim-vinegar'      " netrw improvements
+Plugin 'majutsushi/tagbar' 
 Plugin 'cespare/vim-toml'
 Plugin 'pangloss/vim-javascript'
 Plugin 'wookiehangover/jshint.vim'
@@ -146,6 +147,9 @@ autocmd BufNewFile,BufRead *.json set conceallevel=0
 
 " ESLint (JavaScript)
 let g:syntastic_javascript_checkers = ['eslint']
+
+" Lua
+autocmd BufRead,BufNewFile *.lua set shiftwidth=3 tabstop=3
 
 " CtrlP
 let g:ctrlp_map = '<c-p>'
