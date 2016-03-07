@@ -1,4 +1,7 @@
-filetype off 
+let mapleader="\<space>"
+let maplocalleader="\<space>"
+
+filetype off
 set nobackup
 set nowritebackup
 set noswapfile     
@@ -29,15 +32,9 @@ set expandtab
 set wrap
 set hidden
 set backspace=indent,eol,start
-set textwidth=81
+set textwidth=80
+set colorcolumn=+1
 set formatoptions+=t
-
-" Colorscheme
-colorscheme Tomorrow-Night
-
-" Column highlighting
-highlight ColorColumn ctermbg=240
-let &colorcolumn="80,".join(range(120,255),",") " Render a line at 80 cols
 
 " Vundle
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -46,24 +43,26 @@ Plugin 'gmarik/Vundle.vim'
 
 " Plugins
 Plugin 'Valloric/YouCompleteMe'
+" Plugin 'Shougo/deoplete.nvim'
+" Plugin 'zchee/deoplete-go', {'build': {'unix': 'make'}}
 Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-surround'
-Plugin 'nsf/gocode', {'rtp': 'vim/'}
+" Plugin 'nsf/gocode', {'rtp': 'nvim/'}
 Plugin 'tpope/vim-markdown'
-Plugin 'Lokaltog/powerline'
-Plugin 'kien/ctrlp.vim'         " fuzzy search
-Plugin 'tpope/vim-fugitive'     " git
-Plugin 'flazz/vim-colorschemes' " color scheme
-Plugin 'joshdick/onedark.vim'   " color scheme
-Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
+" Plugin 'Lokaltog/powerline'         
+Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy search
+Plugin 'tpope/vim-fugitive'         " git
+Plugin 'morhetz/gruvbox'            " color scheme
+Plugin 'chriskempson/tomorrow-theme', {'rtp': 'nvim/'}
 Plugin 'scrooloose/syntastic'
 Plugin 'fatih/vim-go'
-Plugin 'tpope/vim-abolish'
+Plugin 'tpope/vim-abolish'      " better word search (abbrev, ignore case, etc)
 Plugin 'scrooloose/nerdtree'    " file nav. tree 
-Plugin 'bling/vim-airline'      " status bar
+Plugin 'rking/ag.vim'           " Silver Searcher plugin
+Plugin 'vim-airline/vim-airline'      " status bar
 Plugin 'tpope/vim-vinegar'      " netrw improvements
-Plugin 'majutsushi/tagbar' 
-Plugin 'cespare/vim-toml'
+Plugin 'majutsushi/tagbar'      " definitions/tag tree 
+Plugin 'cespare/vim-toml' 
 Plugin 'pangloss/vim-javascript'
 Plugin 'wookiehangover/jshint.vim'
 Plugin 'mxw/vim-jsx'
@@ -72,8 +71,23 @@ Plugin 'nginx.vim'
 call vundle#end()
 filetype plugin indent on
 
+" Colorscheme
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+syntax on
+set background=dark
+" colorscheme material-theme
+" colorscheme Tomorrow-Night
+colorscheme gruvbox
+let g:gruvbox_contrast_dark = 'hard'
+
+" Column highlighting
+highlight ColorColumn ctermbg=240
+" let &colorcolumn="80,".join(range(120,255),",") " Render a line at 80 cols
+
 " Write as sudo
 cmap w!! w !sudo tee > /dev/null %
+" Clear search highlighting
+nnoremap <leader>h :noh<CR>
 
 " NERDTree
 map <C-t> :NERDTreeToggle<CR>
@@ -81,6 +95,8 @@ map <C-t> :NERDTreeToggle<CR>
 " Airline
 let g:airline#extensions#whitespace#checks=[]
 let g:airline#extensions#tagbar#enabled = 1
+let g:airline#extensions#tabline#enabled = 1
+" let g:airline_powerline_fonts = 1
 
 " vim-fugitive (Git)
 set diffopt+=vertical
@@ -124,18 +140,26 @@ if has('conceal')
 endif
 
 " Go
-if exists("g:did_load_filetypes")
-  filetype off
-  filetype plugin indent off
-endif
-filetype plugin indent on
-syntax on
 " goimports
 let g:go_fmt_command = "goimports"
 " Go html/template
 au BufNewFile,BufRead *.tmpl set filetype=html
-" Syntastic fix per https://github.com/scrooloose/syntastic/issues/1436
-let g:syntastic_go_go_build_args = "-o /tmp/go-build-artifact"
+" GoDecls
+au FileType go nmap <C-D> :GoDecls<CR>
+
+au FileType go nmap <leader>r <Plug>(go-run)
+au FileType go nmap <leader>b <Plug>(go-build)
+au FileType go nmap <leader>t <Plug>(go-test)
+au FileType go nmap <leader>c <Plug>(go-coverage)
+
+au FileType go nmap <Leader>ds <Plug>(go-def-split)
+au FileType go nmap <Leader>dv <Plug>(go-def-vertical)
+au FileType go nmap <Leader>dt <Plug>(go-def-tab)
+
+au FileType go nmap <Leader>gd <Plug>(go-doc-vertical)
+au FileType go nmap <Leader>gh <Plug>(go-doc)
+au FileType go nmap <Leader>gb <Plug>(go-doc-browser)
+au FileType go nmap <Leader>s <Plug>(go-implements)
 
 " Markdown
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
@@ -150,6 +174,7 @@ let g:syntastic_javascript_checkers = ['eslint']
 
 " Lua
 autocmd BufRead,BufNewFile *.lua set shiftwidth=3 tabstop=3
+autocmd BufNewFile,BufReadPost *.t set filetype=lua
 
 " CtrlP
 let g:ctrlp_map = '<c-p>'
@@ -165,13 +190,10 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
-"if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
-"  syntax on
-"endif
-
 " Autocompletion
 filetype plugin indent on
-set ofu=syntaxcomplete#Complete
+" set ofu=syntaxcomplete#Complete
 
+" YCM debug
+" let g:ycm_server_keep_logfiles = 1
+" let g:ycm_server_log_level = 'debug'

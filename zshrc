@@ -59,6 +59,12 @@ alias rebuild-scss="cd $GOPATH/src/github.com/workwithgo/workwithgo && sass -t c
 alias unixts="date +%s"
 unalias gb
 
+# Shortcut to edit long commands in vim via ESC + v
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^xe' edit-command-line
+bindkey '^x^e' edit-command-line
+
 # helper functions
 mins-ago() {
     echo `expr $(unixts) - 60 \* $1`
