@@ -75,21 +75,12 @@ filetype plugin indent on
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 syntax on
 set background=dark
-" colorscheme material-theme
-" colorscheme Tomorrow-Night
 colorscheme gruvbox
 let g:gruvbox_contrast_dark = 'hard'
 
-" Column highlighting
+" Column highlighting at textwidth
 highlight ColorColumn ctermbg=240
 " let &colorcolumn="80,".join(range(120,255),",") " Render a line at 80 cols
-
-
-" Write as sudo
-cmap w!! w !sudo tee > /dev/null %
-
-" NERDTree
-map <C-t> :NERDTreeToggle<CR>
 
 " Airline
 let g:airline#extensions#whitespace#checks=[]
@@ -100,9 +91,6 @@ let g:airline#extensions#tabline#buffer_nr_show = 1
 
 " vim-fugitive (Git)
 set diffopt+=vertical
-
-" Tagbar
-map <F2> :TagbarToggle<CR>
 
 let g:tagbar_type_go = {
     \ 'ctagstype' : 'go',
@@ -178,6 +166,28 @@ let g:syntastic_javascript_checkers = ['eslint']
 autocmd BufRead,BufNewFile *.lua set shiftwidth=3 tabstop=3
 autocmd BufNewFile,BufReadPost *.t set filetype=lua ts=4 sw=4 et:
 
+" YCM debugging
+" let g:ycm_server_keep_logfiles = 1
+" let g:ycm_server_log_level = 'debug'
+
+" === Keyboard shortcuts ===
+" Write as sudo
+cmap w!! w !sudo tee > /dev/null %
+
+" Turn off search result highlighting
+nnoremap <leader>h :noh<CR>
+
+" Buffer navigation (next/back/close)
+nnoremap <leader>n :bnext<CR>
+nnoremap <leader>b :bprevious<CR>
+nnoremap <leader>q :bdelete<CR>
+
+" NERDTree
+map <C-t> :NERDTreeToggle<CR>
+
+" Tagbar
+map <F2> :TagbarToggle<CR>
+
 " CtrlP
 let g:ctrlp_map = '<c-p>'
 let g:ctrlp_cmd = 'CtrlP'
@@ -191,11 +201,3 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
-
-" Autocompletion
-filetype plugin indent on
-" set ofu=syntaxcomplete#Complete
-
-" YCM debug
-" let g:ycm_server_keep_logfiles = 1
-" let g:ycm_server_log_level = 'debug'
