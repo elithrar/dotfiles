@@ -95,6 +95,7 @@ map <C-t> :NERDTreeToggle<CR>
 let g:airline#extensions#whitespace#checks=[]
 let g:airline#extensions#tagbar#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
 " let g:airline_powerline_fonts = 1
 
 " vim-fugitive (Git)
