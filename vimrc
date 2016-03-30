@@ -15,6 +15,7 @@ set laststatus=2                                " Always display the status line
 set cursorline                                  " Show current line
 set noshowmode                                  " Don't show the mode
 set number                                      " Show absolute line number
+set list                                        " Show whitespace
 set clipboard=unnamed                           " Use system clipboard
 
 " Taken from http://dougblack.io/words/a-good-vimrc.html
