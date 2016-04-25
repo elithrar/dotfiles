@@ -13,3 +13,5 @@
     pretty = oneline
 [credential]
 	helper = osxkeychain
+[alias]
+    pf = push --force-with-lease
