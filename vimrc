@@ -177,11 +177,11 @@ nnoremap <leader>h :noh<CR>
 
 " Buffer navigation (next/back/close)
 nnoremap <leader>n :bnext<CR>
-nnoremap <leader>b :bprevious<CR>
+nnoremap <leader>p :bprevious<CR>
 nnoremap <leader>q :bdelete<CR>
 
 " NERDTree
-map <C-t> :NERDTreeToggle<CR>
+nnoremap <leader>` :NERDTreeToggle<CR>
 
 " Tagbar
 map <F2> :TagbarToggle<CR>

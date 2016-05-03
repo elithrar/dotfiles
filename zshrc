@@ -137,7 +137,7 @@ export GOROOT=/usr/local/opt/go/libexec
 alias todo="godoc -notes="TODO" ."
 alias vendor-list="go list ./... | grep -v /vendor/ | xargs "
 alias gtv="go test -v"
-alias gtvc="go test -v -cover"
+alias gtvc="go test -v -cover ./..."
 alias godoc-this="godoc -http=:6060; open http://localhost:6060/pkg"
 alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverage.out -o coverage.html"
 export GO15VENDOREXPERIMENT=1 # Remove this in Go 1.6
