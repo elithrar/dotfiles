@@ -1,7 +1,6 @@
 let mapleader="\<space>"
 let maplocalleader="\<space>"
 
-filetype off
 set nobackup
 set nowritebackup
 set noswapfile     
@@ -70,11 +69,9 @@ Plugin 'mxw/vim-jsx'
 Plugin 'nginx.vim'
 
 call vundle#end()
-filetype plugin indent on
 
 " Colorscheme
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-syntax on
 set background=dark
 colorscheme gruvbox
 let g:gruvbox_contrast_dark = 'hard'
