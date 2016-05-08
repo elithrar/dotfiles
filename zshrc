@@ -55,7 +55,6 @@ alias zshconfig="nano ~/.zshrc"
 alias lsa="ls -alh"
 alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
 alias sloc="find . -name '*.go' | xargs wc -l"
-alias rebuild-scss="cd $GOPATH/src/github.com/workwithgo/workwithgo && sass -t compressed scss/styles.scss static/css/styles.css"
 alias unixts="date +%s"
 unalias gb
 
@@ -149,6 +148,3 @@ export EDITOR='nvim'
 
 export PATH
 trim_path
-
-# added by travis gem
-[ -f /Users/matt/.travis/travis.sh ] && source /Users/matt/.travis/travis.sh
