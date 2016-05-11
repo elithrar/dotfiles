@@ -30,7 +30,6 @@ PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(
 	brew
-    fabric
 	gem
 	git
 	github
@@ -38,7 +37,6 @@ plugins=(
 	heroku
 	pip
 	python
-	sublime
 	tmux
 	vagrant
 	)
@@ -78,7 +76,6 @@ yesterday() {
 }
 
 time-at() {
-    # ruby -e "puts Time.at($1)"
     date -r $1
 }
 
@@ -125,20 +122,15 @@ export PATH="/usr/local/share/npm/bin:$PATH"
 # Packer
 export PATH="/usr/local/packer:$PATH"
 
-# Bower
-alias bower='noglob bower'
-
 # Go 
 export GOPATH=$HOME/.go
 export GOBIN=$GOPATH/bin
 export PATH=$GOBIN:$PATH:/usr/local/opt/go/libexec/bin
 export GOROOT=/usr/local/opt/go/libexec
 alias todo="godoc -notes="TODO" ."
-alias vendor-list="go list ./... | grep -v /vendor/ | xargs "
-alias gtvc="go test -v -race -cover $(go list ./... | grep -v /vendor/)"
+alias gtvc="go test -v -race -cover ."
 alias godoc-this="godoc -http=:6060; open http://localhost:6060/pkg"
 alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverage.out -o coverage.html"
-export GO15VENDOREXPERIMENT=1 # Remove this in Go 1.6
 
 # editor
 export EDITOR='nvim'
