@@ -43,24 +43,21 @@ Plugin 'gmarik/Vundle.vim'
 
 " Plugins
 Plugin 'Valloric/YouCompleteMe'
-" Plugin 'Shougo/deoplete.nvim'
-" Plugin 'zchee/deoplete-go', {'build': {'unix': 'make'}}
 Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-surround'
-" Plugin 'nsf/gocode', {'rtp': 'nvim/'}
 Plugin 'tpope/vim-markdown'
-" Plugin 'Lokaltog/powerline'         
-Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy search
 Plugin 'tpope/vim-fugitive'         " git
+Plugin 'tpope/vim-abolish'      " better word search (abbrev, ignore case, etc)
+Plugin 'tpope/vim-vinegar'      " netrw improvements
+Plugin 'justinmk/vim-sneak'     " e.g. s{char}{char} - jump to chars. sab = next.
+Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy search
 Plugin 'morhetz/gruvbox'            " color scheme
 Plugin 'chriskempson/tomorrow-theme', {'rtp': 'nvim/'}
 Plugin 'scrooloose/syntastic'
 Plugin 'fatih/vim-go'
-Plugin 'tpope/vim-abolish'      " better word search (abbrev, ignore case, etc)
 Plugin 'scrooloose/nerdtree'    " file nav. tree 
 Plugin 'rking/ag.vim'           " Silver Searcher plugin
 Plugin 'vim-airline/vim-airline'      " status bar
-Plugin 'tpope/vim-vinegar'      " netrw improvements
 Plugin 'majutsushi/tagbar'      " definitions/tag tree 
 Plugin 'cespare/vim-toml' 
 Plugin 'pangloss/vim-javascript'
