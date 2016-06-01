@@ -79,6 +79,10 @@ time-at() {
     date -r $1
 }
 
+flush-dns() {
+    sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo "cache flushed"
+}
+
 # tmux
 alias tmux="tmux -2 -u"
 if which tmux 2>&1 >/dev/null; then
