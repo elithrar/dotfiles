@@ -80,7 +80,7 @@ time-at() {
 }
 
 flush-dns() {
-    sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo "cache flushed"
+    sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo "DNS cache flushed"
 }
 
 # tmux
