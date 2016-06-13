@@ -129,6 +129,9 @@ let g:go_fmt_command = "goimports"
 au BufNewFile,BufRead *.tmpl set filetype=html
 " Syntastic fix per https://github.com/scrooloose/syntastic/issues/1436
 let g:syntastic_go_go_build_args = "-o /tmp/go-build-artifact"
+let g:syntastic_go_checkers = ['govet', 'errcheck', 'go']
+let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
+let g:go_list_type = "quickfix"
 " GoDecls
 au FileType go nmap <C-D> :GoDecls<CR>
 
