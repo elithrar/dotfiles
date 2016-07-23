@@ -59,6 +59,8 @@ Plugin 'scrooloose/nerdtree'    " file nav. tree
 Plugin 'rking/ag.vim'           " Silver Searcher plugin
 Plugin 'vim-airline/vim-airline'      " status bar
 Plugin 'majutsushi/tagbar'      " definitions/tag tree 
+Plugin 'othree/html5.vim'       " HTML5 syntax
+Plugin 'posva/vim-vue'          " Vue.js
 Plugin 'cespare/vim-toml' 
 Plugin 'pangloss/vim-javascript'
 Plugin 'wookiehangover/jshint.vim'
@@ -153,6 +155,9 @@ au FileType go nmap <Leader>s <Plug>(go-implements)
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['go', 'css', 'ruby', 'javascript', 'sh', 'json', 'diff', 'html', 'vim']
 au FileType markdown setlocal textwidth=100
+
+" CSS
+au FileType css setlocal shiftwidth=2 tabstop=2 expandtab
 
 " JSON
 autocmd BufNewFile,BufRead *.json set conceallevel=0 
