@@ -54,6 +54,7 @@ alias lsa="ls -alh"
 alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
 alias sloc="find . -name '*.go' | xargs wc -l"
 alias unixts="date +%s"
+alias serve="ruby -run -e httpd -- -p 8000 ."
 unalias gb
 
 # Shortcut to edit long commands in vim via ESC + v
