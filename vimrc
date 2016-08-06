@@ -59,10 +59,10 @@ Plugin 'scrooloose/nerdtree'    " file nav. tree
 Plugin 'rking/ag.vim'           " Silver Searcher plugin
 Plugin 'vim-airline/vim-airline'      " status bar
 Plugin 'majutsushi/tagbar'      " definitions/tag tree 
+Plugin 'pangloss/vim-javascript'
 Plugin 'othree/html5.vim'       " HTML5 syntax
 Plugin 'posva/vim-vue'          " Vue.js
 Plugin 'cespare/vim-toml' 
-Plugin 'pangloss/vim-javascript'
 Plugin 'wookiehangover/jshint.vim'
 Plugin 'mxw/vim-jsx'
 Plugin 'nginx.vim'
@@ -159,11 +159,15 @@ au FileType markdown setlocal textwidth=100
 " CSS
 au FileType css setlocal shiftwidth=2 tabstop=2 expandtab
 
-" JSON
-autocmd BufNewFile,BufRead *.json set conceallevel=0 
-
 " ESLint (JavaScript)
 let g:syntastic_javascript_checkers = ['eslint']
+au FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
+
+" Vue.js
+au FileType vue setlocal shiftwidth=2 tabstop=2 expandtab
+
+" JSON
+autocmd BufNewFile,BufRead *.json set conceallevel=0 
 
 " Lua
 autocmd BufRead,BufNewFile *.lua set shiftwidth=3 tabstop=3
@@ -176,6 +180,8 @@ autocmd BufNewFile,BufReadPost *.t set filetype=lua ts=4 sw=4 et:
 " === Keyboard shortcuts ===
 " Write as sudo
 cmap w!! w !sudo tee > /dev/null %
+" Reindent and restore position
+map <leader>z mzgg=G`z
 
 " Turn off search result highlighting
 nnoremap <leader>h :noh<CR>

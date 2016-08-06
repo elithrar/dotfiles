@@ -108,6 +108,9 @@ cdpath=(
     $HOME/Dropbox/code
     $HOME/Google\ Drive/code
     $HOME/Google\ Drive
+    $GOPATH/src/github.com
+    $GOPATH/src/golang.org
+    $GOPATH/src
     )
 
 # Ansible
