@@ -106,9 +106,9 @@ MANPATH=/usr/share/man:/usr/local/share/man:/usr/X11/share/man:/usr/X11/man:/usr
 
 # cd directly into these directories
 cdpath=(
-    $HOME/Dropbox/code
     $GOPATH/src/github.com
     $GOPATH/src/golang.org
+    $HOME/Dropbox/code
     $HOME/Google\ Drive/code
     $HOME/Google\ Drive
     )
