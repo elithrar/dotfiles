@@ -167,7 +167,8 @@ au FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
 au FileType vue setlocal shiftwidth=2 tabstop=2 expandtab
 
 " JSON
-autocmd BufNewFile,BufRead *.json set conceallevel=0 
+" autocmd BufNewFile,BufRead *.json set conceallevel=0 sw=2 ts=2 expandtab
+au FileType json setlocal conceallevel=0 shiftwidth=2 tabstop=2 expandtab
 
 " Lua
 autocmd BufRead,BufNewFile *.lua set shiftwidth=3 tabstop=3
