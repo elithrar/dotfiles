@@ -1,0 +1,12 @@
+{
+  "libs": [
+    "vue",
+    "vuex",
+    "vue-resource",
+    "superagent"
+  ],
+  "plugins": {
+    "node": {},
+    "es_modules": {}
+  }
+}
