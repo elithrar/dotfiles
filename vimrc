@@ -156,23 +156,16 @@ autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['go', 'css', 'ruby', 'javascript', 'sh', 'json', 'diff', 'html', 'vim']
 au FileType markdown setlocal textwidth=100
 
-" CSS
-au FileType css setlocal shiftwidth=2 tabstop=2 expandtab
+au FileType css setlocal sw=2 ts=2 expandtab " HTML
+au FileType css setlocal sw=2 ts=2 expandtab " CSS
+au FileType vue setlocal shiftwidth=2 tabstop=2 expandtab " Vue.js
+au FileType json setlocal conceallevel=0 sw=2 ts=2 expandtab "JSON
 
-" ESLint (JavaScript)
 let g:syntastic_javascript_checkers = ['eslint']
-au FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
+au FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab " JS
 
-" Vue.js
-au FileType vue setlocal shiftwidth=2 tabstop=2 expandtab
-
-" JSON
-" autocmd BufNewFile,BufRead *.json set conceallevel=0 sw=2 ts=2 expandtab
-au FileType json setlocal conceallevel=0 shiftwidth=2 tabstop=2 expandtab
-
-" Lua
-autocmd BufRead,BufNewFile *.lua set shiftwidth=3 tabstop=3
-autocmd BufNewFile,BufReadPost *.t set filetype=lua ts=4 sw=4 et:
+autocmd BufRead,BufNewFile *.lua set shiftwidth=3 tabstop=3 " Lua
+autocmd BufNewFile,BufReadPost *.t set filetype=lua ts=4 sw=4 et: " Tests
 
 " YCM debugging
 " let g:ycm_server_keep_logfiles = 1
