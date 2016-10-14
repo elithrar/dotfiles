@@ -104,15 +104,6 @@ env-update() { export PATH=$PATH; }
 # man pages
 MANPATH=/usr/share/man:/usr/local/share/man:/usr/X11/share/man:/usr/X11/man:/usr/local/man
 
-# cd directly into these directories
-cdpath=(
-    $GOPATH/src/github.com
-    $GOPATH/src/golang.org
-    $HOME/Dropbox/code
-    $HOME/Google\ Drive/code
-    $HOME/Google\ Drive
-    )
-
 # Ansible
 export ANSIBLE_CONFIG=$HOME/.ansible.cfg
 
@@ -144,6 +135,16 @@ export EDITOR='nvim'
 
 # Docker
 # eval $(docker-machine env default)
+
+# cd directly into these directories
+cdpath=(
+    $GOPATH/src/github.com
+    $GOPATH/src/golang.org
+    $HOME/Dropbox/code
+    $HOME/Google\ Drive/code
+    $HOME/Google\ Drive
+    )
+
 
 export PATH
 trim_path
