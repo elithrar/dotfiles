@@ -3,7 +3,7 @@ let maplocalleader="\<space>"
 
 set nobackup
 set nowritebackup
-set noswapfile     
+set noswapfile
 set autoread
 set history=50
 set ruler                                       " Show the cursor position all the time
@@ -51,29 +51,34 @@ Plugin 'tpope/vim-abolish'      " better word search (abbrev, ignore case, etc)
 Plugin 'tpope/vim-vinegar'      " netrw improvements
 Plugin 'justinmk/vim-sneak'     " e.g. s{char}{char} - jump to chars. sab = next.
 Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy search
-Plugin 'morhetz/gruvbox'            " color scheme
-Plugin 'chriskempson/tomorrow-theme', {'rtp': 'nvim/'}
 Plugin 'scrooloose/syntastic'
 Plugin 'fatih/vim-go'
 Plugin 'scrooloose/nerdtree'    " file nav. tree 
 Plugin 'rking/ag.vim'           " Silver Searcher plugin
 Plugin 'vim-airline/vim-airline'      " status bar
 Plugin 'majutsushi/tagbar'      " definitions/tag tree 
+Plugin 'keith/swift.vim'
 Plugin 'pangloss/vim-javascript'
 Plugin 'othree/html5.vim'       " HTML5 syntax
 Plugin 'posva/vim-vue'          " Vue.js
 Plugin 'cespare/vim-toml' 
-Plugin 'wookiehangover/jshint.vim'
-Plugin 'mxw/vim-jsx'
-Plugin 'nginx.vim'
+" Plugin 'wookiehangover/jshint.vim'
+" Plugin 'mxw/vim-jsx'
+" Plugin 'nginx.vim'
+
+" Color schemes
+Plugin 'morhetz/gruvbox'            " color scheme
+" Plugin 'chriskempson/tomorrow-theme', {'rtp': 'nvim/'}
 
 call vundle#end()
 
 " Colorscheme
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+syntax on
+set termguicolors
 set background=dark
+let g:gruvbox_contrast_dark = 1
+let g:gruvbox_italic = 1
 colorscheme gruvbox
-let g:gruvbox_contrast_dark = 'hard'
 
 " Column highlighting at textwidth
 highlight ColorColumn ctermbg=240
