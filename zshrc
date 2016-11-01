@@ -121,7 +121,7 @@ export PATH="/usr/local/share/npm/bin:$PATH"
 # Packer
 export PATH="/usr/local/packer:$PATH"
 
-# Go 
+# Go
 export GOPATH=$HOME/.go
 export GOBIN=$GOPATH/bin
 export PATH=$GOBIN:$PATH:/usr/local/opt/go/libexec/bin
@@ -130,6 +130,9 @@ alias todo="godoc -notes="TODO" ."
 alias gtvc="go test -v -race -cover ."
 alias godoc-this="godoc -http=:6060; open http://localhost:6060/pkg"
 alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverage.out -o coverage.html"
+
+# Swift
+if which swiftenv > /dev/null; then eval "$(swiftenv init -)"; fi
 
 # editor
 export EDITOR='nvim'
