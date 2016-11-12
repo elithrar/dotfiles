@@ -149,3 +149,4 @@ cdpath=(
 
 export PATH
 trim_path
+if which swiftenv > /dev/null; then eval "$(swiftenv init -)"; fi

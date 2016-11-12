@@ -67,18 +67,21 @@ Plugin 'cespare/vim-toml'
 " Plugin 'nginx.vim'
 
 " Color schemes
-Plugin 'morhetz/gruvbox'            " color scheme
-" Plugin 'chriskempson/tomorrow-theme', {'rtp': 'nvim/'}
+" Plugin 'morhetz/gruvbox'
+Plugin 'joshdick/onedark.vim'
+" Plugin 'rakr/vim-one'
+Plugin 'mhartington/oceanic-next'
 
 call vundle#end()
 
 " Colorscheme
-syntax on
-set termguicolors
+if (has("termguicolors"))
+ set termguicolors
+endif
+syntax enable
 set background=dark
-let g:gruvbox_contrast_dark = 1
-let g:gruvbox_italic = 1
-colorscheme gruvbox
+" let g:gruvbox_contrast_dark = 1
+colorscheme OceanicNext
 
 " Column highlighting at textwidth
 highlight ColorColumn ctermbg=240
