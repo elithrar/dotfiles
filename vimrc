@@ -80,7 +80,7 @@ if (has("termguicolors"))
 endif
 syntax enable
 set background=dark
-" let g:gruvbox_contrast_dark = 1
+let g:airline_theme='oceanicnext'
 colorscheme OceanicNext
 
 " Column highlighting at textwidth
