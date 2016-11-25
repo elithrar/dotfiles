@@ -68,7 +68,7 @@ Plugin 'cespare/vim-toml'
 
 " Color schemes
 " Plugin 'morhetz/gruvbox'
-Plugin 'joshdick/onedark.vim'
+" Plugin 'joshdick/onedark.vim'
 " Plugin 'rakr/vim-one'
 Plugin 'mhartington/oceanic-next'
 
