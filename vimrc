@@ -43,7 +43,6 @@ Plugin 'gmarik/Vundle.vim'
 
 " Plugins
 Plugin 'Valloric/YouCompleteMe'
-Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-markdown'
 Plugin 'tpope/vim-fugitive'         " git
@@ -56,12 +55,11 @@ Plugin 'fatih/vim-go'
 Plugin 'scrooloose/nerdtree'    " file nav. tree 
 Plugin 'rking/ag.vim'           " Silver Searcher plugin
 Plugin 'vim-airline/vim-airline'      " status bar
-Plugin 'majutsushi/tagbar'      " definitions/tag tree 
-Plugin 'keith/swift.vim'
+Plugin 'majutsushi/tagbar'      " definitions/tag tree
 Plugin 'pangloss/vim-javascript'
 Plugin 'othree/html5.vim'       " HTML5 syntax
 Plugin 'posva/vim-vue'          " Vue.js
-Plugin 'cespare/vim-toml' 
+Plugin 'cespare/vim-toml'
 " Plugin 'wookiehangover/jshint.vim'
 " Plugin 'mxw/vim-jsx'
 " Plugin 'nginx.vim'
@@ -158,6 +156,9 @@ au FileType go nmap <Leader>gd <Plug>(go-doc-vertical)
 au FileType go nmap <Leader>gh <Plug>(go-doc)
 au FileType go nmap <Leader>gb <Plug>(go-doc-browser)
 au FileType go nmap <Leader>s <Plug>(go-implements)
+
+" Python
+let g:ycm_python_binary_path = "python3"
 
 " Markdown
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
