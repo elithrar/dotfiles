@@ -56,6 +56,7 @@ alias sloc="find . -name '*.go' | xargs wc -l"
 alias unixts="date +%s"
 alias serve="ruby -run -e httpd -- -p 8000 ."
 alias iso8601="date -u +'%Y-%m-%dT%H:%M:%SZ'"
+alias vup="vagrant up; vagrant ssh"
 unalias gb
 
 # Shortcut to edit long commands in vim via ESC + v
@@ -135,7 +136,7 @@ alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverag
 if which swiftenv > /dev/null; then eval "$(swiftenv init -)"; fi
 
 # editor
-export EDITOR='nvim'
+export EDITOR='code'
 
 # Docker
 # eval $(docker-machine env default)

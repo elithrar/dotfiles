@@ -2,8 +2,12 @@
 	name = Matt Silverlock
 	email = matt@eatsleeprepeat.net
 [core]
-	editor = nvim
+	editor = code
 	excludesfile = ~/.gitignore
+[diff]
+	tool = default-difftool
+[difftool "default-difftool"]
+	cmd = code --wait --diff $LOCAL $REMOTE
 [push]
 	default = simple
 [rebase]
