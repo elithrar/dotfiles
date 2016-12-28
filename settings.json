@@ -72,5 +72,10 @@
         }
     ]
 ,
-"window.zoomLevel": 0
+"window.zoomLevel": 0,
+"files.associations": {
+    "*.vue": "vue"
+}
+,
+"go.formatTool": "goimports"
 }
