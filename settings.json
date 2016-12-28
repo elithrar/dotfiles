@@ -69,8 +69,19 @@
                     "args": []
                 }
             ]
+        },
+        {
+            "before": ["leader", "g"],
+            "after": [],
+            "commands": [
+                {
+                    "command": "editor.action.goToDeclaration",
+                    "args": []
+                }
+            ]
         }
     ]
 ,
-"window.zoomLevel": 0
+"window.zoomLevel": 0,
+"git.confirmSync": false
 }
