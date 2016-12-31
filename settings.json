@@ -83,5 +83,8 @@
     ]
 ,
 "window.zoomLevel": 0,
-"git.confirmSync": false
+"git.confirmSync": false,
+"files.associations": {
+    "*.vue": "vue"
+}
 }
