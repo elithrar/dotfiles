@@ -86,5 +86,6 @@
 "git.confirmSync": false,
 "files.associations": {
     "*.vue": "vue"
-}
+},
+"go.formatTool": "goimports"
 }

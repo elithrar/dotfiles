@@ -136,7 +136,7 @@ alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverag
 if which swiftenv > /dev/null; then eval "$(swiftenv init -)"; fi
 
 # editor
-export EDITOR='code'
+export EDITOR='code --wait'
 
 # Docker
 # eval $(docker-machine env default)
