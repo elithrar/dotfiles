@@ -79,6 +79,16 @@
                     "args": []
                 }
             ]
+        },
+        {
+            "before": ["leader", "c"],
+            "after": [],
+            "commands": [
+                {
+                    "command": "workbench.git.action.globalOpenChange",
+                    "args": []
+                }
+            ]
         }
     ]
 ,
@@ -87,5 +97,8 @@
 "files.associations": {
     "*.vue": "vue"
 },
-"go.formatTool": "goimports"
+"go.formatTool": "goimports",
+"terminal.integrated.shell.osx": "/usr/local/bin/zsh",
+"terminal.external.osxExec": "iTerm.app",
+"workbench.activityBar.visible": false
 }

@@ -5,8 +5,8 @@
 	editor = "code --wait"
 	excludesfile = ~/.gitignore
 [diff]
-	tool = default-difftool
-[difftool "default-difftool"]
+	tool = vscode
+[difftool "vscode"]
 	cmd = code --wait --diff $LOCAL $REMOTE
 [push]
 	default = simple

@@ -39,6 +39,7 @@ plugins=(
 	python
 	tmux
 	vagrant
+	yarn
 	)
 
 source $ZSH/oh-my-zsh.sh
