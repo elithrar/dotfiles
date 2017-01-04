@@ -1,3 +1,18 @@
 // Place your key bindings in this file to overwrite the defaults
 [
+    {
+        "key": "<leader>+c",
+        "command": "workbench.action.git.globalOpenChange",
+        "when": "textCompareEditorVisible"
+    },
+    {
+        "key": "ctrl+`",
+        "command": "workbench.action.terminal.toggleTerminal",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "ctrl+`",
+        "command": "workbench.action.terminal.kill",
+        "when": "terminalFocus"
+    }
 ]

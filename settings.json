@@ -85,7 +85,7 @@
             "after": [],
             "commands": [
                 {
-                    "command": "workbench.git.action.globalOpenChange",
+                    "command": "workbench.action.git.globalOpenChange",
                     "args": []
                 }
             ]
