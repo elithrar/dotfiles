@@ -12,7 +12,7 @@
     "vim.hlsearch": true,
     "vim.ignorecase": true,
     "vim.smartcase": true,
-    "vim.timeout": 500,
+    "vim.timeout": 250,
     "terminal.integrated.fontSize": 14,
     "vim.leader": "<space>",
     "editor.cursorBlinking": "solid",
@@ -100,5 +100,6 @@
 "go.formatTool": "goimports",
 "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
 "terminal.external.osxExec": "iTerm.app",
-"workbench.activityBar.visible": false
+"workbench.activityBar.visible": false,
+"go.docsTool": "godoc"
 }
