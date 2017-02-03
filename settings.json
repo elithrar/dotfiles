@@ -99,7 +99,7 @@
 },
 "go.formatTool": "goimports",
 "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
-"terminal.external.osxExec": "iTerm.app",
+"terminal.external.osxExec": "Hyper.app",
 "workbench.activityBar.visible": false,
 "go.docsTool": "godoc"
 }
