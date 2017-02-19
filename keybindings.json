@@ -14,5 +14,14 @@
         "key": "ctrl+`",
         "command": "workbench.action.terminal.kill",
         "when": "terminalFocus"
-    }
+    },
+        {
+            "key": "<leader>+b",
+            "command": "search.action.focusPreviousSearchResult"
+        },
+        {
+            "key": "<leader>+n",
+            "command": "search.action.focusNextSearchResult"
+        },
+        ]
 ]

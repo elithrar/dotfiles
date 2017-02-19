@@ -98,8 +98,17 @@
     "*.vue": "vue"
 },
 "go.formatTool": "goimports",
+"go.docsTool": "godoc",
 "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
 "terminal.external.osxExec": "Hyper.app",
 "workbench.activityBar.visible": false,
-"go.docsTool": "godoc"
+"[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.wrappingColumn": 0,
+    "editor.renderWhitespace": "boundary",
+    "editor.quickSuggestions": false,
+    "editor.acceptSuggestionOnEnter": false
+},
+"editor.renderWhitespace": "all",
+"editor.renderControlCharacters": false
 }
