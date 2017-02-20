@@ -49,10 +49,8 @@ bindkey -e
 
 # aliases
 alias code="code --wait"
-# old habits die hard
-alias vi="code --wait"
-alias vim="code --wait"
-alias actuallyvim="nvim"
+alias vi="nvim"
+alias vim="nvim"
 # Follow symbolic links
 alias cd="cd -P"
 alias gl="git --no-pager log --oneline --decorate -n 10"
