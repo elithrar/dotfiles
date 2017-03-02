@@ -49,10 +49,8 @@ bindkey -e
 
 # aliases
 alias code="code --wait"
-# old habits die hard
-alias vi="code --wait"
-alias vim="code --wait"
-alias actuallyvim="nvim"
+alias vi="nvim"
+alias vim="nvim"
 # Follow symbolic links
 alias cd="cd -P"
 alias gl="git --no-pager log --oneline --decorate -n 10"
@@ -143,7 +141,7 @@ alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverag
 if which swiftenv > /dev/null; then eval "$(swiftenv init -)"; fi
 
 # editor
-export EDITOR='code --wait'
+export EDITOR='code --wait -reuse-window'
 
 # Docker
 # eval $(docker-machine env default)
