@@ -101,5 +101,8 @@
 "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
 "terminal.external.osxExec": "iTerm.app",
 "workbench.activityBar.visible": false,
-"go.docsTool": "godoc"
+"go.docsTool": "godoc",
+"editor.renderWhitespace": "all",
+"workbench.colorTheme": "Oceanic Next",
+"workbench.iconTheme": "vs-seti"
 }
