@@ -35,6 +35,7 @@ set backspace=indent,eol,start
 set textwidth=80
 set colorcolumn=+1
 set formatoptions+=t
+set nojoinspaces        " use single spaces when using gq
 
 " Vundle
 set rtp+=~/.vim/bundle/Vundle.vim
