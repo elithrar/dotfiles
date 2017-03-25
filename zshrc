@@ -124,6 +124,8 @@ export PATH="/usr/local/heroku/bin:$PATH"
 export NODE_PATH="/usr/local/lib/node"
 export PATH="/usr/local/share/npm/bin:$PATH"
 
+# Yarn
+export PATH="$(yarn global bin):$PATH"
 # Packer
 export PATH="/usr/local/packer:$PATH"
 
