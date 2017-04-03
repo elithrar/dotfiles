@@ -159,3 +159,9 @@ cdpath=(
 export PATH
 trim_path
 if which swiftenv > /dev/null; then eval "$(swiftenv init -)"; fi
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/matt/Downloads/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/matt/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/matt/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/matt/Downloads/google-cloud-sdk/completion.zsh.inc'; fi

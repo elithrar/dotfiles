@@ -103,8 +103,8 @@
 "terminal.external.osxExec": "Hyper.app",
 "workbench.activityBar.visible": false,
 "go.docsTool": "godoc",
-"workbench.colorTheme": "Oceanic Next",
-"workbench.iconTheme": "vs-seti"
+"workbench.colorTheme": "Oceanic Next (dimmed bg)",
+"workbench.iconTheme": "vs-seti",
 "[markdown]": {
     "editor.formatOnSave": true,
     "editor.wrappingColumn": 0,
@@ -112,6 +112,7 @@
     "editor.quickSuggestions": false,
     "editor.acceptSuggestionOnEnter": false
 },
-"editor.renderWhitespace": "all",
-"editor.renderControlCharacters": false
+"editor.renderWhitespace": "none",
+"editor.renderControlCharacters": true,
+"workbench.welcome.enabled": false
 }

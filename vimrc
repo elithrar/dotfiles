@@ -131,6 +131,8 @@ if has('conceal')
   set conceallevel=2 concealcursor=niv
 endif
 
+let g:syntastic_auto_loc_list=1
+
 " Go
 " goimports
 let g:go_fmt_command = "goimports"
@@ -141,6 +143,7 @@ let g:syntastic_go_go_build_args = "-o /tmp/go-build-artifact"
 let g:syntastic_go_checkers = ['govet', 'errcheck', 'go']
 let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
 let g:go_list_type = "quickfix"
+
 " GoDecls
 au FileType go nmap <C-D> :GoDecls<CR>
 
@@ -160,6 +163,7 @@ au FileType go nmap <leader>s <Plug>(go-implements)
 
 " Python
 let g:ycm_python_binary_path = "python3"
+let g:syntastic_python_checkers = ['pylint']
 
 " Markdown
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
