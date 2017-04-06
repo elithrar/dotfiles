@@ -48,7 +48,7 @@ source $ZSH/oh-my-zsh.sh
 bindkey -e
 
 # aliases
-alias code="code --wait"
+alias code="code --wait --reuse-window"
 alias vi="nvim"
 alias vim="nvim"
 # Follow symbolic links
