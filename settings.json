@@ -1,4 +1,3 @@
-
 {
     "editor.fontFamily": "Fira Mono",
     "editor.fontSize": 14,
@@ -21,7 +20,10 @@
     },
     "vim.otherModesKeyBindingsNonRecursive": [
         {
-            "before": ["leader", "b"],
+            "before": [
+                "leader",
+                "b"
+            ],
             "after": [],
             "commands": [
                 {
@@ -31,7 +33,10 @@
             ]
         },
         {
-            "before": ["leader", "p"],
+            "before": [
+                "leader",
+                "p"
+            ],
             "after": [],
             "commands": [
                 {
@@ -41,7 +46,10 @@
             ]
         },
         {
-            "before": ["leader", "n"],
+            "before": [
+                "leader",
+                "n"
+            ],
             "after": [],
             "commands": [
                 {
@@ -51,7 +59,10 @@
             ]
         },
         {
-            "before": ["leader", "q"],
+            "before": [
+                "leader",
+                "q"
+            ],
             "after": [],
             "commands": [
                 {
@@ -61,7 +72,10 @@
             ]
         },
         {
-            "before": ["leader", "`"],
+            "before": [
+                "leader",
+                "`"
+            ],
             "after": [],
             "commands": [
                 {
@@ -71,7 +85,10 @@
             ]
         },
         {
-            "before": ["leader", "g"],
+            "before": [
+                "leader",
+                "g"
+            ],
             "after": [],
             "commands": [
                 {
@@ -81,7 +98,10 @@
             ]
         },
         {
-            "before": ["leader", "c"],
+            "before": [
+                "leader",
+                "c"
+            ],
             "after": [],
             "commands": [
                 {
@@ -90,29 +110,34 @@
                 }
             ]
         }
-    ]
-,
-"window.zoomLevel": 0,
-"git.confirmSync": false,
-"files.associations": {
-    "*.vue": "vue"
-},
-"go.formatTool": "goimports",
-"go.docsTool": "godoc",
-"terminal.integrated.shell.osx": "/usr/local/bin/zsh",
-"terminal.external.osxExec": "Hyper.app",
-"workbench.activityBar.visible": false,
-"go.docsTool": "godoc",
-"workbench.colorTheme": "Oceanic Next (dimmed bg)",
-"workbench.iconTheme": "vs-seti",
-"[markdown]": {
-    "editor.formatOnSave": true,
-    "editor.wrappingColumn": 0,
-    "editor.renderWhitespace": "boundary",
-    "editor.quickSuggestions": false,
-    "editor.acceptSuggestionOnEnter": false
-},
-"editor.renderWhitespace": "none",
-"editor.renderControlCharacters": true,
-"workbench.welcome.enabled": false
+    ],
+    "window.zoomLevel": 0,
+    "git.confirmSync": false,
+    "files.associations": {
+        "*.vue": "vue"
+    },
+    "go.formatTool": "goimports",
+    "go.docsTool": "godoc",
+    "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
+    "terminal.external.osxExec": "Hyper.app",
+    "workbench.activityBar.visible": false,
+    "go.docsTool": "godoc",
+    "workbench.colorTheme": "Oceanic Next",
+    "workbench.iconTheme": "vs-seti",
+    "[markdown]": {
+        "editor.formatOnSave": true,
+        "editor.wrappingColumn": 0,
+        "editor.renderWhitespace": "boundary",
+        "editor.quickSuggestions": false,
+        "editor.acceptSuggestionOnEnter": false
+    },
+    "editor.renderWhitespace": "all",
+    "editor.renderControlCharacters": true,
+    "workbench.welcome.enabled": false,
+    "python.pythonPath": "python3",
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": true,
+        "strings": true
+    }
 }
