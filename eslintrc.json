@@ -1,0 +1,31 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 8,
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true,
+            "jsx": true
+        },
+        "sourceType": "module"
+    },
+    "env": {
+        "es6": true,
+        "node": true
+    },
+    "plugins": [
+        "import",
+        "node",
+        "promise"
+    ],
+    "globals": {
+        "document": false,
+        "navigator": false,
+        "window": false
+    },
+    "rules": {
+        "strict": 0,
+        "quotes": 0,
+        "no-unused-vars": 0,
+        "camelcase": 0,
+        "no-underscore-dangle": 0
+    }
+}

@@ -2,7 +2,7 @@
 	name = Matt Silverlock
 	email = matt@eatsleeprepeat.net
 [core]
-	editor = "code --wait"
+	editor = "code --wait --reuse-window"
 	excludesfile = ~/.gitignore
 [diff]
 	tool = vscode
