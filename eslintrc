@@ -13,9 +13,8 @@
     ],
     "rules": {
         "strict": 0,
-        "quotes": 0,
-        "no-unused-vars": 0,
-        "camelcase": 0,
-        "no-underscore-dangle": 0
+        "quotes": ["error", "double"],
+        "no-unused-vars": 1,
+        "camelcase": 1,
     }
 }

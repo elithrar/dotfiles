@@ -15,13 +15,17 @@
         "command": "workbench.action.terminal.kill",
         "when": "terminalFocus"
     },
-        {
-            "key": "<leader>+b",
-            "command": "search.action.focusPreviousSearchResult"
-        },
-        {
-            "key": "<leader>+n",
-            "command": "search.action.focusNextSearchResult"
-        },
-        ]
+    {
+        "key": "ctrl+w",
+        "command": "deleteWordLeft",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "<leader>+b",
+        "command": "search.action.focusPreviousSearchResult"
+    },
+    {
+        "key": "<space>+n",
+        "command": "search.action.focusNextSearchResult"
+    }
 ]
