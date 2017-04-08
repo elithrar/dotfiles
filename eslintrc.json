@@ -1,11 +1,7 @@
 {
-    "extends": "airbnb",
+    "extends": "standard",
     "parserOptions": {
         "ecmaVersion": 8,
-        "ecmaFeatures": {
-            "experimentalObjectRestSpread": true,
-            "jsx": true
-        },
         "sourceType": "module"
     },
     "env": {
@@ -15,7 +11,8 @@
     "plugins": [
         "import",
         "node",
-        "promise"
+        "promise",
+        "standard"
     ],
     "globals": {
         "document": false,
@@ -23,10 +20,6 @@
         "window": false
     },
     "rules": {
-        "strict": true,
-        "quotes": ["error", "double"],
-        "no-unused-vars": "error",
-        "camelcase": "error",
-        "no-underscore-dangle": "error"
+        "quotes": ["error", "double"]
     }
 }

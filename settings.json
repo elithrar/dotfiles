@@ -1,7 +1,7 @@
 {
     "editor.fontFamily": "Fira Mono",
     "editor.fontSize": 14,
-    "editor.wordWrap": true,
+    "editor.wordWrap": "on",
     "go.gopath": "/Users/matt/.go",
     "keyboard.dispatch": "keyCode",
     "vim.useSystemClipboard": true,
@@ -122,12 +122,10 @@
     "terminal.external.osxExec": "Hyper.app",
     "workbench.activityBar.visible": false,
     "go.docsTool": "godoc",
-    "workbench.colorTheme": "Oceanic Next (dimmed bg)",
     "workbench.colorTheme": "Oceanic Next",
     "workbench.iconTheme": "vs-seti",
     "[markdown]": {
         "editor.formatOnSave": true,
-        "editor.wrappingColumn": 0,
         "editor.renderWhitespace": "boundary",
         "editor.quickSuggestions": false,
         "editor.acceptSuggestionOnEnter": false
@@ -140,5 +138,6 @@
         "other": true,
         "comments": true,
         "strings": true
-    }
+    },
+    "eslint.options": {"configFile": "/Users/matt/.eslintrc.json"}
 }
