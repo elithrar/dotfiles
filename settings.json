@@ -15,7 +15,7 @@
     "vim.timeout": 250,
     "terminal.integrated.fontSize": 14,
     "vim.leader": "<space>",
-    "editor.cursorBlinking": "solid",
+    "editor.cursorBlinking": "blink",
     "ruby.lint": {
         "rubocop": true
     },
