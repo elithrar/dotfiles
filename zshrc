@@ -125,7 +125,8 @@ export NODE_PATH="/usr/local/lib/node"
 export PATH="/usr/local/share/npm/bin:$PATH"
 
 # Yarn
-export PATH="$HOME/.config/yarn/global/node_modules/.bin":$PATH"
+export PATH="$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
 # Packer
 export PATH="/usr/local/packer:$PATH"
 
@@ -143,10 +144,7 @@ alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverag
 if which swiftenv > /dev/null; then eval "$(swiftenv init -)"; fi
 
 # editor
-export EDITOR='code --wait -reuse-window'
-
-# Docker
-# eval $(docker-machine env default)
+export EDITOR='code --wait'
 
 # cd directly into these directories
 cdpath=(
