@@ -15,7 +15,7 @@
     "vim.timeout": 250,
     "terminal.integrated.fontSize": 14,
     "vim.leader": "<space>",
-    "editor.cursorBlinking": "blink",
+    "editor.cursorBlinking": "solid",
     "ruby.lint": {
         "rubocop": true
     },
@@ -122,7 +122,7 @@
     "terminal.external.osxExec": "Hyper.app",
     "workbench.activityBar.visible": false,
     "go.docsTool": "godoc",
-    "workbench.colorTheme": "Oceanic Next",
+    "workbench.colorTheme": "Dracula",
     "workbench.iconTheme": "vs-seti",
     "[markdown]": {
         "editor.formatOnSave": true,
@@ -142,5 +142,6 @@
     "eslint.options": {
         "configFile": "/Users/matt/.eslintrc.json"
     },
-    "eslint.autoFixOnSave": true
+    "eslint.autoFixOnSave": true,
+    "tslint.autoFixOnSave": true
 }

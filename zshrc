@@ -125,7 +125,7 @@ export NODE_PATH="/usr/local/lib/node"
 export PATH="/usr/local/share/npm/bin:$PATH"
 
 # Yarn
-export PATH="$(yarn global bin):$PATH"
+export PATH="$HOME/.config/yarn/global/node_modules/.bin":$PATH"
 # Packer
 export PATH="/usr/local/packer:$PATH"
 
