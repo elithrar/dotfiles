@@ -115,7 +115,8 @@
     "window.zoomLevel": 0,
     "git.confirmSync": false,
     "files.associations": {
-        "*.vue": "vue"
+        "*.vue": "vue",
+        "*.t": "lua"
     },
     "go.formatTool": "goimports",
     "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
@@ -130,8 +131,13 @@
         "editor.quickSuggestions": false,
         "editor.acceptSuggestionOnEnter": false
     },
+    "[lua]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 3
+    },
     "editor.renderWhitespace": "all",
-    "editor.renderControlCharacters": true,
+    "editor.renderControlCharacters": false,
     "workbench.welcome.enabled": false,
     "python.pythonPath": "python3",
     "editor.quickSuggestions": {
@@ -143,5 +149,6 @@
         "configFile": "/Users/matt/.eslintrc.json"
     },
     "eslint.autoFixOnSave": true,
-    "tslint.autoFixOnSave": true
+    "tslint.autoFixOnSave": true,
+    "tslint.nodePath": "/Users/matt/.config/yarn/global"
 }
