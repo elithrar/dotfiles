@@ -123,7 +123,7 @@
     "terminal.external.osxExec": "Hyper.app",
     "workbench.activityBar.visible": false,
     "go.docsTool": "godoc",
-    "workbench.colorTheme": "Dracula",
+    "workbench.colorTheme": "Sapphire",
     "workbench.iconTheme": "vs-seti",
     "[markdown]": {
         "editor.formatOnSave": true,
@@ -150,5 +150,7 @@
     },
     "eslint.autoFixOnSave": true,
     "tslint.autoFixOnSave": true,
-    "tslint.nodePath": "/Users/matt/.config/yarn/global"
+    "tslint.nodePath": "/Users/matt/.config/yarn/global",
+    "window.nativeTabs": false,
+    "typescript.check.tscVersion": false
 }
