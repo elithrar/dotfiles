@@ -136,7 +136,7 @@
         "editor.insertSpaces": true,
         "editor.tabSize": 3
     },
-    "editor.renderWhitespace": "all",
+    "editor.renderWhitespace": "none",
     "editor.renderControlCharacters": false,
     "workbench.welcome.enabled": false,
     "python.pythonPath": "python3",
