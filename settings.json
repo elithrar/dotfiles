@@ -116,14 +116,14 @@
     "git.confirmSync": false,
     "files.associations": {
         "*.vue": "vue",
-        "*.t": "lua"
+        "*.t": "perl"
     },
     "go.formatTool": "goimports",
     "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
     "terminal.external.osxExec": "Hyper.app",
     "workbench.activityBar.visible": false,
     "go.docsTool": "godoc",
-    "workbench.colorTheme": "Sapphire",
+    "workbench.colorTheme": "Dracula",
     "workbench.iconTheme": "vs-seti",
     "[markdown]": {
         "editor.formatOnSave": true,
@@ -152,5 +152,7 @@
     "tslint.autoFixOnSave": true,
     "tslint.nodePath": "/Users/matt/.config/yarn/global",
     "window.nativeTabs": false,
-    "typescript.check.tscVersion": false
+    "typescript.check.tscVersion": false,
+    "lua.preferLuaCheckErrors": true,
+    "lua.luacheckPath": "/Users/matt/.luarocks/bin/luacheck"
 }
