@@ -4,6 +4,8 @@
 [core]
 	editor = "code --wait"
 	excludesfile = ~/.gitignore
+[merge]
+	conflictstyle = diff3
 [diff]
 	tool = vscode
 [difftool "vscode"]
