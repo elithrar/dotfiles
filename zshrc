@@ -130,6 +130,9 @@ export PATH="$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 # Packer
 export PATH="/usr/local/packer:$PATH"
 
+# Lua
+export PATH="$HOME/.luarocks/bin:$PATH"
+
 # Go
 export GOPATH=$HOME/.go
 export GOBIN=$GOPATH/bin

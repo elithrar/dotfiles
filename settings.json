@@ -116,8 +116,8 @@
     "git.confirmSync": false,
     "files.associations": {
         "*.vue": "vue",
-        "*.t": "lua",
-        "*.jinja": "jinja"
+        "*.jinja": "jinja",
+        "*.t": "perl"
     },
     "go.formatTool": "goimports",
     "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
@@ -137,7 +137,7 @@
         "editor.insertSpaces": true,
         "editor.tabSize": 3
     },
-    "editor.renderWhitespace": "all",
+    "editor.renderWhitespace": "none",
     "editor.renderControlCharacters": false,
     "workbench.welcome.enabled": false,
     "python.pythonPath": "python3",
@@ -154,6 +154,11 @@
     "tslint.nodePath": "/Users/matt/.config/yarn/global",
     "window.nativeTabs": false,
     "typescript.check.tscVersion": false,
+<<<<<<< HEAD
     "vim.disableAnnoyingNeovimMessage": true,
     "vim.disableAnnoyingGcMessage": true
+=======
+    "lua.preferLuaCheckErrors": true,
+    "lua.luacheckPath": "/Users/matt/.luarocks/bin/luacheck"
+>>>>>>> 94dd8d4496dec355509506ecdb9cc318a6d288dd
 }
