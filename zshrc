@@ -155,10 +155,12 @@ cdpath=(
     $HOME/Google\ Drive
     )
 
-
 export PATH
 trim_path
+
+# Swiftenv
 if which swiftenv > /dev/null; then eval "$(swiftenv init -)"; fi
+
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/matt/Downloads/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/matt/Downloads/google-cloud-sdk/path.zsh.inc'; fi
