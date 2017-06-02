@@ -70,6 +70,7 @@ Plugin 'cespare/vim-toml'
 " Plugin 'joshdick/onedark.vim'
 " Plugin 'rakr/vim-one'
 Plugin 'mhartington/oceanic-next'
+Plugin 'dracula/vim'
 
 call vundle#end()
 
