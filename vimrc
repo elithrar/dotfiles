@@ -1,6 +1,7 @@
 let mapleader="\<space>"
 let maplocalleader="\<space>"
 
+set mouse=a
 set nobackup
 set nowritebackup
 set noswapfile

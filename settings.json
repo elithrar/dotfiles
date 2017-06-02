@@ -116,6 +116,7 @@
     "git.confirmSync": false,
     "files.associations": {
         "*.vue": "vue",
+        "*.jinja": "jinja",
         "*.t": "perl"
     },
     "go.formatTool": "goimports",
@@ -153,9 +154,10 @@
     "tslint.nodePath": "/Users/matt/.config/yarn/global",
     "window.nativeTabs": false,
     "typescript.check.tscVersion": false,
+    "vim.disableAnnoyingNeovimMessage": true,
+    "vim.disableAnnoyingGcMessage": true,
     "lua.preferLuaCheckErrors": true,
     "lua.luacheckPath": "/Users/matt/.luarocks/bin/luacheck",
-    "vim.disableAnnoyingNeovimMessage": true,
     "vim.easymotionMarkerFontFamily": "Fira Mono",
     "vim.enableNeovim": true,
     "prettier.trailingComma": "es5",
