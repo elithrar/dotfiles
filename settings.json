@@ -124,18 +124,19 @@
     "terminal.external.osxExec": "Hyper.app",
     "workbench.activityBar.visible": false,
     "go.docsTool": "godoc",
-    "workbench.colorTheme": "Dracula",
+    "workbench.colorTheme": "Sapphire (Bright)",
     "workbench.iconTheme": "vs-seti",
     "[markdown]": {
         "editor.formatOnSave": true,
         "editor.renderWhitespace": "boundary",
         "editor.quickSuggestions": false,
-        "editor.acceptSuggestionOnEnter": false
+        "editor.acceptSuggestionOnEnter": "smart"
     },
     "[lua]": {
         "editor.detectIndentation": false,
         "editor.insertSpaces": true,
-        "editor.tabSize": 3
+        "editor.tabSize": 3,
+        "editor.formatOnSave": false
     },
     "editor.renderWhitespace": "all",
     "editor.renderControlCharacters": false,
@@ -164,5 +165,6 @@
     "vim.easymotionMarkerFontSize": "14",
     "vim.easymotionMarkerYOffset": 12,
     "vim.easymotionMarkerHeight": 24,
-    "vim.easymotionMarkerBackgroundColor": "rgba(40, 40, 40, 0.5)"
+    "vim.easymotionMarkerBackgroundColor": "rgba(40, 40, 40, 0.5)",
+    "editor.formatOnSave": true
 }
