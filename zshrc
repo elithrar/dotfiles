@@ -170,3 +170,5 @@ if [ -f '/Users/matt/Downloads/google-cloud-sdk/path.zsh.inc' ]; then source '/U
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/matt/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/matt/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+export PROMPT="⚡️ %{$fg_bold[green]%}%p %{$fg_bold[blue]%}%c $(git_prompt_info)% %{$reset_color%}"
