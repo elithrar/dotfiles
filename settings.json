@@ -124,7 +124,7 @@
     "terminal.external.osxExec": "Hyper.app",
     "workbench.activityBar.visible": false,
     "go.docsTool": "godoc",
-    "workbench.colorTheme": "Sapphire (Bright)",
+    "workbench.colorTheme": "Dracula",
     "workbench.iconTheme": "vs-seti",
     "[markdown]": {
         "editor.formatOnSave": true,
