@@ -1,170 +1,146 @@
 {
-    "editor.fontFamily": "Fira Mono",
-    "editor.fontSize": 14,
-    "editor.wordWrap": "on",
-    "go.gopath": "/Users/matt/.go",
-    "keyboard.dispatch": "keyCode",
-    "vim.useSystemClipboard": true,
-    "vim.useCtrlKeys": true,
-    "vim.useSolidBlockCursor": true,
-    "vim.easymotion": true,
-    "vim.incsearch": true,
-    "vim.hlsearch": true,
-    "vim.ignorecase": true,
-    "vim.smartcase": true,
-    "vim.timeout": 250,
-    "terminal.integrated.fontSize": 14,
-    "vim.leader": "<space>",
-    "editor.cursorBlinking": "solid",
-    "ruby.lint": {
-        "rubocop": true
-    },
-    "vim.otherModesKeyBindingsNonRecursive": [
+  "editor.fontFamily": "Fira Mono",
+  "editor.fontSize": 14,
+  "editor.wordWrap": "on",
+  "go.gopath": "/Users/matt/.go",
+  "keyboard.dispatch": "keyCode",
+  "vim.useSystemClipboard": true,
+  "vim.useCtrlKeys": true,
+  "vim.easymotion": true,
+  "vim.incsearch": true,
+  "vim.hlsearch": true,
+  "vim.ignorecase": true,
+  "vim.smartcase": true,
+  "vim.timeout": 250,
+  "terminal.integrated.fontSize": 14,
+  "vim.leader": "<space>",
+  "editor.cursorBlinking": "solid",
+  "ruby.lint": {
+    "rubocop": true
+  },
+  "vim.otherModesKeyBindingsNonRecursive": [
+    {
+      "before": ["leader", "b"],
+      "after": [],
+      "commands": [
         {
-            "before": [
-                "leader",
-                "b"
-            ],
-            "after": [],
-            "commands": [
-                {
-                    "command": "workbench.action.previousEditor",
-                    "args": []
-                }
-            ]
-        },
-        {
-            "before": [
-                "leader",
-                "p"
-            ],
-            "after": [],
-            "commands": [
-                {
-                    "command": "workbench.action.previousEditor",
-                    "args": []
-                }
-            ]
-        },
-        {
-            "before": [
-                "leader",
-                "n"
-            ],
-            "after": [],
-            "commands": [
-                {
-                    "command": "workbench.action.nextEditor",
-                    "args": []
-                }
-            ]
-        },
-        {
-            "before": [
-                "leader",
-                "q"
-            ],
-            "after": [],
-            "commands": [
-                {
-                    "command": "workbench.action.closeActiveEditor",
-                    "args": []
-                }
-            ]
-        },
-        {
-            "before": [
-                "leader",
-                "`"
-            ],
-            "after": [],
-            "commands": [
-                {
-                    "command": "workbench.action.toggleSidebarVisibility",
-                    "args": []
-                }
-            ]
-        },
-        {
-            "before": [
-                "leader",
-                "g"
-            ],
-            "after": [],
-            "commands": [
-                {
-                    "command": "editor.action.goToDeclaration",
-                    "args": []
-                }
-            ]
-        },
-        {
-            "before": [
-                "leader",
-                "c"
-            ],
-            "after": [],
-            "commands": [
-                {
-                    "command": "workbench.action.git.globalOpenChange",
-                    "args": []
-                }
-            ]
+          "command": "workbench.action.previousEditor",
+          "args": []
         }
-    ],
-    "window.zoomLevel": 0,
-    "git.confirmSync": false,
-    "files.associations": {
-        "*.vue": "vue",
-        "*.jinja": "jinja",
-        "*.t": "perl"
+      ]
     },
-    "go.formatTool": "goimports",
-    "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
-    "terminal.external.osxExec": "Hyper.app",
-    "workbench.activityBar.visible": false,
-    "go.docsTool": "godoc",
-    "workbench.colorTheme": "Dracula",
-    "workbench.iconTheme": "vs-seti",
-    "[markdown]": {
-        "editor.formatOnSave": true,
-        "editor.renderWhitespace": "boundary",
-        "editor.quickSuggestions": false,
-        "editor.acceptSuggestionOnEnter": "smart"
+    {
+      "before": ["leader", "p"],
+      "after": [],
+      "commands": [
+        {
+          "command": "workbench.action.previousEditor",
+          "args": []
+        }
+      ]
     },
-    "[lua]": {
-        "editor.detectIndentation": false,
-        "editor.insertSpaces": true,
-        "editor.tabSize": 3,
-        "editor.formatOnSave": false
+    {
+      "before": ["leader", "n"],
+      "after": [],
+      "commands": [
+        {
+          "command": "workbench.action.nextEditor",
+          "args": []
+        }
+      ]
     },
-    "editor.renderWhitespace": "all",
-    "editor.renderControlCharacters": false,
-    "workbench.welcome.enabled": false,
-    "python.pythonPath": "python3",
-    "editor.quickSuggestions": {
-        "other": true,
-        "comments": true,
-        "strings": true
+    {
+      "before": ["leader", "q"],
+      "after": [],
+      "commands": [
+        {
+          "command": "workbench.action.closeActiveEditor",
+          "args": []
+        }
+      ]
     },
-    "eslint.options": {
-        "configFile": "/Users/matt/.eslintrc.json"
+    {
+      "before": ["leader", "`"],
+      "after": [],
+      "commands": [
+        {
+          "command": "workbench.action.toggleSidebarVisibility",
+          "args": []
+        }
+      ]
     },
-    "eslint.autoFixOnSave": true,
-    "tslint.autoFixOnSave": true,
-    "tslint.nodePath": "/Users/matt/.config/yarn/global",
-    "window.nativeTabs": false,
-    "typescript.check.tscVersion": false,
-    "vim.disableAnnoyingNeovimMessage": true,
-    "vim.disableAnnoyingGcMessage": true,
-    "lua.preferLuaCheckErrors": true,
-    "lua.luacheckPath": "/Users/matt/.luarocks/bin/luacheck",
-    "vim.easymotionMarkerFontFamily": "Fira Mono",
-    "vim.enableNeovim": true,
-    "prettier.trailingComma": "es5",
-    "vim.easymotionMarkerFontSize": "14",
-    "vim.easymotionMarkerYOffset": 12,
-    "vim.easymotionMarkerHeight": 24,
-    "vim.easymotionMarkerBackgroundColor": "rgba(40, 40, 40, 0.5)",
-    "editor.formatOnSave": true
+    {
+      "before": ["leader", "g"],
+      "after": [],
+      "commands": [
+        {
+          "command": "editor.action.goToDeclaration",
+          "args": []
+        }
+      ]
+    },
+    {
+      "before": ["leader", "c"],
+      "after": [],
+      "commands": [
+        {
+          "command": "workbench.action.git.globalOpenChange",
+          "args": []
+        }
+      ]
+    }
+  ],
+  "window.zoomLevel": 0,
+  "git.confirmSync": false,
+  "files.associations": {
+    "*.vue": "vue",
+    "*.jinja": "jinja",
+    "*.t": "perl"
+  },
+  "go.formatTool": "goimports",
+  "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
+  "terminal.external.osxExec": "Hyper.app",
+  "workbench.activityBar.visible": false,
+  "go.docsTool": "godoc",
+  "workbench.colorTheme": "Dracula",
+  "workbench.iconTheme": "vs-seti",
+  "[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.renderWhitespace": "boundary",
+    "editor.quickSuggestions": false,
+    "editor.acceptSuggestionOnEnter": "smart"
+  },
+  "[lua]": {
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 3,
+    "editor.formatOnSave": false
+  },
+  "editor.renderWhitespace": "all",
+  "editor.renderControlCharacters": false,
+  "python.pythonPath": "python3",
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+  "eslint.options": {
+    "configFile": "/Users/matt/.eslintrc.json"
+  },
+  "eslint.autoFixOnSave": true,
+  "tslint.autoFixOnSave": true,
+  "tslint.nodePath": "/Users/matt/.config/yarn/global",
+  "window.nativeTabs": false,
+  "typescript.check.tscVersion": false,
+  "vim.disableAnnoyingNeovimMessage": true,
+  "lua.preferLuaCheckErrors": true,
+  "lua.luacheckPath": "/Users/matt/.luarocks/bin/luacheck",
+  "vim.easymotionMarkerFontFamily": "Fira Mono",
+  "vim.enableNeovim": true,
+  "prettier.trailingComma": "es5",
+  "vim.easymotionMarkerFontSize": "14",
+  "vim.easymotionMarkerYOffset": 12,
+  "vim.easymotionMarkerHeight": 24,
+  "vim.easymotionMarkerBackgroundColor": "rgba(40, 40, 40, 0.5)",
+  "editor.formatOnSave": true
 }
