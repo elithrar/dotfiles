@@ -131,7 +131,6 @@
   "tslint.autoFixOnSave": true,
   "tslint.nodePath": "/Users/matt/.config/yarn/global",
   "window.nativeTabs": false,
-  "vim.disableAnnoyingNeovimMessage": true,
   "lua.preferLuaCheckErrors": true,
   "lua.luacheckPath": "/Users/matt/.luarocks/bin/luacheck",
   "vim.easymotionMarkerFontFamily": "Fira Mono",
@@ -142,5 +141,10 @@
   "vim.easymotionMarkerHeight": 24,
   "vim.easymotionMarkerBackgroundColor": "rgba(40, 40, 40, 0.5)",
   "editor.formatOnSave": true,
-  "workbench.startupEditor": "newUntitledFile"
+  "workbench.startupEditor": "newUntitledFile",
+  "vim.neovimPath": "/usr/local/bin/nvim",
+  "go.useLanguageServer": true,
+  "prettier.semi": false,
+  "workbench.panel.location": "right",
+  "extensions.ignoreRecommendations": false
 }

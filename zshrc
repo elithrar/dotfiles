@@ -164,13 +164,11 @@ trim_path
 # Swiftenv
 if which swiftenv > /dev/null; then eval "$(swiftenv init -)"; fi
 
-
-# export PROMPT="%{$fg_bold[green]%}%p %{$fg_bold[blue]%}%~ $(git_prompt_info)% %{$reset_color%} "
 export PROMPT='${ret_status}%{$fg_bold[green]%}%p %{$fg_bold[blue]%}%~ $(git_prompt_info)% %{$reset_color%} '
 
+# added by travis gem
+[ -f /Users/matt/.travis/travis.sh ] && source /Users/matt/.travis/travis.sh
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/matt/Downloads/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/matt/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+# Google Cloud SDK
+source /Users/matt/Downloads/google-cloud-sdk/path.zsh.inc
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/matt/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/matt/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
