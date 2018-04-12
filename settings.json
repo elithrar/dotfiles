@@ -20,10 +20,7 @@
   },
   "vim.otherModesKeyBindingsNonRecursive": [
     {
-      "before": [
-        "leader",
-        "b"
-      ],
+      "before": ["leader", "b"],
       "after": [],
       "commands": [
         {
@@ -33,10 +30,7 @@
       ]
     },
     {
-      "before": [
-        "leader",
-        "p"
-      ],
+      "before": ["leader", "p"],
       "after": [],
       "commands": [
         {
@@ -46,10 +40,7 @@
       ]
     },
     {
-      "before": [
-        "leader",
-        "n"
-      ],
+      "before": ["leader", "n"],
       "after": [],
       "commands": [
         {
@@ -59,10 +50,7 @@
       ]
     },
     {
-      "before": [
-        "leader",
-        "q"
-      ],
+      "before": ["leader", "q"],
       "after": [],
       "commands": [
         {
@@ -72,10 +60,7 @@
       ]
     },
     {
-      "before": [
-        "leader",
-        "`"
-      ],
+      "before": ["leader", "`"],
       "after": [],
       "commands": [
         {
@@ -85,10 +70,7 @@
       ]
     },
     {
-      "before": [
-        "leader",
-        "g"
-      ],
+      "before": ["leader", "g"],
       "after": [],
       "commands": [
         {
@@ -98,10 +80,7 @@
       ]
     },
     {
-      "before": [
-        "leader",
-        "c"
-      ],
+      "before": ["leader", "c"],
       "after": [],
       "commands": [
         {
