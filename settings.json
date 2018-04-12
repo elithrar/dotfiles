@@ -20,7 +20,10 @@
   },
   "vim.otherModesKeyBindingsNonRecursive": [
     {
-      "before": ["leader", "b"],
+      "before": [
+        "leader",
+        "b"
+      ],
       "after": [],
       "commands": [
         {
@@ -30,7 +33,10 @@
       ]
     },
     {
-      "before": ["leader", "p"],
+      "before": [
+        "leader",
+        "p"
+      ],
       "after": [],
       "commands": [
         {
@@ -40,7 +46,10 @@
       ]
     },
     {
-      "before": ["leader", "n"],
+      "before": [
+        "leader",
+        "n"
+      ],
       "after": [],
       "commands": [
         {
@@ -50,7 +59,10 @@
       ]
     },
     {
-      "before": ["leader", "q"],
+      "before": [
+        "leader",
+        "q"
+      ],
       "after": [],
       "commands": [
         {
@@ -60,7 +72,10 @@
       ]
     },
     {
-      "before": ["leader", "`"],
+      "before": [
+        "leader",
+        "`"
+      ],
       "after": [],
       "commands": [
         {
@@ -70,7 +85,10 @@
       ]
     },
     {
-      "before": ["leader", "g"],
+      "before": [
+        "leader",
+        "g"
+      ],
       "after": [],
       "commands": [
         {
@@ -80,7 +98,10 @@
       ]
     },
     {
-      "before": ["leader", "c"],
+      "before": [
+        "leader",
+        "c"
+      ],
       "after": [],
       "commands": [
         {
@@ -102,7 +123,7 @@
   "terminal.external.osxExec": "iTerm2.app",
   "workbench.activityBar.visible": false,
   "go.docsTool": "godoc",
-  "workbench.colorTheme": "Dracula Soft",
+  "workbench.colorTheme": "Dracula",
   "workbench.iconTheme": "vs-seti",
   "[markdown]": {
     "editor.formatOnSave": true,
@@ -116,8 +137,12 @@
     "editor.tabSize": 3,
     "editor.formatOnSave": false
   },
-  "editor.renderWhitespace": "none",
-  "editor.renderControlCharacters": true,
+  "[javascript]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "editor.renderWhitespace": "all",
+  "editor.renderControlCharacters": false,
   "python.pythonPath": "python3",
   "editor.quickSuggestions": {
     "other": true,
@@ -135,7 +160,6 @@
   "lua.luacheckPath": "/Users/matt/.luarocks/bin/luacheck",
   "vim.easymotionMarkerFontFamily": "Fira Mono",
   "vim.enableNeovim": true,
-  "prettier.trailingComma": "es5",
   "vim.easymotionMarkerFontSize": "14",
   "vim.easymotionMarkerYOffset": 12,
   "vim.easymotionMarkerHeight": 24,
@@ -144,7 +168,8 @@
   "workbench.startupEditor": "newUntitledFile",
   "vim.neovimPath": "/usr/local/bin/nvim",
   "go.useLanguageServer": true,
-  "prettier.semi": false,
-  "workbench.panel.location": "right",
-  "extensions.ignoreRecommendations": false
+  "workbench.panel.defaultLocation": "right",
+  "extensions.ignoreRecommendations": false,
+  "terminal.integrated.macOptionIsMeta": true,
+  "prettier.semi": false
 }
