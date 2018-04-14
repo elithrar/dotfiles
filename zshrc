@@ -91,6 +91,12 @@ flush-dns() {
     sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo "DNS cache flushed"
 }
 
+get_new_mac() {
+    sudo /System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport -z && \
+    sudo ifconfig en0 ether a0$(openssl rand -hex 5 | sed 's/\(..\)/:\1/g') && \
+    networksetup -detectnewhardware
+}
+
 # tmux
 alias tmux="tmux -2 -u"
 if which tmux 2>&1 >/dev/null; then
@@ -169,6 +175,10 @@ export PROMPT='${ret_status}%{$fg_bold[green]%}%p %{$fg_bold[blue]%}%~ $(git_pro
 # added by travis gem
 [ -f /Users/matt/.travis/travis.sh ] && source /Users/matt/.travis/travis.sh
 
+# ripgrep
+export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
+
 # Google Cloud SDK
-source /Users/matt/Downloads/google-cloud-sdk/path.zsh.inc
+source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc'
+source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc'
 
