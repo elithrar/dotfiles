@@ -29,16 +29,13 @@ PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(
-	brew
 	gem
 	git
 	github
 	golang
-	heroku
 	pip
 	python
 	tmux
-	vagrant
 	yarn
 	)
 
@@ -56,13 +53,31 @@ alias cd="cd -P"
 alias gl="git --no-pager log --oneline --decorate -n 10"
 alias zshconfig="nano ~/.zshrc"
 alias lsa="ls -alh"
-alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
 alias sloc="find . -name '*.go' | xargs wc -l"
 alias unixts="date +%s"
 alias serve="ruby -run -e httpd -- -p 8000 ."
 alias iso8601="date -u +'%Y-%m-%dT%H:%M:%SZ'"
 alias vup="vagrant up; vagrant ssh"
 unalias gb
+
+# macOS specific
+if [ "$(uname 2> /dev/null)" != "Linux" ]; then
+	flush-dns() {
+	    sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo "DNS cache flushed"
+	}
+	
+	get_new_mac() {
+	    sudo /System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport -z && \
+	    sudo ifconfig en0 ether a0$(openssl rand -hex 5 | sed 's/\(..\)/:\1/g') && \
+	    networksetup -detectnewhardware
+	}
+
+	alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
+
+	# Google Cloud SDK
+	source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc'
+	source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc'
+fi
 
 # Shortcut to edit long commands in vim via ESC + v
 autoload -U edit-command-line
@@ -85,16 +100,6 @@ yesterday() {
 
 time-at() {
     date -r $1
-}
-
-flush-dns() {
-    sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo "DNS cache flushed"
-}
-
-get_new_mac() {
-    sudo /System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport -z && \
-    sudo ifconfig en0 ether a0$(openssl rand -hex 5 | sed 's/\(..\)/:\1/g') && \
-    networksetup -detectnewhardware
 }
 
 # tmux
@@ -177,8 +182,4 @@ export PROMPT='${ret_status}%{$fg_bold[green]%}%p %{$fg_bold[blue]%}%~ $(git_pro
 
 # ripgrep
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
-
-# Google Cloud SDK
-source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc'
-source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc'
 
