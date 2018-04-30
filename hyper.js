@@ -12,7 +12,7 @@ module.exports = {
     fontSize: 14,
 
     // font family with optional fallbacks
-    fontFamily: "'Fira Mono', 'IBM Plex Mono', Menlo, Consolas, monospace",
+    fontFamily: "'Fira Mono', 'IBM Plex Mono', Consolas, monospace",
 
     // default font weight: 'normal' or 'bold'
     fontWeight: "normal",
@@ -40,7 +40,7 @@ module.exports = {
     backgroundColor: "#000",
 
     // terminal selection color
-    selectionColor: "rgba(248,28,229,0.3)",
+    selectionColor: "rgba(251,190,89,1)",
 
     // border color (window, tabs)
     borderColor: "#000",
@@ -63,11 +63,9 @@ module.exports = {
     // custom padding (CSS format, i.e.: `top right bottom left`)
     padding: `5px 10px`,
 
-    // the full list. if you're going to provide the full color palette,
-    // including the 6 x 6 color cubes and the grayscale map, just provide
-    // an array here instead of a color map object
     colors: {
-      black: "#000000",
+      //black: "#000000",
+      black: "#2D393F",
       red: "#C51E14",
       green: "#1DC121",
       yellow: "#C7C329",
@@ -110,36 +108,19 @@ module.exports = {
       altIsMeta: true
     },
 
-    // set to `false` for no bell
     bell: `false`,
-
-    // if `true` (without backticks and without quotes), selected text will automatically be copied to the clipboard
     copyOnSelect: false,
-
-    // if `true` (without backticks and without quotes), hyper will be set as the default protocol client for SSH
     defaultSSHApp: true
-
-    // if `true` (without backticks and without quotes), on right click selected text will be copied or pasted if no
-    // selection is present (`true` by default on Windows and disables the context menu feature)
-    // quickEdit: true,
-
-    // URL to custom bell
-    // bellSoundURL: 'http://example.com/bell.mp3',
 
     // for advanced config flags please refer to https://hyper.is/#cfg
   },
 
-  // a list of plugins to fetch and install from npm
-  // format: [@org/]project[#version]
-  // examples:
-  //   `hyperpower`
-  //   `@company/project`
-  //   `project#1.0.1`
-  plugins: ["hyper-dracula"],
+  plugins: [
+    // "hyper-dracula"
+    // "shades-of-purple-hyper"
+    "hyper-material-theme"
+  ],
 
-  // in development, you can create a directory under
-  // `~/.hyper_plugins/local/` and include it here
-  // to load it and avoid it being `npm install`ed
   localPlugins: [],
 
   keymaps: {

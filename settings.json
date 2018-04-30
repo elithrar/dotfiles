@@ -102,8 +102,8 @@
   "terminal.external.osxExec": "iTerm2.app",
   "workbench.activityBar.visible": false,
   "go.docsTool": "godoc",
-  "workbench.colorTheme": "Dracula",
-  "workbench.iconTheme": "vs-seti",
+  "workbench.colorTheme": "Material Theme",
+  "workbench.iconTheme": "eq-material-theme-icons",
   "[markdown]": {
     "editor.formatOnSave": true,
     "editor.renderWhitespace": "boundary",
