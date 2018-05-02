@@ -125,7 +125,7 @@ then
 
   # Manually link our themes
   mkdir -p ~/.oh-my-zsh/themes/
-  for theme in $(ls *.zsh-theme) do
+  for theme in $(ls $DOTFILES_DIR/*.zsh-theme) do
     ln -fs $DOTFILES_DIR/$theme ~/.oh-my-zsh/themes/$theme
   done
 fi
