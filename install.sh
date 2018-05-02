@@ -21,6 +21,7 @@ PACKAGES=(
   tree
   htop
   wrk
+  gifski
 )
 
 # Apps available as Homebrew Casks
@@ -70,7 +71,7 @@ fi
 
 # Setup dotfiles
 echo "🔨 Configuring dotfiles"
-if test ! -d $HOME/.oh-my-zsh
+if test ! -d $DOTFILES_DIR
 then
   git clone $DOTFILES $DOTFILES_DIR
 fi
