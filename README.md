@@ -10,7 +10,7 @@ Notes:
 * My `.vimrc` is commented and clear about what-applies-to-what.
 * I use the [Fira Mono](http://mozilla.github.io/Fira/) typeface.
 
-### VS Code
+## VS Code
 
 ![VS Code screenshot](vscode-material-screenshot-20180502.png)
 
