@@ -1,6 +1,9 @@
 #!/bin/bash
 set -eu
 
+# Lives at https://github.com/elithrar/dotfiles
+# Inspired by https://github.com/skovhus/setup
+
 DOTFILES=https://github.com/elithrar/dotfiles
 DOTFILES_DIR=$HOME/.dotfiles
 
@@ -36,10 +39,36 @@ APPS=(
   visual-studio-code
 )
 
-# Enable key repeat
-defaults write -g ApplePressAndHoldEnabled -bool false
-# Increase ulimit
-sudo launchctl limit maxfiles 2048 16384
+SETTINGS=(
+  # Enable repeat on keydown
+  "defaults write -g ApplePressAndHoldEnabled -bool false"
+  # Use current directory as default search scope in Finder
+  "defaults write com.apple.finder FXDefaultSearchScope -string 'SCcf'"
+  # Show Path bar in Finder
+  "defaults write com.apple.finder ShowPathbar -bool true"
+  # Show Status bar in Finder
+  "defaults write com.apple.finder ShowStatusBar -bool true"
+  # Hide the Dock
+  "defaults write com.apple.Dock autohide -bool TRUE;"
+  "killall Dock"
+  # Set a blazingly fast keyboard repeat rate
+  "defaults write NSGlobalDomain KeyRepeat -int 1"
+  # Set a shorter Delay until key repeat
+  "defaults write NSGlobalDomain InitialKeyRepeat -int 15"
+  # Enable Safari’s debug menu
+  "defaults write com.apple.Safari IncludeInternalDebugMenu -bool true"
+  # Add a context menu item for showing the Web Inspector in web views
+  "defaults write NSGlobalDomain WebKitDeveloperExtras -bool true"
+  # Show the ~/Library folder
+  "chflags nohidden ~/Library"
+  # Increase ulimit
+  "sudo launchctl limit maxfiles 2048 16384"
+)
+
+# Apply macOS preferences
+for setting in $SETTINGS do
+  sh -c $setting
+done
 
 if test ! $(which brew)
 then
@@ -67,6 +96,19 @@ then
 
   brew tap thoughtbot/formulae
   brew install rcm
+
+  echo "🔨 Installing Python & Node packages"
+  if test $(which pip)
+  then
+    # Python packages
+    pip install requests virtualenv pep8 pylint flake8
+  fi
+
+  if test $(which yarn)
+  then
+    # Node packages
+    yarn global add typescript eslint tslint
+  fi
 fi
 
 # Setup dotfiles
@@ -81,9 +123,11 @@ then
   # Symlink dotfiles
   rcup -d $DOTFILES_DIR
 
-  # Manually link the theme
+  # Manually link our themes
   mkdir -p ~/.oh-my-zsh/themes/
-  ln -fs $DOTFILES_DIR/dracula.zsh-theme ~/.oh-my-zsh/themes/dracula.zsh-theme
+  for theme in $(ls *.zsh-theme) do
+    ln -fs $DOTFILES_DIR/$theme ~/.oh-my-zsh/themes/$theme
+  done
 fi
 
 # Install other brew packages
@@ -93,19 +137,6 @@ if test $(which brew)
   brew cask install font-fira-mono
   brew cask install font-fira-sans
   brew cask install font-ibm-plex
-fi
-
-echo "🔨 Installing Python & Node packages"
-if test $(which pip)
-then
-  # Python packages
-  pip install requests virtualenv pep8 pylint flake8
-fi
-
-if test $(which yarn)
-then
-  # Node packages
-  yarn global add typescript eslint tslint
 fi
 
 # Install macOS apps
