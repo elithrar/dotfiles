@@ -59,6 +59,8 @@ SETTINGS=(
   "defaults write com.apple.Safari IncludeInternalDebugMenu -bool true"
   # Add a context menu item for showing the Web Inspector in web views
   "defaults write NSGlobalDomain WebKitDeveloperExtras -bool true"
+  # Dont re-arrange spaces based on MRU
+  "defaults write com.apple.dock mru-spaces -bool false"
   # Show the ~/Library folder
   "chflags nohidden ~/Library"
   # Increase ulimit
