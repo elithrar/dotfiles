@@ -61,6 +61,9 @@ SETTINGS=(
   "defaults write NSGlobalDomain WebKitDeveloperExtras -bool true"
   # Dont re-arrange spaces based on MRU
   "defaults write com.apple.dock mru-spaces -bool false"
+  # Require the login password when the screensaver is activated
+  "defaults -currentHost write com.apple.screensaver askForPassword -bool true"
+  "defaults -currentHost write com.apple.screensaver askForPasswordDelay -int 5"
   # Show the ~/Library folder
   "chflags nohidden ~/Library"
   # Increase ulimit

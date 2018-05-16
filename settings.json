@@ -167,7 +167,7 @@
   "editor.formatOnSave": true,
   "workbench.startupEditor": "newUntitledFile",
   "vim.neovimPath": "/usr/local/bin/nvim",
-  "go.useLanguageServer": true,
+  "go.useLanguageServer": false,
   "workbench.panel.defaultLocation": "right",
   "extensions.ignoreRecommendations": false,
   "terminal.integrated.macOptionIsMeta": true,
