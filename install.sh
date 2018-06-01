@@ -64,6 +64,8 @@ SETTINGS=(
   # Require the login password when the screensaver is activated
   "defaults -currentHost write com.apple.screensaver askForPassword -bool true"
   "defaults -currentHost write com.apple.screensaver askForPasswordDelay -int 5"
+  # Disable the guest account
+  "sudo defaults write /Library/Preferences/com.apple.loginwindow GuestEnabled -bool false"
   # Show the ~/Library folder
   "chflags nohidden ~/Library"
   # Increase ulimit
