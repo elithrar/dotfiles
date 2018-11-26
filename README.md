@@ -1,6 +1,6 @@
 # dotfiles
 
-dotfiles & installation script for my development environment.
+✏ dotfiles & installation script for my development environment.
 
 ## Install
 
@@ -25,4 +25,4 @@ rcup -d ~/.dotfiles
 
 ## License
 
-See LICENSE file for details.
+📜 See LICENSE file for details.
