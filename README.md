@@ -4,6 +4,14 @@
 
 ## Install
 
+There are three major components: the [Boxstarter](https://boxstarter.org) script for setting up Windows + WSL, the `setup.sh` script for building a Linux/macOS dev environment, and the `.dotfiles` themselves.
+
+_Windows_: [Install Boxstarter](https://boxstarter.org/InstallBoxstarter) and then, in a Powershell shell:
+
+```sh
+Install-BoxstarterPackage -PackageName windows-boxstarter.ps1
+```
+
 Install the dependencies: package manager, packages, tooling:
 
 ```sh
