@@ -1,20 +1,28 @@
-dotfiles
-========
+# dotfiles
 
-elithrar/dotfiles using [rcm](https://github.com/thoughtbot/rcm) to manage them. Install with `rcup -d ~/.dotfiles`.
+dotfiles & installation script for my development environment.
 
-Notes:
+## Install
 
-* I currently use [Hyper 2](https://zeit.co/blog/hyper2) as my terminal emulator, with the [Dracula](https://github.com/dracula/hyper) theme
-* zsh and [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) as my shell
-* My `.vimrc` is commented and clear about what-applies-to-what.
-* I use the [Fira Mono](http://mozilla.github.io/Fira/) typeface.
+Install the dependencies: package manager, packages, tooling:
 
-## VS Code
+```sh
+sh setup.sh 2>&1 | tee ~/setup.log
+```
 
-![VS Code screenshot](vscode-material-screenshot-20180502.png)
+Use [rcm](https://github.com/thoughtbot/rcm) to automatically symlink the dotfiles:
 
-## Terminal (Hyper)
+```sh
+rcup -d ~/.dotfiles
+```
 
-![hyper screenshot](hyper-screenshot-20180423.png)
+## Notes:
 
+- I currently use [Hyper 2](https://zeit.co/blog/hyper2) as my terminal emulator, with the [Dracula](https://github.com/dracula/hyper) theme
+- zsh and [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) as my shell
+- My `.vimrc` is commented and clear about what-applies-to-what.
+- I use the [Fira Mono](http://mozilla.github.io/Fira/) typeface.
+
+## License
+
+See LICENSE file for details.
