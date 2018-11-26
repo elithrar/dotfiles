@@ -34,7 +34,6 @@ alias iso8601="date -u +'%Y-%m-%dT%H:%M:%SZ'"
 unalias gb
 
 # Go
-export GOPATH=$HOME/.go
 export GOBIN=$GOPATH/bin
 export PATH=$GOBIN:$PATH
 alias todo="godoc -notes="TODO" ."
@@ -69,10 +68,12 @@ if [ "$(uname -s 2> /dev/null)" = "Linux" ]; then
 	# Linuxbrew
 	test -d ~/.linuxbrew && PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
 
-	# GOPATH outside of WSL
-	if [ -d "/mnt/c/Users/matt" ]; then
-		GOPATH=/mnt/c/Users/matt/go
-		GOBIN=$GOPATH:$PATH
+	# WSL specific
+	if [ ! -z "$USERPROFILE" ]; then
+		cdpath+=(
+			$USERPROFILE/Dropbox
+			$USERPROFILE/Downloads
+		)
 	fi
 fi
 
