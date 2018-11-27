@@ -150,7 +150,7 @@ fi
 # Clone & install dotfiles
 if ! [ -x "$(command -v rcup)" ]; then
     # Install rcup
-    brew tap thoughtbot/rcm
+    brew tap thoughtbot/formulae
     brew install rcm
     
     if ! [ -d "$HOME/.dotfiles"]; then
