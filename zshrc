@@ -68,7 +68,9 @@ fi
 if [ "$(uname -s 2> /dev/null)" = "Linux" ]; then
 	printf "Applying Linux specific settings\n"
 	# Linuxbrew
-	test -d ~/.linuxbrew && PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
+	if [ -d ~/.linuxbrew ]; then
+		PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
+	fi
 
 	# WSL specific
 	if [ ! -z "$USERPROFILE" ]; then
