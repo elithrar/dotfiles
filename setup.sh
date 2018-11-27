@@ -148,19 +148,18 @@ fi
 # --- dotfiles
 
 # Clone & install dotfiles
+print_info "Configuring dotfiles"
 if ! [ -x "$(command -v rcup)" ]; then
     # Install rcup
     brew tap thoughtbot/formulae
     brew install rcm
-    
-    if ! [ -d "$HOME/.dotfiles"]; then
-        print_info "Installing dotfiles"
-        git clone ${DOTFILES_REPO} $HOME/.dotfiles
-        rcup -d $HOME/.dotfiles
-        print_success "dotfiles installed"
-    fi
+elif ! [ -d "$HOME/.dotfiles"]; then
+    print_info "Cloning dotfiles"
+    git clone ${DOTFILES_REPO} $HOME/.dotfiles
 else
-    print_success "dotfiles already installed"
+    print_info "Linking dotfiles"
+    rcup -d $HOME/.dotfiles
+    print_success "dotfiles installed"
 fi
 
 # --- Setup VSCode (dotfiles -> copy into /mnt/c/ location)
