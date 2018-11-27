@@ -88,7 +88,7 @@ fi
 sudo -v &> /dev/null
 
 # Update the system & install core dependencies
-if [ "$OS_ENV" = "Linux" ] && [ "$OS_DISTRO" = "Debian" ]; then
+if [ "$OS" = "Linux" ] && [ "$DISTRO" = "Debian" ]; then
     print_info "Updating system packages"
     sudo apt-get update
     sudo apt-get -y upgrade
