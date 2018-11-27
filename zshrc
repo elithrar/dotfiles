@@ -43,6 +43,7 @@ alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverag
 
 # macOS specific
 if [ "$(uname -s 2> /dev/null)" = "Darwin" ]; then
+	printf "Applying macOS specific settings\n"
 	flush-dns() {
 	    sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo "DNS cache flushed"
 	}
@@ -65,6 +66,7 @@ fi
 
 # Linux specific
 if [ "$(uname -s 2> /dev/null)" = "Linux" ]; then
+	printf "Applying Linux specific settings\n"
 	# Linuxbrew
 	test -d ~/.linuxbrew && PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
 

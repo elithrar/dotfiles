@@ -61,24 +61,20 @@ Running...
 ${reset}
 "
 
-# Check environment
-if $(uname -s | grep -iq "Linux"); then
-    OS_ENV="Linux"
+# Check environments
+OS=$(uname -s 2> /dev/null)
+if [ "${OS}" = "Linux" ]; then
     IS_WSL=false
     # Check Debian vs. RHEL
     if [ -f /etc/os-release ] && $(grep -iq "Debian" /etc/os-release); then
-        OS_DISTRO="Debian"
+        DISTRO="Debian"
     fi
 
     if $(grep -q "Microsoft" /proc/version); then
         IS_WSL=true
     fi
-elif $(uname -s | grep -q "Darwin"); then
-    OS_ENV="macOS"
-else
-    OS_ENV="other"
 fi
-print_info "Detected environment: ${OS_ENV} - ${OS_DISTRO} (WSL: ${IS_WSL})"
+print_info "Detected environment: ${OS} - ${DISTRO} (WSL: ${IS_WSL})"
 
 # Check for connectivity
 if [ ping -q -w1 -c1 google.com &>/dev/null ]; then
@@ -110,7 +106,7 @@ fi
 
 # Install Homebrew
 if ! [ -x "$(command -v brew)" ]; then
-    if [ "$OS_ENV" = "Linux" ]; then
+    if [ "${OS}" = "Linux" ]; then
         # Install Linuxbrew - http://linuxbrew.sh/
         print_info "Installing Linuxbrew..."
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
