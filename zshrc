@@ -1,8 +1,9 @@
 ZSH=$HOME/.oh-my-zsh
-
 # Set name of the theme to load.
 # Looks in ~/.oh-my-zsh/themes/
 ZSH_THEME="dracula"
+
+umask 027
 
 # Plugins: can be found in ~/.oh-my-zsh/plugins/*
 plugins=(
@@ -77,6 +78,8 @@ if [ "$(uname -s 2> /dev/null)" = "Linux" ]; then
 			$USERPROFILE/Dropbox
 			$USERPROFILE/Downloads
 		)
+
+		GOPATH=$USERPROFILE/go
 	fi
 fi
 

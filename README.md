@@ -15,7 +15,7 @@ Install-BoxstarterPackage -PackageName windows-boxstarter.ps1
 Install the dependencies: package manager, packages, tooling:
 
 ```sh
-sh setup.sh 2>&1 | tee ~/setup.log
+sh install.sh 2>&1 | tee ~/install.log
 ```
 
 Use [rcm](https://github.com/thoughtbot/rcm) to automatically symlink the dotfiles:

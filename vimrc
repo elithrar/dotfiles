@@ -41,7 +41,7 @@ set nojoinspaces        " use single spaces when using gq
 " Vundle
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-Plugin 'gmarik/Vundle.vim'
+Plugin 'VundleVim/Vundle.vim'
 
 " Plugins
 Plugin 'Valloric/YouCompleteMe'
