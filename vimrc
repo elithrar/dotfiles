@@ -39,7 +39,7 @@ set formatoptions+=t
 set nojoinspaces        " use single spaces when using gq
 
 " Vundle
-set rtp+=~/.vim/bundle/Vundle.vim
+set rtp+=~/.config/nvim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 
@@ -70,19 +70,19 @@ Plugin 'cespare/vim-toml'
 " Plugin 'morhetz/gruvbox'
 " Plugin 'joshdick/onedark.vim'
 " Plugin 'rakr/vim-one'
+Plugin 'haishanh/night-owl.vim'
 Plugin 'mhartington/oceanic-next'
 Plugin 'dracula/vim'
 
 call vundle#end()
 
 " Colorscheme
-if (has("termguicolors"))
- set termguicolors
-endif
+" if (has("termguicolors"))
+"  set termguicolors
+" endif
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 syntax enable
-set background=dark
-let g:airline_theme='oceanicnext'
-colorscheme OceanicNext
+colorscheme night-owl
 
 " Column highlighting at textwidth
 highlight ColorColumn ctermbg=240

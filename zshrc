@@ -67,7 +67,6 @@ fi
 
 # Linux specific
 if [ "$(uname -s 2> /dev/null)" = "Linux" ]; then
-	printf "Applying Linux specific settings\n"
 	# Linuxbrew
 	test -d ~/.linuxbrew && PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
 	test -d /home/linuxbrew/.linuxbrew && PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
