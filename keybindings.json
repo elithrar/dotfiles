@@ -27,5 +27,10 @@
     {
         "key": "<space>+n",
         "command": "search.action.focusNextSearchResult"
+    },
+    {
+        "key": "ctrl+o",
+        "command": "-extension.vim_ctrl+o",
+        "when": "editorTextFocus && vim.active && vim.use<C-o> && !inDebugRepl"
     }
 ]
