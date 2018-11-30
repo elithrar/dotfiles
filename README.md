@@ -16,6 +16,21 @@ Install the dependencies: package manager, packages, tooling:
 
 ```sh
 sh install.sh 2>&1 | tee ~/install.log
+
+Running...
+ _           _        _ _       _     
+(_)_ __  ___| |_ __ _| | |  ___| |__  
+| | '_ \/ __| __/ _  | | | / __| '_ \ 
+| | | | \__ \ || (_| | | |_\__ \ | | |
+|_|_| |_|___/\__\__,_|_|_(_)___/_| |_|
+                                      
+-----
+- Sets up a Linux or macOS based development machine.
+- Safe to run repeatedly (checks for existing installs)
+- Repository at https://github.com/elithrar/dotfiles
+- Fork as needed
+- Deeply inspired by https://github.com/minamarkham/formation
+-----
 ```
 
 Use [rcm](https://github.com/thoughtbot/rcm) to automatically symlink the dotfiles:
