@@ -41,9 +41,9 @@ rcup -d ~/.dotfiles
 
 ## Notes:
 
-- I currently use [Hyper 2](https://zeit.co/blog/hyper2) as my terminal emulator, with the [Dracula](https://github.com/dracula/hyper) theme
+- I currently use [Terminus](https://github.com/Eugeny/terminus) as my terminal emulator on Windows.
 - zsh and [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) as my shell
-- My `.vimrc` is commented and clear about what-applies-to-what.
+- [Visual Studio Code](https://code.visualstudio.com/) as my editor, although I still carry a `.vimrc` around.
 - I use the [Fira Mono](http://mozilla.github.io/Fira/) typeface.
 
 ## License
