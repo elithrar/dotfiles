@@ -82,6 +82,12 @@ if [ "$(uname -s 2> /dev/null)" = "Linux" ]; then
 	fi
 fi
 
+# gcloud SDK
+GCLOUD_SDK_DIR="$HOME/repos/google-cloud-sdk"
+if [[ -d "${GCLOUD_SDK_DIR}/bin" ]]; then
+	PATH=$PATH:$GCLOUD_SDK_DIR/bin
+fi
+
 # cd directly into these directories
 cdpath+=(
     $GOPATH/src/github.com
