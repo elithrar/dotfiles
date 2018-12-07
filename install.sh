@@ -146,20 +146,24 @@ else
     print_success "oh-my-zsh already installed"
 fi
 
-# --- dotfiles
+# Set up repos directory outside of WSL
+if [[ "${WSL}" = true ]] && [[ -z "${USERPROFILE}"]]; then
+    mkdir -p "${USERPROFILE}/repos"
+fi
 
+# --- dotfiles
 # Clone & install dotfiles
 print_info "Configuring dotfiles"
 if ! [ -x "$(command -v rcup)" ]; then
     # Install rcup
     brew tap thoughtbot/formulae
     brew install rcm
-elif ! [ -d "$HOME/.dotfiles"]; then
+elif ! [ -d "${USERPROFILE}/repos/dotfiles"]; then
     print_info "Cloning dotfiles"
-    git clone ${DOTFILES_REPO} $HOME/.dotfiles
+    git clone ${DOTFILES_REPO} "${USERPROFILE}/repos/dotfiles"
 else
     print_info "Linking dotfiles"
-    rcup -d $HOME/.dotfiles
+    rcup -d "${USERPROFILE}/repos/dotfiles"
     print_success "dotfiles installed"
 fi
 
