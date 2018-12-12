@@ -149,6 +149,11 @@ fi
 # Set up repos directory outside of WSL
 if [[ "${WSL}" = true ]] && [[ -z "${USERPROFILE}"]]; then
     mkdir -p "${USERPROFILE}/repos"
+
+    # Symlink into Windows filesystem
+    if ! [ $(readlink -f "${HOME}/repos") = "${USERPROFILE}/repos" ]; then
+        ln -s "${HOME}/repos" "${USERPROFILE}/repos"
+    fi
 fi
 
 # --- dotfiles
@@ -158,15 +163,35 @@ if ! [ -x "$(command -v rcup)" ]; then
     # Install rcup
     brew tap thoughtbot/formulae
     brew install rcm
-elif ! [ -d "${USERPROFILE}/repos/dotfiles"]; then
+fi
+
+if ! [ -d "${USERPROFILE}/repos/dotfiles"]; then
     print_info "Cloning dotfiles"
     git clone ${DOTFILES_REPO} "${USERPROFILE}/repos/dotfiles"
+fi
+
+print_info "Linking dotfiles"
+rcup -d "${USERPROFILE}/repos/dotfiles"
+print_success "dotfiles installed"
+
+# gcloud SDK
+CLOUDSDK_CORE_DISABLE_PROMPTS=1
+CLOUDSDK_INSTALL_DIR="${HOME}/repos"
+if ! [ -f "${CLOUDSDK_INSTALL_DIR}/google-cloud-sdk" ]; then
+    print_info "Installing gcloud SDK"
+    curl https://sdk.cloud.google.com | bash
+    print_success "gcloud SDK installed"
 else
-    print_info "Linking dotfiles"
-    rcup -d "${USERPROFILE}/repos/dotfiles"
-    print_success "dotfiles installed"
+    print_success "gcloud SDK already installed"
 fi
 
 # --- Setup VSCode (dotfiles -> copy into /mnt/c/ location)
+VSCODE_WIN_DIR="${USERPROFILE}/AppData/Roaming/Code/User"
+if [ "${WSL}" = true ] && [ -d "${VSCODE_WIN_DIR}" ]; then
+    ln -s "${USERPROFILE}/repos/dotfiles/settings.json" "${VSCODE_WIN_DIR}/settings.json"
+    ln -s "${USERPROFILE}/repos/dotfiles/settings.json" "${VSCODE_WIN_DIR}/keybindings.json"
+elif [ "${OS}" = "macOS" ]; then
+    # TODO: Symlink into ~/Library
+fi
 
 print_success "All done! Visit https://github.com/elithrar/dotfiles for the full source & related configs."

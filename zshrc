@@ -143,3 +143,8 @@ export PROMPT='${ret_status}%{$fg_bold[green]%}%p %{$fg_bold[blue]%}%~ $(git_pro
 
 export PATH
 trim_path
+
+# gcloud SDK
+if [ -f "${USERPROFILE}/repos/google-cloud-sdk/path.zsh.inc" ]; then . "${USERPROFILE}/repos/google-cloud-sdk/path.zsh.inc"; fi
+if [ -f "${USERPROFILE}/repos/google-cloud-sdk/completion.zsh.inc" ]; then . "${USERPROFILE}/repos/google-cloud-sdk/completion.zsh.inc"; fi
+
