@@ -139,7 +139,8 @@ export EDITOR='code --wait'
 # ripgrep
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 
-export PROMPT='${ret_status}%{$fg_bold[green]%}%p %{$fg_bold[blue]%}%~ $(git_prompt_info)% %{$reset_color%} '
+NEWLINE=$'\n'
+export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~ $(git_prompt_info)${NEWLINE}${ret_status}%{$reset_color%} '
 
 export PATH
 trim_path
