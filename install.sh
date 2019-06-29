@@ -6,7 +6,7 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(asciinema cmake curl gifski git go htop jq jupyter lua make neovim nmap node python ripgrep tree wget wrk yarn youtube-dl zsh)
+BREW_PACKAGES=(asciinema cmake curl fd gifski git go htop jq jupyter lua make neovim nmap node python ripgrep tree wget wrk yarn youtube-dl zsh)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 
 # Colors
@@ -53,6 +53,7 @@ Running...
                                       
 -----
 - Sets up a Linux or macOS based development machine.
+- Can be run in WSL on Windows
 - Safe to run repeatedly (checks for existing installs)
 - Repository at https://github.com/elithrar/dotfiles
 - Fork as needed
@@ -137,7 +138,7 @@ done
 print_success "Homebrew packages installed"
 
 # --- Configure zsh
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
+if [ ! -d "${HOME}/.oh-my-zsh" ]; then
     print_info "Installing oh-my-zsh"
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     command -v zsh | sudo tee -a /etc/shells
@@ -146,14 +147,9 @@ else
     print_success "oh-my-zsh already installed"
 fi
 
-# Set up repos directory outside of WSL
-if [[ "${WSL}" = true ]] && [[ -z "${USERPROFILE}"]]; then
-    mkdir -p "${USERPROFILE}/repos"
-
-    # Symlink into Windows filesystem
-    if ! [ $(readlink -f "${HOME}/repos") = "${USERPROFILE}/repos" ]; then
-        ln -s "${HOME}/repos" "${USERPROFILE}/repos"
-    fi
+# Set up repos directory
+if [ ! -d "${HOME}/repos" ]; then
+    mkdir -p $HOME/repos
 fi
 
 # --- dotfiles
@@ -165,13 +161,13 @@ if ! [ -x "$(command -v rcup)" ]; then
     brew install rcm
 fi
 
-if ! [ -d "${USERPROFILE}/repos/dotfiles"]; then
+if ! [ -d "${HOME}/repos/dotfiles"]; then
     print_info "Cloning dotfiles"
-    git clone ${DOTFILES_REPO} "${USERPROFILE}/repos/dotfiles"
+    git clone ${DOTFILES_REPO} "${HOME}/repos/dotfiles"
 fi
 
 print_info "Linking dotfiles"
-rcup -d "${USERPROFILE}/repos/dotfiles"
+rcup -d "${HOME}/repos/dotfiles"
 print_success "dotfiles installed"
 
 # gcloud SDK
@@ -188,10 +184,9 @@ fi
 # --- Setup VSCode (dotfiles -> copy into /mnt/c/ location)
 VSCODE_WIN_DIR="${USERPROFILE}/AppData/Roaming/Code/User"
 if [ "${WSL}" = true ] && [ -d "${VSCODE_WIN_DIR}" ]; then
-    ln -s "${USERPROFILE}/repos/dotfiles/settings.json" "${VSCODE_WIN_DIR}/settings.json"
-    ln -s "${USERPROFILE}/repos/dotfiles/settings.json" "${VSCODE_WIN_DIR}/keybindings.json"
-elif [ "${OS}" = "macOS" ]; then
-    # TODO: Symlink into ~/Library
+    ln -s "${HOME}/repos/dotfiles/settings.json" "${VSCODE_WIN_DIR}/settings.json"
+    ln -s "${HOME}/repos/dotfiles/settings.json" "${VSCODE_WIN_DIR}/keybindings.json"
 fi
 
 print_success "All done! Visit https://github.com/elithrar/dotfiles for the full source & related configs."
+

@@ -5,6 +5,9 @@ ZSH_THEME="dracula"
 
 umask 027
 
+autoload -Uz bracketed-paste-magic
+zle -N bracketed-paste bracketed-paste-magic
+
 # Plugins: can be found in ~/.oh-my-zsh/plugins/*
 plugins=(
 	gem
@@ -32,9 +35,11 @@ alias lsa="ls -alh"
 alias sloc="find . -name '*.go' | xargs wc -l"
 alias unixts="date +%s"
 alias iso8601="date -u +'%Y-%m-%dT%H:%M:%SZ'"
+alias less="less -X"
 unalias gb
 
 # Go
+export GOPATH=$HOME/repos/go
 export GOBIN=$GOPATH/bin
 export PATH=$GOBIN:$PATH
 alias todo="godoc -notes="TODO" ."
@@ -77,8 +82,6 @@ if [ "$(uname -s 2> /dev/null)" = "Linux" ]; then
 			$USERPROFILE/Dropbox
 			$USERPROFILE/Downloads
 		)
-
-		GOPATH=$USERPROFILE/go
 	fi
 fi
 
@@ -134,17 +137,22 @@ trim_path() {
 env-update() { export PATH=$PATH; }
 
 # editor
-export EDITOR='code --wait'
+if [ -x "$(command -v code)" ]; then
+    export EDITOR='code --wait'
+else
+    export EDITOR="vim"
+fi
 
 # ripgrep
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 
-export PROMPT='${ret_status}%{$fg_bold[green]%}%p %{$fg_bold[blue]%}%~ $(git_prompt_info)% %{$reset_color%} '
+NEWLINE=$'\n'
+export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~ $(git_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%} '
 
 export PATH
 trim_path
 
 # gcloud SDK
-if [ -f "${USERPROFILE}/repos/google-cloud-sdk/path.zsh.inc" ]; then . "${USERPROFILE}/repos/google-cloud-sdk/path.zsh.inc"; fi
-if [ -f "${USERPROFILE}/repos/google-cloud-sdk/completion.zsh.inc" ]; then . "${USERPROFILE}/repos/google-cloud-sdk/completion.zsh.inc"; fi
+if [ -f "${HOME}/repos/google-cloud-sdk/path.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/path.zsh.inc"; fi
+if [ -f "${HOME}/repos/google-cloud-sdk/completion.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/completion.zsh.inc"; fi
 

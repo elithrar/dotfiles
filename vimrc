@@ -39,8 +39,10 @@ set formatoptions+=t
 set nojoinspaces        " use single spaces when using gq
 
 " Vundle
-set rtp+=~/.config/nvim/bundle/Vundle.vim
-call vundle#begin()
+set nocompatible
+filetype off
+set runtimepath+=~/.config/nvim/bundle/Vundle.vim
+call vundle#begin('~/.config/nvim/bundle')
 Plugin 'VundleVim/Vundle.vim'
 
 " Plugins
@@ -62,9 +64,6 @@ Plugin 'pangloss/vim-javascript'
 Plugin 'othree/html5.vim'       " HTML5 syntax
 Plugin 'posva/vim-vue'          " Vue.js
 Plugin 'cespare/vim-toml'
-" Plugin 'wookiehangover/jshint.vim'
-" Plugin 'mxw/vim-jsx'
-" Plugin 'nginx.vim'
 
 " Color schemes
 " Plugin 'morhetz/gruvbox'
@@ -82,7 +81,7 @@ call vundle#end()
 " endif
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 syntax enable
-colorscheme night-owl
+colorscheme OceanicNext
 
 " Column highlighting at textwidth
 highlight ColorColumn ctermbg=240

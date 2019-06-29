@@ -26,6 +26,7 @@ Running...
                                       
 -----
 - Sets up a Linux or macOS based development machine.
+- Can be run in WSL on Windows!
 - Safe to run repeatedly (checks for existing installs)
 - Repository at https://github.com/elithrar/dotfiles
 - Fork as needed
@@ -41,7 +42,8 @@ rcup -d ~/.dotfiles
 
 ## Notes:
 
-- I currently use [Terminus](https://github.com/Eugeny/terminus) as my terminal emulator on Windows.
+- I currently use the [Windows Terminal](https://github.com/microsoft/terminal) w/ tmux as my
+  terminal env.
 - zsh and [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) as my shell
 - [Visual Studio Code](https://code.visualstudio.com/) as my editor, although I still carry a `.vimrc` around.
 - I use the [Fira Mono](http://mozilla.github.io/Fira/) typeface.
