@@ -6,7 +6,8 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(asciinema cmake curl fd gifski git go htop jq jupyter lua make neovim nmap node python ripgrep tree wget wrk yarn youtube-dl zsh)
+BREW_PACKAGES=(asciinema cmake curl fd gifski git go htop jq jupyter lua make neovim nmap node python reattach-to-user-namespace rcm ripgrep tmux tree wget wrk yarn youtube-dl zsh)
+CASKS=(1password dropbox font-fira-code rectangle spotify)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 
 # Colors
@@ -64,8 +65,9 @@ ${reset}
 
 # Check environments
 OS=$(uname -s 2> /dev/null)
+DISTRO="none"
+IS_WSL=false
 if [ "${OS}" = "Linux" ]; then
-    IS_WSL=false
     # Check Debian vs. RHEL
     if [ -f /etc/os-release ] && $(grep -iq "Debian" /etc/os-release); then
         DISTRO="Debian"
@@ -105,6 +107,11 @@ if ! [[ -f "$HOME/.ssh/id_ed25519" ]]; then
     print "Key generated!"
 fi
 
+# Set up repos directory
+if [ ! -d "${HOME}/repos" ]; then
+    mkdir -p $HOME/repos
+fi
+
 # Install Homebrew
 if ! [ -x "$(command -v brew)" ]; then
     if [ "${OS}" = "Linux" ]; then
@@ -113,7 +120,7 @@ if ! [ -x "$(command -v brew)" ]; then
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
         test -d ~/.linuxbrew && export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
         print_success "Linuxbrew installed"
-    elif [ "$OS_ENV" = "macOS" ]; then
+    elif [ "$OS" = "Darwin" ]; then
 	    print_info "Installing Homebrew..."
 	    curl -fsS 'https://raw.githubusercontent.com/Homebrew/install/master/install' | ruby
 	    export PATH="/usr/local/bin:$PATH"
@@ -125,10 +132,24 @@ fi
 
 # --- Homebrew
 print_info "Installing Homebrew packages"
+# Install taps first
+brew tap thoughtbot/formulae
 for pkg in "${BREW_PACKAGES[@]}"; do
     # Check if $pkg is already installed
     print_info "Checking package $pkg"
     if test ! $(brew list | grep $pkg); then
+        print_info "Installing $pkg"
+        brew install $pkg
+    else 
+        print_success "$pkg already installed"
+    fi
+done
+
+# Casks
+for pkg in "${CASKS[@]}"; do
+    # Check if $pkg is already installed
+    print_info "Checking package $pkg"
+    if test ! $(brew cask list | grep $pkg); then
         print_info "Installing $pkg"
         brew install $pkg
     else 
@@ -147,11 +168,6 @@ else
     print_success "oh-my-zsh already installed"
 fi
 
-# Set up repos directory
-if [ ! -d "${HOME}/repos" ]; then
-    mkdir -p $HOME/repos
-fi
-
 # --- dotfiles
 # Clone & install dotfiles
 print_info "Configuring dotfiles"
@@ -161,7 +177,7 @@ if ! [ -x "$(command -v rcup)" ]; then
     brew install rcm
 fi
 
-if ! [ -d "${HOME}/repos/dotfiles"]; then
+if [ ! -d "${HOME}/repos/dotfiles"]; then
     print_info "Cloning dotfiles"
     git clone ${DOTFILES_REPO} "${HOME}/repos/dotfiles"
 fi
@@ -179,13 +195,6 @@ if ! [ -f "${CLOUDSDK_INSTALL_DIR}/google-cloud-sdk" ]; then
     print_success "gcloud SDK installed"
 else
     print_success "gcloud SDK already installed"
-fi
-
-# --- Setup VSCode (dotfiles -> copy into /mnt/c/ location)
-VSCODE_WIN_DIR="${USERPROFILE}/AppData/Roaming/Code/User"
-if [ "${WSL}" = true ] && [ -d "${VSCODE_WIN_DIR}" ]; then
-    ln -s "${HOME}/repos/dotfiles/settings.json" "${VSCODE_WIN_DIR}/settings.json"
-    ln -s "${HOME}/repos/dotfiles/settings.json" "${VSCODE_WIN_DIR}/keybindings.json"
 fi
 
 print_success "All done! Visit https://github.com/elithrar/dotfiles for the full source & related configs."

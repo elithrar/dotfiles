@@ -62,10 +62,6 @@ if [ "$(uname -s 2> /dev/null)" = "Darwin" ]; then
 
 	alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
 
-	# Google Cloud SDK
-	source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc'
-	source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc'
-
 	# Homebrew
 	PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 fi
@@ -156,3 +152,9 @@ trim_path
 if [ -f "${HOME}/repos/google-cloud-sdk/path.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/path.zsh.inc"; fi
 if [ -f "${HOME}/repos/google-cloud-sdk/completion.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/completion.zsh.inc"; fi
 
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/matt/repos/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/matt/repos/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/matt/repos/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/matt/repos/google-cloud-sdk/completion.zsh.inc'; fi
