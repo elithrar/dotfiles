@@ -53,7 +53,7 @@ Running...
 |_|_| |_|___/\__\__,_|_|_(_)___/_| |_|
                                       
 -----
-- Sets up a Linux or macOS based development machine.
+- Sets up a macOS or Linux based development machine.
 - Can be run in WSL on Windows
 - Safe to run repeatedly (checks for existing installs)
 - Repository at https://github.com/elithrar/dotfiles
@@ -121,9 +121,9 @@ if ! [ -x "$(command -v brew)" ]; then
         test -d ~/.linuxbrew && export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
         print_success "Linuxbrew installed"
     elif [ "$OS" = "Darwin" ]; then
-	    print_info "Installing Homebrew..."
-	    curl -fsS 'https://raw.githubusercontent.com/Homebrew/install/master/install' | ruby
-	    export PATH="/usr/local/bin:$PATH"
+        print_info "Installing Homebrew..."
+        curl -fsS 'https://raw.githubusercontent.com/Homebrew/install/master/install' | ruby
+        export PATH="/usr/local/bin:$PATH"
         print_success "Homebrew installed"
     fi
 else
@@ -146,16 +146,22 @@ for pkg in "${BREW_PACKAGES[@]}"; do
 done
 
 # Casks
-for pkg in "${CASKS[@]}"; do
-    # Check if $pkg is already installed
-    print_info "Checking package $pkg"
-    if test ! $(brew cask list | grep $pkg); then
-        print_info "Installing $pkg"
-        brew install $pkg
-    else 
-        print_success "$pkg already installed"
-    fi
-done
+if [ "$OS" = "Darwin" ]; do
+    print_info "Installing Homebrew Casks"
+    for pkg in "${CASKS[@]}"; do
+        # Check if $pkg is already installed
+        print_info "Checking package $pkg"
+        if test ! $(brew cask list | grep $pkg); then
+            print_info "Installing $pkg"
+            brew install $pkg
+        else 
+            print_success "$pkg already installed"
+        fi
+    done
+else
+    print_info "Skipping Cask installation: not on macOS"
+fi
+
 print_success "Homebrew packages installed"
 
 # --- Configure zsh
@@ -180,6 +186,8 @@ fi
 if [ ! -d "${HOME}/repos/dotfiles"]; then
     print_info "Cloning dotfiles"
     git clone ${DOTFILES_REPO} "${HOME}/repos/dotfiles"
+else
+    print_info "dotfiles already cloned"
 fi
 
 print_info "Linking dotfiles"
@@ -198,4 +206,3 @@ else
 fi
 
 print_success "All done! Visit https://github.com/elithrar/dotfiles for the full source & related configs."
-
