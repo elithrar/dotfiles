@@ -4,13 +4,11 @@
 
 ## Install
 
-There are three major components: the [Boxstarter](https://boxstarter.org) script for setting up Windows + WSL, the `setup.sh` script for building a Linux/macOS dev environment, and the `.dotfiles` themselves.
+There are three major components: 
 
-_Windows_: [Install Boxstarter](https://boxstarter.org/InstallBoxstarter) and then, in a Powershell shell:
-
-```sh
-Install-BoxstarterPackage -PackageName windows-boxstarter.ps1
-```
+1. `install.sh` - which sets up dependencies, installs Homebrew and related packages, and links in dotfiles, on macOS and Linux
+2. The [Boxstarter](https://boxstarter.org) script for setting up Windows + WSL (optional!)
+3. The 'dotfiles' themselves - `.tmuxconf`, `.zshrc`, etc.
 
 Install the dependencies: package manager, packages, tooling:
 
@@ -42,8 +40,7 @@ rcup -d ~/.dotfiles
 
 ## Notes:
 
-- I currently use the [Windows Terminal](https://github.com/microsoft/terminal) w/ tmux as my
-  terminal env.
+- I use [iTerm2](https://www.iterm2.com/) on macOS as my primary terminal environment - `install.sh` will install iTerm2 for you.
 - zsh and [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) as my shell
 - [Visual Studio Code](https://code.visualstudio.com/) as my editor, although I still carry a `.vimrc` around.
 - I use the [Fira Mono](http://mozilla.github.io/Fira/) typeface.

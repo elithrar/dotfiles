@@ -27,6 +27,7 @@ bindkey -e
 
 # aliases
 alias vim="nvim"
+alias code="code-insiders"
 # Follow symbolic links
 alias cd="cd -P"
 alias gl="git --no-pager log --oneline --decorate -n 10"
@@ -151,10 +152,3 @@ trim_path
 # gcloud SDK
 if [ -f "${HOME}/repos/google-cloud-sdk/path.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/path.zsh.inc"; fi
 if [ -f "${HOME}/repos/google-cloud-sdk/completion.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/completion.zsh.inc"; fi
-
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/matt/repos/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/matt/repos/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/matt/repos/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/matt/repos/google-cloud-sdk/completion.zsh.inc'; fi
