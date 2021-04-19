@@ -140,6 +140,9 @@ else
     export EDITOR="vim"
 fi
 
+# fly.io (flyctl)
+export PATH=$PATH:$HOME/.fly/bin
+
 # ripgrep
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 
