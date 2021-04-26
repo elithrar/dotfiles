@@ -65,7 +65,7 @@ ${reset}
 
 # Check environments
 OS=$(uname -s 2> /dev/null)
-DISTRO="none"
+DISTRO="unknown"
 IS_WSL=false
 INTERACTIVE=true
 if [ "${OS}" = "Linux" ]; then
@@ -84,7 +84,7 @@ if [ "${OS}" = "Linux" ]; then
         INTERACTIVE=false
     fi
 fi
-print_info "Detected environment: ${OS} - ${DISTRO} (WSL: ${IS_WSL})"
+print_info "Detected environment: ${OS} - ${DISTRO} - WSL: ${IS_WSL} - interactive: ${INTERACTIVE}"
 
 # Check for connectivity
 if [ ping -q -w1 -c1 google.com &>/dev/null ]; then
