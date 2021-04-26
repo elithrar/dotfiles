@@ -67,6 +67,7 @@ ${reset}
 OS=$(uname -s 2> /dev/null)
 DISTRO="none"
 IS_WSL=false
+INTERACTIVE=true
 if [ "${OS}" = "Linux" ]; then
     # Check Debian vs. RHEL
     if [ -f /etc/os-release ] && $(grep -iq "Debian" /etc/os-release); then
@@ -75,6 +76,12 @@ if [ "${OS}" = "Linux" ]; then
 
     if $(grep -q "Microsoft" /proc/version); then
         IS_WSL=true
+    fi
+    
+    if [[ $- == *i* ]]; then
+        INTERACTIVE=true
+    else
+        INTERACTIVE=false
     fi
 fi
 print_info "Detected environment: ${OS} - ${DISTRO} (WSL: ${IS_WSL})"
@@ -100,8 +107,8 @@ else
     print_info "Skipping system package updates"
 fi
 
-# Generate an SSH key (if none)
-if ! [[ -f "$HOME/.ssh/id_ed25519" ]]; then
+# Generate an SSH key (if none) if we're in an interactive shell
+if [ "$INTERACTIVE" = true ] && ! [[ -f "$HOME/.ssh/id_ed25519" ]]; then
     printf "🔑 Generating new SSH key"
     ssh-keygen -t ed25519 -f $HOME/.ssh/id_ed25519 -C "matt@eatsleeprepeat.net"
     print "Key generated!"
