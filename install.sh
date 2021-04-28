@@ -128,7 +128,9 @@ if ! [ -x "$(command -v brew)" ]; then
         # Install Linuxbrew - http://linuxbrew.sh/
         print_info "Installing Linuxbrew..."
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-        test -d ~/.linuxbrew && export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
+        # Put 'brew' on the current path
+        test -d ~/.linuxbrew && export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
         print_success "Linuxbrew installed"
     elif [ "$OS" = "Darwin" ]; then
         print_info "Installing Homebrew..."
