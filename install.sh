@@ -37,7 +37,7 @@ print_error() {
 }
 
 print_info() {
-    printf "${blue}🛈 info:${reset} %b\n" "$1"
+    printf "${blue}ⓘ info:${reset} %b\n" "$1"
 }
 
 # ------
@@ -65,7 +65,7 @@ ${reset}
 
 # Check environments
 OS=$(uname -s 2> /dev/null)
-DISTRO="unknown"
+DISTRO=""
 IS_WSL=false
 INTERACTIVE=true
 if [ "${OS}" = "Linux" ]; then
@@ -84,7 +84,10 @@ if [ "${OS}" = "Linux" ]; then
         INTERACTIVE=false
     fi
 fi
-print_info "Detected environment: ${OS} - ${DISTRO} - WSL: ${IS_WSL} - interactive: ${INTERACTIVE}"
+
+print_info "Detected environment: ${OS} (distro: ${DISTRO})"
+print_info "Windows for Linux Subsystem (WSL): ${IS_WSL}"
+print_info "Interactive shell session: ${INTERACTIVE}"
 
 # Check for connectivity
 if [ ping -q -w1 -c1 google.com &>/dev/null ]; then
