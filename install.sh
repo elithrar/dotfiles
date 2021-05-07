@@ -159,7 +159,7 @@ for pkg in "${BREW_PACKAGES[@]}"; do
 done
 
 # reattach-to-user-namespace
-if [ "$OS" = "Darwin" ]; do
+if [ "$OS" = "Darwin" ]; then
     brew install reattach-to-user-namespace
 fi
 
