@@ -103,9 +103,9 @@ sudo -v &> /dev/null
 # Update the system & install core dependencies
 if [ "$OS" = "Linux" ] && [ "$DISTRO" = "Debian" ]; then
     print_info "Updating system packages"
-    sudo apt-get update
-    sudo apt-get -y upgrade
-    sudo apt-get -y install build-essential curl file git
+    sudo apt update
+    sudo apt -y upgrade
+    sudo apt -y install build-essential curl file git
 else
     print_info "Skipping system package updates"
 fi
