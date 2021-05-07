@@ -6,7 +6,7 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(asciinema cmake curl fd gifski git go htop jq lua make mkcert neovim nmap node python reattach-to-user-namespace rcm ripgrep tmux tree wget wrk yarn youtube-dl zsh)
+BREW_PACKAGES=(asciinema cmake curl fd gifski git go htop jq lua make mkcert neovim nmap node python rcm ripgrep tmux tree wget wrk yarn youtube-dl zsh)
 CASKS=(1password alfred font-fira-code rectangle)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 
@@ -156,6 +156,11 @@ for pkg in "${BREW_PACKAGES[@]}"; do
         print_success "$pkg already installed"
     fi
 done
+
+# reattach-to-user-namespace
+if [ "$OS" = "Darwin" ]; do
+    brew install reattach-to-user-namespace
+fi
 
 # Casks
 if [ "$OS" = "Darwin" ]; do
