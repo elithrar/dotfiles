@@ -6,8 +6,8 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(asciinema cmake curl fd gifski git go htop jq jupyter lua make mkcert neovim nmap node python reattach-to-user-namespace rcm ripgrep tmux tree wget wrk yarn youtube-dl zsh)
-CASKS=(1password alfred dropbox font-fira-code kap rectangle spotify)
+BREW_PACKAGES=(asciinema cmake curl fd gifski git go htop jq lua make mkcert neovim nmap node python reattach-to-user-namespace rcm ripgrep tmux tree wget wrk yarn youtube-dl zsh)
+CASKS=(1password alfred font-fira-code rectangle)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 
 # Colors
