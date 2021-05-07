@@ -127,7 +127,7 @@ if ! [ -x "$(command -v brew)" ]; then
     if [ "${OS}" = "Linux" ]; then
         # Install Linuxbrew - http://linuxbrew.sh/
         print_info "Installing Linuxbrew..."
-        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+        /usr/bin/env ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
         # Put 'brew' on the current path
         test -d ~/.linuxbrew && export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
