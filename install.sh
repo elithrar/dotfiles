@@ -222,4 +222,13 @@ else
     print_success "gcloud SDK already installed"
 fi
 
+# Fly.io
+if ! [ -f "${HOME}/.fly" ]; then
+    print_info "Installing flyctl"
+    curl -L https://fly.io/install.sh | sh
+    print_success "flyctl installed"
+else
+    print_success "flyctl already installed"
+fi
+
 print_success "All done! Visit https://github.com/elithrar/dotfiles for the full source & related configs."
