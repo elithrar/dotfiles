@@ -164,7 +164,7 @@ if [ "$OS" = "Darwin" ]; then
 fi
 
 # Casks
-if [ "$OS" = "Darwin" ]; do
+if [ "$OS" = "Darwin" ]; then
     print_info "Installing Homebrew Casks"
     for pkg in "${CASKS[@]}"; do
         # Check if $pkg is already installed
