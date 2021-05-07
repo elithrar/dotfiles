@@ -209,15 +209,14 @@ else
 fi
 
 print_info "Linking dotfiles"
-rcup -d "${HOME}/repos/dotfiles"
+rcup -f -d "${HOME}/repos/dotfiles"
 print_success "dotfiles installed"
 
 # gcloud SDK
-CLOUDSDK_CORE_DISABLE_PROMPTS=1
-CLOUDSDK_INSTALL_DIR="${HOME}/repos"
 if ! [ -f "${CLOUDSDK_INSTALL_DIR}/google-cloud-sdk" ]; then
     print_info "Installing gcloud SDK"
-    curl https://sdk.cloud.google.com | bash
+    curl https://sdk.cloud.google.com > install_gcloud.sh
+    bash install_gcloud.sh --disable-prompts --install-dir="${CLOUDSDK_INSTALL_DIR}/google-cloud-sdk"
     print_success "gcloud SDK installed"
 else
     print_success "gcloud SDK already installed"
