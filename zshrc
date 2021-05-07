@@ -140,6 +140,10 @@ else
     export EDITOR="vim"
 fi
 
+# gcloud SDK
+if [ -f "${HOME}/repos/google-cloud-sdk/path.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/path.zsh.inc"; fi
+if [ -f "${HOME}/repos/google-cloud-sdk/completion.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/completion.zsh.inc"; fi
+
 # fly.io (flyctl)
 export PATH=$PATH:$HOME/.fly/bin
 
@@ -152,6 +156,3 @@ export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~ $(git_prompt_info)% %{$
 export PATH
 trim_path
 
-# gcloud SDK
-if [ -f "${HOME}/repos/google-cloud-sdk/path.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/path.zsh.inc"; fi
-if [ -f "${HOME}/repos/google-cloud-sdk/completion.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/completion.zsh.inc"; fi
