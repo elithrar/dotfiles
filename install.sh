@@ -180,25 +180,14 @@ else
     print_info "Skipping Cask installation: not on macOS"
 fi
 
-print_success "Homebrew packages installed"
-
-# --- Configure zsh
-if [ ! -d "${HOME}/.oh-my-zsh" ]; then
-    print_info "Installing oh-my-zsh"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-    command -v zsh | sudo tee -a /etc/shells
-    chsh -s $(which zsh)
-else
-    print_success "oh-my-zsh already installed"
-fi
-
+print_success "Homebrew packages 
 # --- dotfiles
 # Clone & install dotfiles
 print_info "Configuring dotfiles"
-if ! [ -x "$(command -v rcup)" ]; then
-    # Install rcup
-    brew tap thoughtbot/formulae
-    brew install rcm
+if ! [ -x "$(command -v stow)" ]; then
+    # Install GNU stow
+    # https://linux.die.net/man/8/stow
+    brew install stow
 fi
 
 if [ ! -d "${HOME}/repos/dotfiles"]; then
@@ -209,8 +198,20 @@ else
 fi
 
 print_info "Linking dotfiles"
-rcup -f -d "${HOME}/repos/dotfiles"
+stow --dir="${HOME}/repos/dotfiles" --target="${HOME}"
 print_success "dotfiles installed"
+
+installed"
+
+# --- Configure zsh
+if [ ! -d "${HOME}/.oh-my-zsh" ]; then
+    print_info "Installing oh-my-zsh"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    command -v zsh | sudo tee -a /etc/shells
+    chsh -s $(which zsh)
+else
+    print_success "oh-my-zsh already installed"
+fi
 
 # gcloud SDK
 if ! [ -f "${CLOUDSDK_INSTALL_DIR}/google-cloud-sdk" ]; then
