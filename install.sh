@@ -153,7 +153,7 @@ for pkg in "${BREW_PACKAGES[@]}"; do
     print_info "Checking package $pkg"
     if test ! $(brew list | grep $pkg); then
         print_info "Installing $pkg"
-        brew install $pkg
+        brew install --quiet $pkg
     else 
         print_success "$pkg already installed"
     fi
@@ -161,7 +161,7 @@ done
 
 # reattach-to-user-namespace
 if [ "$OS" = "Darwin" ]; then
-    brew install reattach-to-user-namespace
+    brew install --quiet reattach-to-user-namespace
 fi
 
 # Casks
@@ -170,9 +170,9 @@ if [ "$OS" = "Darwin" ]; then
     for pkg in "${CASKS[@]}"; do
         # Check if $pkg is already installed
         print_info "Checking package $pkg"
-        if test ! $(brew cask list | grep $pkg); then
+        if test ! $(brew list --cask | grep $pkg); then
             print_info "Installing $pkg"
-            brew install $pkg
+            brew install --cask $pkg
         else 
             print_success "$pkg already installed"
         fi
