@@ -39,6 +39,9 @@ alias iso8601="date -u +'%Y-%m-%dT%H:%M:%SZ'"
 alias less="less -X"
 unalias gb
 
+# Rust
+export PATH=$HOME/.cargo/bin:$PATH
+
 # Go
 export GOPATH=$HOME/repos/go
 export GOBIN=$GOPATH/bin
@@ -152,7 +155,9 @@ export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 
 NEWLINE=$'\n'
 export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~ $(git_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%} '
+export TERM="xterm-256color"
 
 export PATH
 trim_path
 
+export PATH="/usr/local/opt/curl/bin:$PATH"

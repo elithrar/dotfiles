@@ -7,7 +7,6 @@
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
 BREW_PACKAGES=(asciinema cmake curl fd gifski git go htop jq lua make mkcert neovim nmap node python rcm ripgrep tmux tree wget wrk yarn youtube-dl zsh)
-CASKS=(1password alfred font-fira-code rectangle)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 CLOUDSDK_INSTALL_DIR="${HOME}/repos"
 
@@ -115,7 +114,7 @@ fi
 if [ "$INTERACTIVE" = true ] && ! [[ -f "$HOME/.ssh/id_ed25519" ]]; then
     printf "🔑 Generating new SSH key"
     ssh-keygen -t ed25519 -f $HOME/.ssh/id_ed25519 -C "matt@eatsleeprepeat.net"
-    print "Key generated!"
+    print_info "Key generated!"
 fi
 
 # Set up repos directory
