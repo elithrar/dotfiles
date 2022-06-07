@@ -32,10 +32,11 @@ Running...
 -----
 ```
 
-Use [rcm](https://github.com/thoughtbot/rcm) to automatically symlink the dotfiles:
+Use [GNU Stow](https://www.gnu.org/software/stow/manual/stow.html) to automatically symlink the dotfiles:
 
 ```sh
-rcup -d ~/.dotfiles
+# Assuming you've cloned to $HOME/repos/dotfiles
+stow --dir="${HOME}/repos/dotfiles" --target="${HOME}"
 ```
 
 ## Notes:
