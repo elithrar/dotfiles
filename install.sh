@@ -115,6 +115,10 @@ if [ "$INTERACTIVE" = true ] && ! [[ -f "$HOME/.ssh/id_ed25519" ]]; then
     printf "🔑 Generating new SSH key"
     ssh-keygen -t ed25519 -f $HOME/.ssh/id_ed25519 -C "matt@eatsleeprepeat.net"
     print_info "Key generated!"
+    if [ "$OS" = "Darwin" ]; then
+      print_info "Adding key to Keychain"
+      ssh-add --apple-use-keychain $HOME/.ssh/id_ed25519
+    fi 
 fi
 
 # Set up repos directory
