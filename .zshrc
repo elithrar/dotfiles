@@ -161,3 +161,4 @@ export PATH
 trim_path
 
 export PATH="/usr/local/opt/curl/bin:$PATH"
+export NO_D1_WARNING=1

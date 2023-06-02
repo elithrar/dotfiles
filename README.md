@@ -36,7 +36,7 @@ Use [GNU Stow](https://www.gnu.org/software/stow/manual/stow.html) to automatica
 
 ```sh
 # Assuming you've cloned to $HOME/repos/dotfiles
-stow --dir="${HOME}/repos/dotfiles" --target="${HOME}"
+stow --dir="${HOME}/repos/dotfiles" --target="${HOME}" .
 ```
 
 ## Notes:
