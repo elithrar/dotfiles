@@ -22,3 +22,6 @@
     pf = push --force-with-lease
     pr = "!f() { git fetch origin pull/$1/head:$2; }; f"
     yolo = push --force-with-lease
+[pull]
+	rebase = true
+	ffonly = true

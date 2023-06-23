@@ -162,3 +162,18 @@ trim_path
 
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export NO_D1_WARNING=1
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/matt/repos/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/matt/repos/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/matt/repos/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/matt/repos/google-cloud-sdk/completion.zsh.inc'; fi
+
+# nvm (https://github.com/nvm-sh/nvm)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# rbenv (https://github.com/rbenv/rbenv)
+eval "$(rbenv init - zsh)"
+
