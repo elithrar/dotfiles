@@ -2,7 +2,7 @@
     name = Matt Silverlock
     email = "matt@eatsleeprepeat.net"
 [core]
-    editor = "code --wait"
+    editor = "code-insiders --wait"
     excludesfile = ~/.gitignore
     fileMode = false
 [diff]
@@ -21,8 +21,10 @@
 [alias]
     pf = push --force-with-lease
     pr = "!f() { git fetch origin pull/$1/head:$2; }; f"
-    yolo = push --force-with-lease
+    rebase-main = "!f() { git fetch origin main && git rebase origin/main"
 [pull]
     rebase = true
 [init]
     defaultBranch = main
+[include]
+	path = /Users/matt/.local/share/cloudflare-warp-certs/gitconfig

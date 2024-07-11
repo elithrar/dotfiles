@@ -177,3 +177,6 @@ export NVM_DIR="$HOME/.nvm"
 # rbenv (https://github.com/rbenv/rbenv)
 eval "$(rbenv init - zsh)"
 
+
+# sst
+export PATH=/Users/matt/.sst/bin:$PATH
