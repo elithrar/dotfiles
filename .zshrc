@@ -180,3 +180,6 @@ eval "$(rbenv init - zsh)"
 
 # sst
 export PATH=/Users/matt/.sst/bin:$PATH
+
+# Created by `pipx` on 2024-07-11 12:31:03
+export PATH="$PATH:/Users/matt/.local/bin"
