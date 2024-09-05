@@ -5,6 +5,8 @@
     editor = "code-insiders --wait"
     excludesfile = ~/.gitignore
     fileMode = false
+    # https://notes.takashiidobe.com/tools/git/delta
+    pager = delta
 [diff]
     tool = vscode
 [difftool "vscode"]
