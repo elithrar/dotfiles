@@ -1,0 +1,15 @@
+{
+  "vim_mode": true,
+  "ui_font_family": "Berkeley Mono",
+  "buffer_font_family": "Berkeley Mono",
+  "ui_font_size": 15,
+  "buffer_font_size": 14,
+  "soft_wrap": "editor_width",
+  "theme": {
+    "mode": "dark",
+    "light": "Night Owl Dark",
+    "dark": "Night Owl Dark"
+  },
+  "project_panel": { "dock": "right" },
+  "outline_panel": { "dock": "right" }
+}

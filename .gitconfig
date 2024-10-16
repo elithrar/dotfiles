@@ -6,7 +6,7 @@
     excludesfile = ~/.gitignore
     fileMode = false
     # https://notes.takashiidobe.com/tools/git/delta
-    pager = delta
+    pager = "pre=$(which delta); ${pre:-cat} | less --tabs=4 -RFX"
 [diff]
     tool = vscode
 [difftool "vscode"]
