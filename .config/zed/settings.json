@@ -1,15 +1,52 @@
 {
+  "features": {
+    "inline_completion_provider": "none"
+  },
   "vim_mode": true,
   "ui_font_family": "Berkeley Mono",
   "buffer_font_family": "Berkeley Mono",
   "ui_font_size": 15,
   "buffer_font_size": 14,
+  "ui_font_weight": 500,
   "soft_wrap": "editor_width",
   "theme": {
     "mode": "dark",
     "light": "Night Owl Dark",
-    "dark": "Night Owl Dark"
+    "dark": "Rosé Pine"
+  },
+  "languages": {
+    "Markdown-Inline": {
+      "enable_language_server": true
+    }
   },
   "project_panel": { "dock": "right" },
-  "outline_panel": { "dock": "right" }
+  "outline_panel": { "dock": "right" },
+  "cursor_shape": "block",
+  "assistant": {
+    "dock": "right",
+    "enabled": true,
+    "version": "2",
+    "default_model": {
+      "provider": "openai",
+      "model": "@cf/meta/llama-3.1-70b-instruct"
+    }
+  },
+  "language_models": {
+    "openai": {
+      "available_models": [
+        {
+          "display_name": "@cf/meta/llama-3.2-3b-instruct",
+          "name": "@cf/meta/llama-3.2-3b-instruct",
+          "max_tokens": 128000
+        },
+        {
+          "display_name": "@cf/meta/llama-3.1-70b-instruct",
+          "name": "@cf/meta/llama-3.1-70b-instruct",
+          "max_tokens": 128000
+        }
+      ],
+      "version": "1",
+      "api_url": "https://api.cloudflare.com/client/v4/accounts/d458dbe698b8eef41837f941d73bc5b3/ai/v1"
+    }
+  }
 }
