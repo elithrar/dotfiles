@@ -6,7 +6,8 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age asciinema bat cmake curl delta fd gifski git go htop jq lua make mkcert neovim nmap node pipx python rcm ripgrep tmux tree wget wrk yarn youtube-dl zsh cloudflare/cloudflare/cloudflared rbenv ruby-build uv ruff)
+BREW_PACKAGES=(age asciinema bat cmake curl delta fd ghostty gifski git go htop jq lua make mkcert neovim nmap node pipx python rcm ripgrep tmux tree wget wrk yarn youtube-dl zsh cloudflare/cloudflare/cloudflared rbenv ruby-build uv ruff)
+CASKS=()
 SSH_EMAIL="matt@eatsleeprepeat.net"
 CLOUDSDK_INSTALL_DIR="${HOME}/repos"
 
@@ -46,12 +47,12 @@ print_info() {
 printf "
 ${yellow}
 Running...
- _           _        _ _       _     
-(_)_ __  ___| |_ __ _| | |  ___| |__  
-| | '_ \/ __| __/ _  | | | / __| '_ \ 
+ _           _        _ _       _
+(_)_ __  ___| |_ __ _| | |  ___| |__
+| | '_ \/ __| __/ _  | | | / __| '_ \
 | | | | \__ \ || (_| | | |_\__ \ | | |
 |_|_| |_|___/\__\__,_|_|_(_)___/_| |_|
-                                      
+
 -----
 - Sets up a macOS or Linux based development machine.
 - Can be run in WSL on Windows
@@ -77,7 +78,7 @@ if [ "${OS}" = "Linux" ]; then
     if $(grep -q "Microsoft" /proc/version); then
         IS_WSL=true
     fi
-    
+
     if [[ $- == *i* ]]; then
         INTERACTIVE=true
     else
@@ -118,7 +119,7 @@ if [ "$INTERACTIVE" = true ] && ! [[ -f "$HOME/.ssh/id_ed25519" ]]; then
     if [ "$OS" = "Darwin" ]; then
       print_info "Adding key to Keychain"
       ssh-add --apple-use-keychain $HOME/.ssh/id_ed25519
-    fi 
+    fi
 fi
 
 # Set up repos directory
@@ -157,7 +158,7 @@ for pkg in "${BREW_PACKAGES[@]}"; do
     if test ! $(brew list | grep $pkg); then
         print_info "Installing $pkg"
         brew install --quiet $pkg
-    else 
+    else
         print_success "$pkg already installed"
     fi
 done
@@ -176,7 +177,7 @@ if [ "$OS" = "Darwin" ]; then
         if test ! $(brew list --cask | grep $pkg); then
             print_info "Installing $pkg"
             brew install --cask $pkg
-        else 
+        else
             print_success "$pkg already installed"
         fi
     done
@@ -184,7 +185,7 @@ else
     print_info "Skipping Cask installation: not on macOS"
 fi
 
-print_success "Homebrew packages 
+print_success "Homebrew packages
 # --- dotfiles
 # Clone & install dotfiles
 print_info "Configuring dotfiles"
