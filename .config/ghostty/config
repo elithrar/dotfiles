@@ -1,0 +1,12 @@
+# github.com/elithrar/dotfiles
+
+theme = "Banana Blueberry"
+font-size = 15
+font-family = "TX-02"
+
+window-padding-balance = true
+window-padding-x = 5
+window-width = 90
+window-height = 30
+
+macos-option-as-alt = true

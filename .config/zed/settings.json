@@ -2,9 +2,10 @@
   "features": {
     "inline_completion_provider": "none"
   },
+  "show_whitespaces": "boundary",
   "vim_mode": true,
-  "ui_font_family": "Berkeley Mono",
-  "buffer_font_family": "Berkeley Mono",
+  "ui_font_family": "TX-02",
+  "buffer_font_family": "TX-02",
   "ui_font_size": 15,
   "buffer_font_size": 14,
   "ui_font_weight": 500,
@@ -27,8 +28,8 @@
     "enabled": true,
     "version": "2",
     "default_model": {
-      "provider": "openai",
-      "model": "@cf/meta/llama-3.1-70b-instruct"
+      "provider": "zed.dev",
+      "model": "claude-3-5-sonnet-latest"
     }
   },
   "language_models": {
