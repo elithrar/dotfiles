@@ -5,7 +5,7 @@
   "show_whitespaces": "boundary",
   "vim_mode": true,
   "ui_font_family": "TX-02",
-  "buffer_font_family": "TX-02",
+  "buffer_font_family": "Berkeley Mono",
   "ui_font_size": 15,
   "buffer_font_size": 14,
   "ui_font_weight": 500,
