@@ -25,9 +25,6 @@ source $ZSH/oh-my-zsh.sh
 # keybinding mode
 bindkey -e
 
-# aliases
-alias vim="nvim"
-alias code="code-insiders"
 # Follow symbolic links
 alias cd="cd -P"
 alias gl="git --no-pager log --oneline --decorate -n 10"
@@ -137,18 +134,11 @@ trim_path() {
 env-update() { export PATH=$PATH; }
 
 # editor
-if [ -x "$(command -v code)" ]; then
-    export EDITOR='code --wait'
+if [ -x "$(command -v zed)" ]; then
+    export EDITOR='zed'
 else
     export EDITOR="vim"
 fi
-
-# gcloud SDK
-if [ -f "${HOME}/repos/google-cloud-sdk/path.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/path.zsh.inc"; fi
-if [ -f "${HOME}/repos/google-cloud-sdk/completion.zsh.inc" ]; then . "${HOME}/repos/google-cloud-sdk/completion.zsh.inc"; fi
-
-# fly.io (flyctl)
-export PATH=$PATH:$HOME/.fly/bin
 
 # ripgrep
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
@@ -156,9 +146,6 @@ export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 NEWLINE=$'\n'
 export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~ $(git_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%} '
 export TERM="xterm-256color"
-
-export PATH
-trim_path
 
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export NO_D1_WARNING=1
@@ -177,9 +164,12 @@ export NVM_DIR="$HOME/.nvm"
 # rbenv (https://github.com/rbenv/rbenv)
 eval "$(rbenv init - zsh)"
 
-
 # sst
 export PATH=/Users/matt/.sst/bin:$PATH
 
 # Created by `pipx` on 2024-07-11 12:31:03
 export PATH="$PATH:/Users/matt/.local/bin"
+
+export PATH
+trim_path
+
