@@ -12,3 +12,5 @@ window-height = 472
 font-thicken = true
 
 macos-option-as-alt = true
+macos-titlebar-style = hidden
+clipboard-paste-protection = true

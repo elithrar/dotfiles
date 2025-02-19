@@ -1,10 +1,14 @@
 {
+  "icon_theme": "Zed (Default)",
+  "edit_predictions": {
+    "mode": "eager_preview"
+  },
   "features": {
-    "inline_completion_provider": "none"
+    "edit_prediction_provider": "zed"
   },
   "show_whitespaces": "boundary",
   "vim_mode": true,
-  "ui_font_family": "TX-02",
+  "ui_font_family": "Berkeley Mono",
   "buffer_font_family": "Berkeley Mono",
   "ui_font_size": 15,
   "buffer_font_size": 14,
@@ -12,42 +16,39 @@
   "soft_wrap": "editor_width",
   "theme": {
     "mode": "dark",
-    "light": "Night Owl Dark",
-    "dark": "Rosé Pine"
+    "light": "Night Owl Light",
+    "dark": "Night Owl Dark"
   },
+  "formatter": "auto",
   "languages": {
     "Markdown-Inline": {
       "enable_language_server": true
     }
   },
-  "project_panel": { "dock": "right" },
-  "outline_panel": { "dock": "right" },
+  "project_panel": {
+    "dock": "right"
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
   "cursor_shape": "block",
   "assistant": {
     "dock": "right",
     "enabled": true,
     "version": "2",
     "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-3-5-sonnet-latest"
+      "provider": "google",
+      "model": "gemini-2.0-flash-thinking-exp"
     }
   },
-  "language_models": {
-    "openai": {
-      "available_models": [
-        {
-          "display_name": "@cf/meta/llama-3.2-3b-instruct",
-          "name": "@cf/meta/llama-3.2-3b-instruct",
-          "max_tokens": 128000
-        },
-        {
-          "display_name": "@cf/meta/llama-3.1-70b-instruct",
-          "name": "@cf/meta/llama-3.1-70b-instruct",
-          "max_tokens": 128000
-        }
-      ],
-      "version": "1",
-      "api_url": "https://api.cloudflare.com/client/v4/accounts/d458dbe698b8eef41837f941d73bc5b3/ai/v1"
+  "terminal": {
+    "font_family": "Berkeley Mono",
+    "blinking": "off",
+    "working_directory": "current_project_directory"
+  },
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000
     }
   }
 }

@@ -54,7 +54,7 @@ if [ "$(uname -s 2> /dev/null)" = "Darwin" ]; then
 	flush-dns() {
 	    sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo "DNS cache flushed"
 	}
-	
+
 	get_new_mac() {
 	    sudo /System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport -z && \
 	    sudo ifconfig en0 ether a0$(openssl rand -hex 5 | sed 's/\(..\)/:\1/g') && \
@@ -170,6 +170,11 @@ export PATH=/Users/matt/.sst/bin:$PATH
 # Created by `pipx` on 2024-07-11 12:31:03
 export PATH="$PATH:/Users/matt/.local/bin"
 
+# atuin shell plugin
+eval "$(atuin init zsh)"
+
 export PATH
 trim_path
 
+# Added by Windsurf
+export PATH="/Users/matt/.codeium/windsurf/bin:$PATH"

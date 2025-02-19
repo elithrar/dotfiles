@@ -6,7 +6,7 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age asciinema bat cmake curl delta fd ghostty gifski git go htop jq lua make mkcert neovim nmap node pipx python rcm ripgrep tmux tree wget wrk yarn youtube-dl zsh cloudflare/cloudflare/cloudflared rbenv ruby-build uv ruff)
+BREW_PACKAGES=(age asciinema atuin bat cmake curl delta fd ghostty gifski git go htop jq lua make mkcert neovim nmap node pipx python rcm ripgrep tmux tree wget wrk yarn youtube-dl zsh cloudflare/cloudflare/cloudflared rbenv ruby-build uv ruff)
 CASKS=()
 SSH_EMAIL="matt@eatsleeprepeat.net"
 CLOUDSDK_INSTALL_DIR="${HOME}/repos"
