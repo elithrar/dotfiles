@@ -17,13 +17,16 @@
   "theme": {
     "mode": "dark",
     "light": "Night Owl Light",
-    "dark": "Night Owl Dark"
+    "dark": "Catppuccin Mocha"
   },
   "formatter": "auto",
   "languages": {
     "Markdown-Inline": {
       "enable_language_server": true
     }
+  },
+  "git_panel": {
+    "dock": "right"
   },
   "project_panel": {
     "dock": "right"
@@ -33,12 +36,13 @@
   },
   "cursor_shape": "block",
   "assistant": {
+    "enable_experimental_live_diffs": true,
     "dock": "right",
     "enabled": true,
     "version": "2",
     "default_model": {
-      "provider": "google",
-      "model": "gemini-2.0-flash-thinking-exp"
+      "provider": "anthropic",
+      "model": "claude-3-7-sonnet-latest"
     }
   },
   "terminal": {
