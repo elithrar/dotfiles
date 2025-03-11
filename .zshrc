@@ -134,11 +134,8 @@ trim_path() {
 env-update() { export PATH=$PATH; }
 
 # editor
-if [ -x "$(command -v zed)" ]; then
-    export EDITOR='zed'
-else
-    export EDITOR="vim"
-fi
+export EDITOR="open -a \"Zed Preview\""
+alias zed="open $1 -a \"Zed Preview\""
 
 # ripgrep
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
