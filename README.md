@@ -4,11 +4,10 @@
 
 ## Install
 
-There are three major components:
+There are two major components:
 
 1. `install.sh` - which sets up dependencies, installs Homebrew and related packages, and links in dotfiles, on macOS and Linux
-2. The [Boxstarter](https://boxstarter.org) script for setting up Windows + WSL (optional!)
-3. The 'dotfiles' themselves - `.tmuxconf`, `.zshrc`, etc.
+2. The 'dotfiles' themselves - `.tmuxconf`, `.zshrc`, etc.
 
 Install the dependencies: package manager, packages, tooling:
 
