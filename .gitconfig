@@ -2,15 +2,11 @@
     name = Matt Silverlock
     email = "matt@eatsleeprepeat.net"
 [core]
-    editor = "code-insiders --wait"
+    editor = "cursor --wait"
     excludesfile = ~/.gitignore
     fileMode = false
     # https://notes.takashiidobe.com/tools/git/delta
     pager = "pre=$(which delta); ${pre:-cat} | less --tabs=4 -RFX"
-[diff]
-    tool = vscode
-[difftool "vscode"]
-    cmd = code --wait --diff $LOCAL $REMOTE
 [push]
     default = simple
 [rebase]

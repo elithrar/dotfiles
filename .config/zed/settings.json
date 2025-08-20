@@ -1,7 +1,7 @@
 {
   "icon_theme": "Zed (Default)",
   "edit_predictions": {
-    "mode": "eager_preview"
+    "mode": "eager"
   },
   "features": {
     "edit_prediction_provider": "zed"
@@ -35,14 +35,45 @@
     "dock": "right"
   },
   "cursor_shape": "block",
-  "assistant": {
-    "enable_experimental_live_diffs": true,
+  "agent": {
+    "inline_assistant_model": {
+      "provider": "anthropic",
+      "model": "claude-3-5-sonnet-latest"
+    },
+    "profiles": {
+      "write": {
+        "name": "Write",
+        "tools": {
+          "terminal": true,
+          "batch_tool": true,
+          "code_symbols": true,
+          "copy_path": true,
+          "create_file": true,
+          "delete_path": true,
+          "diagnostics": true,
+          "edit_file": true,
+          "edit_files": false,
+          "fetch": true,
+          "list_directory": true,
+          "move_path": true,
+          "now": true,
+          "find_path": true,
+          "read_file": true,
+          "grep": true,
+          "symbol_info": true,
+          "thinking": true
+        },
+        "enable_all_context_servers": true,
+        "context_servers": {}
+      }
+    },
+    "always_allow_tool_actions": true,
     "dock": "right",
     "enabled": true,
     "version": "2",
     "default_model": {
       "provider": "anthropic",
-      "model": "claude-3-7-sonnet-latest"
+      "model": "claude-3-7-sonnet-thinking-latest"
     }
   },
   "terminal": {
