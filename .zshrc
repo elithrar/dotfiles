@@ -1,7 +1,5 @@
 ZSH=$HOME/.oh-my-zsh
-# Set name of the theme to load.
-# Looks in ~/.oh-my-zsh/themes/
-ZSH_THEME="dracula"
+ZSH_THEME="robbyrussell"
 
 umask 027
 
@@ -36,6 +34,9 @@ alias iso8601="date -u +'%Y-%m-%dT%H:%M:%SZ'"
 alias less="less -X"
 alias sl="ls"
 unalias gb
+
+# Keychain + SSH
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
 
 # Rust
 export PATH=$HOME/.cargo/bin:$PATH
