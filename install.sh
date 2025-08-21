@@ -6,7 +6,7 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age asciinema atuin bat cmake curl delta fd ghostty gifski git go htop jq lua make mkcert neovim nmap node pipx python rcm ripgrep tmux tree wget wrk yarn youtube-dl zsh cloudflare/cloudflare/cloudflared rbenv ruby-build uv ruff)
+BREW_PACKAGES=(age asciinema atuin bat cmake curl delta fd gifski git go htop jq lua make mkcert neovim nmap node pipx python rcm ripgrep tmux tree wget wrk yarn zsh cloudflare/cloudflare/cloudflared stow rbenv ruby-build uv ruff)
 CASKS=()
 SSH_EMAIL="matt@eatsleeprepeat.net"
 CLOUDSDK_INSTALL_DIR="${HOME}/repos"
@@ -218,23 +218,12 @@ else
     print_success "oh-my-zsh already installed"
 fi
 
-# gcloud SDK
-if ! [ -f "${CLOUDSDK_INSTALL_DIR}/google-cloud-sdk" ]; then
-    print_info "Installing gcloud SDK"
-    curl https://sdk.cloud.google.com > install_gcloud.sh
-    bash install_gcloud.sh --disable-prompts --install-dir="${CLOUDSDK_INSTALL_DIR}/google-cloud-sdk"
-    print_success "gcloud SDK installed"
+# --- Install Atuin
+if [ ! -d "${HOME}/.atuin" ]; then
+    print_info "Installing Atuin"
+    curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
 else
-    print_success "gcloud SDK already installed"
-fi
-
-# Fly.io
-if ! [ -f "${HOME}/.fly" ]; then
-    print_info "Installing flyctl"
-    curl -L https://fly.io/install.sh | sh
-    print_success "flyctl installed"
-else
-    print_success "flyctl already installed"
+    print_success "Atuin already installed"
 fi
 
 print_success "All done! Visit https://github.com/elithrar/dotfiles for the full source & related configs."
