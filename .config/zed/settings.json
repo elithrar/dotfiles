@@ -16,7 +16,7 @@
   "soft_wrap": "editor_width",
   "theme": {
     "mode": "dark",
-    "light": "Night Owl Light",
+    "light": "Catppuccin Mocha",
     "dark": "Catppuccin Mocha"
   },
   "formatter": "auto",
@@ -70,7 +70,6 @@
     "always_allow_tool_actions": true,
     "dock": "right",
     "enabled": true,
-    "version": "2",
     "default_model": {
       "provider": "anthropic",
       "model": "claude-3-7-sonnet-thinking-latest"
