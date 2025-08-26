@@ -37,6 +37,8 @@ unalias gb
 
 # Keychain + SSH
 ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+# macOS screenshots -> clipboard
+defaults write com.apple.screencapture target clipboard
 
 # Rust
 export PATH=$HOME/.cargo/bin:$PATH

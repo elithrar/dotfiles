@@ -185,7 +185,7 @@ else
     print_info "Skipping Cask installation: not on macOS"
 fi
 
-print_success "Homebrew packages
+print_success "Homebrew packages"
 # --- dotfiles
 # Clone & install dotfiles
 print_info "Configuring dotfiles"
@@ -206,8 +206,6 @@ print_info "Linking dotfiles"
 stow --dir="${HOME}/repos/dotfiles" --target="${HOME}"
 print_success "dotfiles installed"
 
-installed"
-
 # --- Configure zsh
 if [ ! -d "${HOME}/.oh-my-zsh" ]; then
     print_info "Installing oh-my-zsh"
@@ -224,6 +222,14 @@ if [ ! -d "${HOME}/.atuin" ]; then
     curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
 else
     print_success "Atuin already installed"
+fi
+
+# Install uv
+if ! [ -x "$(command -v uv)" ]; then
+  print_info "Installing uv"
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+else
+    print_success "uv already installed."
 fi
 
 print_success "All done! Visit https://github.com/elithrar/dotfiles for the full source & related configs."
