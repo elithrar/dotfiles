@@ -26,7 +26,7 @@ indent="   "
 
 # Error handling
 trap 'ret=$?; test $ret -ne 0 && printf "${red}Setup failed${reset}\n" >&2; exit $ret' EXIT
-set -e
+set -euo pipefail
 
 # --- Helpers
 print_success() {
@@ -50,7 +50,7 @@ Running...
  _           _        _ _       _
 (_)_ __  ___| |_ __ _| | |  ___| |__
 | | '_ \/ __| __/ _  | | | / __| '_ \
-| | | | \__ \ || (_| | | |_\__ \ | | |
+| | | | \__ \ || (_| | | |_
 |_|_| |_|___/\__\__,_|_|_(_)___/_| |_|
 
 -----
@@ -91,9 +91,9 @@ print_info "Windows for Linux Subsystem (WSL): ${IS_WSL}"
 print_info "Interactive shell session: ${INTERACTIVE}"
 
 # Check for connectivity
-if [ ping -q -w1 -c1 google.com &>/dev/null ]; then
+if ! ping -q -w1 -c1 google.com &>/dev/null; then
     print_error "Cannot connect to the Internet"
-    exit 0
+    exit 1
 else
     print_success "Internet reachable"
 fi
@@ -102,7 +102,7 @@ fi
 sudo -v &> /dev/null
 
 # Update the system & install core dependencies
-if [ "$OS" = "Linux" ] && [ "$DISTRO" = "Debian" ]; then
+if [ "${OS}" = "Linux" ] && [ "${DISTRO}" = "Debian" ]; then
     print_info "Updating system packages"
     sudo apt update
     sudo apt -y upgrade
@@ -112,11 +112,11 @@ else
 fi
 
 # Generate an SSH key (if none) if we're in an interactive shell
-if [ "$INTERACTIVE" = true ] && ! [[ -f "$HOME/.ssh/id_ed25519" ]]; then
+if [ "${INTERACTIVE}" = true ] && ! [[ -f "${HOME}/.ssh/id_ed25519" ]]; then
     printf "🔑 Generating new SSH key"
     ssh-keygen -t ed25519 -f $HOME/.ssh/id_ed25519 -C "matt@eatsleeprepeat.net"
     print_info "Key generated!"
-    if [ "$OS" = "Darwin" ]; then
+    if [ "${OS}" = "Darwin" ]; then
       print_info "Adding key to Keychain"
       ssh-add --apple-use-keychain $HOME/.ssh/id_ed25519
     fi
@@ -138,7 +138,7 @@ if ! [ -x "$(command -v brew)" ]; then
         test -d ~/.linuxbrew && export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
         print_success "Linuxbrew installed"
-    elif [ "$OS" = "Darwin" ]; then
+    elif [ "${OS}" = "Darwin" ]; then
         print_info "Installing Homebrew..."
         curl -fsS 'https://raw.githubusercontent.com/Homebrew/install/master/install' | ruby
         export PATH="/usr/local/bin:$PATH"
@@ -154,31 +154,31 @@ print_info "Installing Homebrew packages"
 brew tap thoughtbot/formulae
 for pkg in "${BREW_PACKAGES[@]}"; do
     # Check if $pkg is already installed
-    print_info "Checking package $pkg"
-    if test ! $(brew list | grep $pkg); then
-        print_info "Installing $pkg"
-        brew install --quiet $pkg
+    print_info "Checking package ${pkg}"
+    if ! brew list "${pkg}" &>/dev/null; then
+        print_info "Installing ${pkg}"
+        brew install --quiet "${pkg}"
     else
-        print_success "$pkg already installed"
+        print_success "${pkg} already installed"
     fi
 done
 
 # reattach-to-user-namespace
-if [ "$OS" = "Darwin" ]; then
+if [ "${OS}" = "Darwin" ]; then
     brew install --quiet reattach-to-user-namespace
 fi
 
 # Casks
-if [ "$OS" = "Darwin" ]; then
+if [ "${OS}" = "Darwin" ]; then
     print_info "Installing Homebrew Casks"
     for pkg in "${CASKS[@]}"; do
         # Check if $pkg is already installed
-        print_info "Checking package $pkg"
-        if test ! $(brew list --cask | grep $pkg); then
-            print_info "Installing $pkg"
-            brew install --cask $pkg
+        print_info "Checking package ${pkg}"
+        if ! brew list --cask "${pkg}" &>/dev/null; then
+            print_info "Installing ${pkg}"
+            brew install --cask "${pkg}"
         else
-            print_success "$pkg already installed"
+            print_success "${pkg} already installed"
         fi
     done
 else
@@ -195,7 +195,7 @@ if ! [ -x "$(command -v stow)" ]; then
     brew install stow
 fi
 
-if [ ! -d "${HOME}/repos/dotfiles"]; then
+if [ ! -d "${HOME}/repos/dotfiles" ]; then
     print_info "Cloning dotfiles"
     git clone ${DOTFILES_REPO} "${HOME}/repos/dotfiles"
 else
