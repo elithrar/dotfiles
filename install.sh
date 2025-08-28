@@ -6,7 +6,7 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age asciinema atuin bat cmake curl delta fd gifski git go htop jq lua make mkcert neovim nmap node pipx python rcm ripgrep tmux tree wget wrk yarn zsh cloudflare/cloudflare/cloudflared stow rbenv ruby-build uv ruff)
+BREW_PACKAGES=(age asciinema atuin bat cmake curl delta fd gifski git go htop jq lua make mkcert neovim nmap node pipx python rcm ripgrep tmux tree wget wrk yarn zsh cloudflare/cloudflare/cloudflared stow rbenv ruby-build uv ruff gh shellcheck fzf zoxide)
 CASKS=()
 SSH_EMAIL="matt@eatsleeprepeat.net"
 CLOUDSDK_INSTALL_DIR="${HOME}/repos"
@@ -91,7 +91,12 @@ print_info "Windows for Linux Subsystem (WSL): ${IS_WSL}"
 print_info "Interactive shell session: ${INTERACTIVE}"
 
 # Check for connectivity
-if ! ping -q -w1 -c1 google.com &>/dev/null; then
+ping_timeout_flag="-w1"
+if [ "$OS" = "Darwin" ]; then
+    ping_timeout_flag="-t1"
+fi
+
+if ! ping -q ${ping_timeout_flag} -c1 google.com &>/dev/null; then
     print_error "Cannot connect to the Internet"
     exit 1
 else
