@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Via https://github.com/elithrar <matt@eatsleeprepeat.net>
-# Sets up a Linux and/or WSL (Windows Subsystem for Linux) based dev-environment.
+# Sets up a macOS and/or Linux based dev-environment.
 # Inspired by https://github.com/minamarkham/formation (great!)
 
 # Configuration
@@ -18,7 +18,7 @@ dim="$(tput dim)"
 red="$(tput setaf 1)"
 blue="$(tput setaf 4)"
 green="$(tput setaf 2)"
-yellow="$(tput setaf 3)"
+ yellow="$(tput setaf 3)"
 bold=$(tput bold)
 normal=$(tput sgr0)
 underline="$(tput smul)"
@@ -50,12 +50,11 @@ Running...
  _           _        _ _       _
 (_)_ __  ___| |_ __ _| | |  ___| |__
 | | '_ \/ __| __/ _  | | | / __| '_ \
-| | | | \__ \ || (_| | | |_
+| | | | \__ \ || (_| | | |_\__ \ | | |
 |_|_| |_|___/\__\__,_|_|_(_)___/_| |_|
 
 -----
 - Sets up a macOS or Linux based development machine.
-- Can be run in WSL on Windows
 - Safe to run repeatedly (checks for existing installs)
 - Repository at https://github.com/elithrar/dotfiles
 - Fork as needed
@@ -66,33 +65,27 @@ ${reset}
 
 # Check environments
 OS=$(uname -s 2> /dev/null)
-DISTRO=""
-IS_WSL=false
 INTERACTIVE=true
+if [[ $- != *i* ]]; then
+    INTERACTIVE=false
+fi
+
+print_info "Detected OS: ${OS}"
+print_info "Interactive shell session: ${INTERACTIVE}"
+
+# On Linux, we may need to install some packages.
+DISTRO=""
 if [ "${OS}" = "Linux" ]; then
-    # Check Debian vs. RHEL
-    if [ -f /etc/os-release ] && $(grep -iq "Debian" /etc/os-release); then
+    if [ -f /etc/os-release ] && grep -iq "Debian" /etc/os-release;
+ then
         DISTRO="Debian"
-    fi
-
-    if $(grep -q "Microsoft" /proc/version); then
-        IS_WSL=true
-    fi
-
-    if [[ $- == *i* ]]; then
-        INTERACTIVE=true
-    else
-        INTERACTIVE=false
+        print_info "Detected Linux distro: ${DISTRO}"
     fi
 fi
 
-print_info "Detected environment: ${OS} (distro: ${DISTRO})"
-print_info "Windows for Linux Subsystem (WSL): ${IS_WSL}"
-print_info "Interactive shell session: ${INTERACTIVE}"
-
 # Check for connectivity
 ping_timeout_flag="-w1"
-if [ "$OS" = "Darwin" ]; then
+if [ "${OS}" = "Darwin" ]; then
     ping_timeout_flag="-t1"
 fi
 
@@ -159,7 +152,8 @@ brew tap thoughtbot/formulae
 for pkg in "${BREW_PACKAGES[@]}"; do
     # Check if $pkg is already installed
     print_info "Checking package ${pkg}"
-    if ! brew list "${pkg}" &>/dev/null; then
+    if ! brew list "${pkg}" &>/dev/null;
+ then
         print_info "Installing ${pkg}"
         brew install --quiet "${pkg}"
     else
@@ -178,7 +172,8 @@ if [ "${OS}" = "Darwin" ]; then
     for pkg in "${CASKS[@]:-}"; do
         # Check if $pkg is already installed
         print_info "Checking package ${pkg}"
-        if ! brew list --cask "${pkg}" &>/dev/null; then
+        if ! brew list --cask "${pkg}" &>/dev/null;
+ then
             print_info "Installing ${pkg}"
             brew install --cask "${pkg}"
         else
