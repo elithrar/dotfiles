@@ -134,21 +134,20 @@ fi
 
 # Install Homebrew
 if ! [ -x "$(command -v brew)" ]; then
-    if [ "${OS}" = "Linux" ]; then
-        # Install Linuxbrew - http://linuxbrew.sh/
-        print_info "Installing Linuxbrew..."
-        # Unattended
-        echo "" | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-        # Put 'brew' on the current path
-        test -d ~/.linuxbrew && export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+    print_info "Installing Homebrew..."
+    # Use NONINTERACTIVE=1 to run without prompts, matching the script's style.
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+    # Add Homebrew to the PATH for the rest of this script's execution.
+    # The location is architecture-dependent.
+    if [ -x "/opt/homebrew/bin/brew" ]; then # Apple Silicon macOS
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [ -x "/usr/local/bin/brew" ]; then # Intel macOS
+        eval "$(/usr/local/bin/brew shellenv)"
+    elif [ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]; then # Linux
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-        print_success "Linuxbrew installed"
-    elif [ "${OS}" = "Darwin" ]; then
-        print_info "Installing Homebrew..."
-        curl -fsS 'https://raw.githubusercontent.com/Homebrew/install/master/install' | ruby
-        export PATH="/usr/local/bin:$PATH"
-        print_success "Homebrew installed"
     fi
+    print_success "Homebrew installed"
 else
     print_success "Homebrew/Linuxbrew already installed."
 fi
@@ -176,7 +175,7 @@ fi
 # Casks
 if [ "${OS}" = "Darwin" ]; then
     print_info "Installing Homebrew Casks"
-    for pkg in "${CASKS[@]}"; do
+    for pkg in "${CASKS[@]:-}"; do
         # Check if $pkg is already installed
         print_info "Checking package ${pkg}"
         if ! brew list --cask "${pkg}" &>/dev/null; then
