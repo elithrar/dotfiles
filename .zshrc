@@ -86,18 +86,6 @@ if [ "$(uname -s 2> /dev/null)" = "Linux" ]; then
 	fi
 fi
 
-# gcloud SDK
-GCLOUD_SDK_DIR="$HOME/repos/google-cloud-sdk"
-if [[ -d "${GCLOUD_SDK_DIR}/bin" ]]; then
-	PATH=$PATH:$GCLOUD_SDK_DIR/bin
-fi
-
-# cd directly into these directories
-cdpath+=(
-    $GOPATH/src/github.com
-    $GOPATH/src/golang.org
-    )
-
 # Shortcut to edit long commands in vim via ESC + v
 autoload -U edit-command-line
 zle -N edit-command-line
@@ -137,16 +125,23 @@ trim_path() {
 
 env-update() { export PATH=$PATH; }
 
+# prompt
+# Git prompt colors and symbols
+ZSH_THEME_GIT_PROMPT_PREFIX=" %F{208}("
+ZSH_THEME_GIT_PROMPT_SUFFIX=")%f"
+ZSH_THEME_GIT_PROMPT_DIRTY=" ✗"
+ZSH_THEME_GIT_PROMPT_CLEAN=" ✓"
+
+NEWLINE=$'\n'
+export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~$(git_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%}$ '
+export TERM="xterm-256color"
+
 # editor
 export EDITOR="open -a \"Zed Preview\""
 alias zed="open $1 -a \"Zed Preview\""
 
 # ripgrep
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
-
-NEWLINE=$'\n'
-export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~ $(git_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%} '
-export TERM="xterm-256color"
 
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export NO_D1_WARNING=1
