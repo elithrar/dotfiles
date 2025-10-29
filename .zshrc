@@ -158,7 +158,23 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # rbenv (https://github.com/rbenv/rbenv)
-eval "$(rbenv init - zsh)"
+export PATH="/Users/matt/.rbenv/shims:${PATH}"
+export RBENV_SHELL=zsh
+command rbenv rehash 2>/dev/null
+rbenv() {
+  local command
+  command="${1:-}"
+  if [ "$#" -gt 0 ]; then
+    shift
+  fi
+
+  case "$command" in
+  rehash|shell)
+    eval "$(rbenv "sh-$command" "$@")";;
+  *)
+    command rbenv "$command" "$@";;
+  esac
+}
 
 # sst
 export PATH=/Users/matt/.sst/bin:$PATH
