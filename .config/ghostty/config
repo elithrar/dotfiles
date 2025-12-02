@@ -14,3 +14,6 @@ font-thicken = true
 macos-option-as-alt = true
 macos-titlebar-style = hidden
 clipboard-paste-protection = true
+
+auto-update = download
+auto-update-channel = tip

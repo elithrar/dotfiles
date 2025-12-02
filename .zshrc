@@ -1,6 +1,10 @@
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 
+# Completion options
+CASE_SENSITIVE="false"
+HYPHEN_INSENSITIVE="true"
+
 umask 027
 
 autoload -Uz bracketed-paste-magic
@@ -8,6 +12,8 @@ zle -N bracketed-paste bracketed-paste-magic
 
 # Plugins: can be found in ~/.oh-my-zsh/plugins/*
 plugins=(
+	colored-man-pages
+	command-not-found
 	gem
 	git
 	github
@@ -16,6 +22,8 @@ plugins=(
 	python
 	tmux
 	yarn
+	zsh-autosuggestions
+	zsh-syntax-highlighting
 	)
 
 source $ZSH/oh-my-zsh.sh
@@ -26,7 +34,7 @@ bindkey -e
 # Follow symbolic links
 alias cd="cd -P"
 alias gl="git --no-pager log --oneline --decorate -n 10"
-alias zshconfig="nano ~/.zshrc"
+alias zshconfig="$EDITOR ~/.zshrc"
 alias lsa="ls -alh"
 alias sloc="find . -name '*.go' | xargs wc -l"
 alias unixts="date +%s"
@@ -36,17 +44,13 @@ alias sl="ls"
 unalias gb
 
 # Keychain + SSH
-ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519 2>/dev/null
 # macOS screenshots -> clipboard
-defaults write com.apple.screencapture target clipboard
-
-# Rust
-export PATH=$HOME/.cargo/bin:$PATH
+defaults write com.apple.screencapture target clipboard 2>/dev/null
 
 # Go
 export GOPATH=$HOME/repos/go
 export GOBIN=$GOPATH/bin
-export PATH=$GOBIN:$PATH
 alias todo="godoc -notes="TODO" ."
 alias gtvc="go test -v -race -cover ."
 alias godoc-this="godoc -http=:6060; open http://localhost:6060/pkg"
@@ -67,18 +71,14 @@ if [ "$(uname -s 2> /dev/null)" = "Darwin" ]; then
 
 	alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
 
-	# Homebrew
-	PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+	# Homebrew paths (Apple Silicon uses /opt/homebrew, Intel uses /usr/local)
+	# These are usually set by /etc/zprofile but we ensure they're present
 fi
 
 # Linux specific
 if [ "$(uname -s 2> /dev/null)" = "Linux" ]; then
-	# Linuxbrew
-	test -d ~/.linuxbrew && PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
-	test -d /home/linuxbrew/.linuxbrew && PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
-
 	# WSL specific
-	if [ ! -z "$USERPROFILE" ]; then
+	if [[ -n "$USERPROFILE" ]]; then
 		cdpath+=(
 			$USERPROFILE/Dropbox
 			$USERPROFILE/Downloads
@@ -94,15 +94,15 @@ bindkey '^x^e' edit-command-line
 
 # helper functions
 mins-ago() {
-    echo `expr $(unixts) - 60 \* $1`
+    echo $(expr $(unixts) - 60 \* $1)
 }
 
 hours-ago() {
-    echo `expr $(unixts) - 3600 \* $1`
+    echo $(expr $(unixts) - 3600 \* $1)
 }
 
 yesterday() {
-    echo `expr $(unixts) - 86400`
+    echo $(expr $(unixts) - 86400)
 }
 
 time-at() {
@@ -137,34 +137,59 @@ export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~$(git_prompt_info)% %{$r
 export TERM="xterm-256color"
 
 # editor
-export EDITOR="open -a \"Zed Preview\""
-alias zed="open $1 -a \"Zed Preview\""
+unalias zed 2>/dev/null || true
+zed() {
+  if [ -d "/Applications/Zed Preview.app" ]; then
+    open "$1" -a "Zed Preview" --wait
+  else
+    open "$1" -a "Zed" --wait
+  fi
+}
+export EDITOR="zed"
+
 
 # ripgrep
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 
-export PATH="/usr/local/opt/curl/bin:$PATH"
 export NO_D1_WARNING=1
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/matt/repos/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/matt/repos/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/matt/repos/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/matt/repos/google-cloud-sdk/completion.zsh.inc'; fi
 
 # nvm (https://github.com/nvm-sh/nvm)
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Lazy load nvm - only loads when nvm/node/npm/npx is called
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  # Defer nvm loading
+  nvm() {
+    unset -f nvm node npm npx
+    source "$NVM_DIR/nvm.sh"
+    nvm "$@"
+  }
+  
+  node() {
+    unset -f nvm node npm npx
+    source "$NVM_DIR/nvm.sh"
+    node "$@"
+  }
+  
+  npm() {
+    unset -f nvm node npm npx
+    source "$NVM_DIR/nvm.sh"
+    npm "$@"
+  }
+  
+  npx() {
+    unset -f nvm node npm npx
+    source "$NVM_DIR/nvm.sh"
+    npx "$@"
+  }
+fi
 
 # rbenv (https://github.com/rbenv/rbenv)
-export PATH="/Users/matt/.rbenv/shims:${PATH}"
 export RBENV_SHELL=zsh
 command rbenv rehash 2>/dev/null
 rbenv() {
   local command
   command="${1:-}"
-  if [ "$#" -gt 0 ]; then
+  if [[ "$#" -gt 0 ]]; then
     shift
   fi
 
@@ -176,17 +201,30 @@ rbenv() {
   esac
 }
 
-# sst
-export PATH=/Users/matt/.sst/bin:$PATH
-
-# Created by `pipx` on 2024-07-11 12:31:03
-export PATH="$PATH:/Users/matt/.local/bin"
-
 # atuin shell plugin
 eval "$(atuin init zsh)"
 
-export PATH
-trim_path
+# ============================================================================
+# PATH CONFIGURATION - Consolidated for clarity
+# ============================================================================
+# Note: Order matters! Earlier entries take precedence.
 
-# Added by Windsurf
-export PATH="/Users/matt/.codeium/windsurf/bin:$PATH"
+# User-specific bins
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.sst/bin:$PATH"
+export PATH="$HOME/.codeium/windsurf/bin:$PATH"
+
+# Ruby (rbenv)
+export PATH="$HOME/.rbenv/shims:$PATH"
+
+# Rust
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# Go
+export PATH="$GOBIN:$PATH"
+
+# Homebrew curl (override system curl)
+export PATH="/usr/local/opt/curl/bin:$PATH"
+
+# Remove duplicate PATH entries
+trim_path
