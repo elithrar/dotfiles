@@ -17,8 +17,8 @@
   "soft_wrap": "editor_width",
   "theme": {
     "mode": "dark",
-    "light": "Catppuccin Mocha",
-    "dark": "Catppuccin Mocha"
+    "light": "orng Light",
+    "dark": "orng Dark"
   },
   "formatter": "auto",
   "languages": {

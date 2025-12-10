@@ -228,3 +228,6 @@ export PATH="/usr/local/opt/curl/bin:$PATH"
 
 # Remove duplicate PATH entries
 trim_path
+
+# bun completions
+[ -s "/Users/matt/.bun/_bun" ] && source "/Users/matt/.bun/_bun"
