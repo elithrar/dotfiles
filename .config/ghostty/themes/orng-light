@@ -1,0 +1,30 @@
+# orng Light - Ghostty Theme
+# Based on the Zed orng theme by Matt Silverlock / Cloudflare
+# Cloudflare-inspired orange primaries
+
+background = #FFF7F1
+foreground = #1a1a1a
+cursor-color = #EC5B2B
+cursor-text = #ffffff
+selection-background = #f5cfc0
+selection-foreground = #1a1a1a
+
+# Standard colors (0-7)
+palette = 0=#1a1a1a
+palette = 1=#d1383d
+palette = 2=#0062d1
+palette = 3=#b0851f
+palette = 4=#0062d1
+palette = 5=#c94d24
+palette = 6=#318795
+palette = 7=#ffffff
+
+# Bright colors (8-15)
+palette = 8=#8a8a8a
+palette = 9=#e05a5e
+palette = 10=#0055b8
+palette = 11=#c99d3a
+palette = 12=#0055b8
+palette = 13=#EC5B2B
+palette = 14=#4ba3b0
+palette = 15=#ffffff
