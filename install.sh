@@ -9,7 +9,6 @@ DOTFILES_REPO="https://github.com/elithrar/dotfiles"
 BREW_PACKAGES=(age asciinema atuin bat bun cmake curl delta fd gifski git go htop jq lua make mkcert neovim nmap node pipx python rcm ripgrep tmux tree websocat wget wrk yarn zsh cloudflare/cloudflare/cloudflared stow rbenv ruby-build uv ruff gh shellcheck fzf zoxide)
 CASKS=()
 SSH_EMAIL="matt@eatsleeprepeat.net"
-CLOUDSDK_INSTALL_DIR="${HOME}/repos"
 
 # Colors
 reset="$(tput sgr0)"
