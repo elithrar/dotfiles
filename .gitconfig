@@ -2,13 +2,27 @@
     name = Matt Silverlock
     email = "matt@eatsleeprepeat.net"
 [core]
-    editor = "cursor --wait"
+    editor = "zed --wait"
     excludesfile = ~/.gitignore
     fileMode = false
     # https://notes.takashiidobe.com/tools/git/delta
     pager = "pre=$(which delta); ${pre:-cat} | less --tabs=4 -RFX"
 [push]
     default = simple
+    autoSetupRemote = true
+[fetch]
+    prune = true
+[merge]
+    conflictStyle = zdiff3
+[diff]
+    algorithm = histogram
+    colorMoved = default
+[rerere]
+    enabled = true
+[branch]
+    sort = -committerdate
+[column]
+    ui = auto
 [rebase]
     autosquash = true
 [log]
@@ -26,3 +40,5 @@
     defaultBranch = main
 [include]
 	path = /Users/matt/.local/share/cloudflare-warp-certs/gitconfig
+[includeIf "hasconfig:remote.*.url:*gitlab.cfdata.org*"]
+    path = ~/.gitconfig-cloudflare
