@@ -41,6 +41,8 @@ alias unixts="date +%s"
 alias iso8601="date -u +'%Y-%m-%dT%H:%M:%SZ'"
 alias less="less -X"
 alias sl="ls"
+alias opencode="opencode --continue"
+alias oc="opencode --continue"
 unalias gb
 
 # Keychain + SSH
