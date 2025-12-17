@@ -20,3 +20,13 @@
 * em-dashes are OK. semi-colons less so.
 * don't use emojis unless I do.
 * be concise, avoid walls of text, and prefer American English.
+* lead with the problem or context before the solution.
+* use "we" for collaboration; "you" to address the reader.
+* keep paragraphs short - 2-4 sentences max.
+* explain why, not just what.
+* link liberally to sources, docs, and references.
+* use bullet points over numbered lists unless order matters.
+* be direct and opinionated; acknowledge tradeoffs honestly.
+* use bold for key phrases that anchor an argument.
+* reframe complex points to aid readers in comprehension.
+* use rhetorical questions sparingly to drive a point home.
