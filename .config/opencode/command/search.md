@@ -2,7 +2,7 @@
 description: "search the current codebase for specific functionality or behavior"
 ---
 
-Search the current codebase for specific functionality or behavior related to the provided arguments.
+search the current codebase for specific functionality or behavior related to the provided arguments.
 
 $ARGUMENTS
 
