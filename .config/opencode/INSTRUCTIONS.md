@@ -18,6 +18,7 @@
 * prefer AP style unless there is an existing convention in the project
 * avoid marketing speak - "perfect for", "empowers you to", "modernization"
 * em-dashes are OK. semi-colons less so.
+* if I paste in a document or prose, strongly prioritize retaining the original voice, tone, and narrative structure. help bring clarity and coherence in your edits, and keep edits small and self-contained unless otherwise requested.
 * don't use emojis unless I do.
 * be concise, avoid walls of text, and prefer American English.
 * lead with the problem or context before the solution.
