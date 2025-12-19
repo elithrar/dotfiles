@@ -41,7 +41,6 @@ alias unixts="date +%s"
 alias iso8601="date -u +'%Y-%m-%dT%H:%M:%SZ'"
 alias less="less -X"
 alias sl="ls"
-alias opencode="opencode --continue"
 alias oc="opencode --continue"
 unalias gb
 
@@ -165,19 +164,19 @@ if [[ -s "$NVM_DIR/nvm.sh" ]]; then
     source "$NVM_DIR/nvm.sh"
     nvm "$@"
   }
-  
+
   node() {
     unset -f nvm node npm npx
     source "$NVM_DIR/nvm.sh"
     node "$@"
   }
-  
+
   npm() {
     unset -f nvm node npm npx
     source "$NVM_DIR/nvm.sh"
     npm "$@"
   }
-  
+
   npx() {
     unset -f nvm node npm npx
     source "$NVM_DIR/nvm.sh"
