@@ -3,6 +3,24 @@
   "theme": "orng",
   "autoupdate": true,
   "instructions": ["INSTRUCTIONS.md"],
+  "mcp": {
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
+    },
+    "cloudflare-docs": {
+      "type": "remote",
+      "url": "https://docs.mcp.cloudflare.com/mcp",
+    },
+    "cloudflare-builds": {
+      "type": "remote",
+      "url": "https://builds.mcp.cloudflare.com/mcp",
+    },
+    "cloudflare-observability": {
+      "type": "remote",
+      "url": "https://observability.mcp.cloudflare.com/mcp",
+    },
+  },
   "agent": {
     "write": {
       "description": "reviews, edits and drafts longer-form content in my voice.",
