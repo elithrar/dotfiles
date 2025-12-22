@@ -15,10 +15,12 @@
     "cloudflare-builds": {
       "type": "remote",
       "url": "https://builds.mcp.cloudflare.com/mcp",
+      "oauth": {},
     },
     "cloudflare-observability": {
       "type": "remote",
       "url": "https://observability.mcp.cloudflare.com/mcp",
+      "oauth": {},
     },
   },
   "agent": {
