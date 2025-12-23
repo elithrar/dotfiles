@@ -7,6 +7,7 @@
     "chrome-devtools": {
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
+      "enabled": false,
     },
     "cloudflare-docs": {
       "type": "remote",
@@ -16,11 +17,13 @@
       "type": "remote",
       "url": "https://builds.mcp.cloudflare.com/mcp",
       "oauth": {},
+      "enabled": false,
     },
     "cloudflare-observability": {
       "type": "remote",
       "url": "https://observability.mcp.cloudflare.com/mcp",
       "oauth": {},
+      "enabled": false,
     },
   },
   "agent": {
