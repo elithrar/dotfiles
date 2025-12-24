@@ -10,17 +10,30 @@ BREW_PACKAGES=(age asciinema atuin bat bun cmake curl delta fd gifski git go hto
 CASKS=(raycast)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 
-# Colors
-reset="$(tput sgr0)"
-highlight="$(tput smso)"
-dim="$(tput dim)"
-red="$(tput setaf 1)"
-blue="$(tput setaf 4)"
-green="$(tput setaf 2)"
- yellow="$(tput setaf 3)"
-bold=$(tput bold)
-normal=$(tput sgr0)
-underline="$(tput smul)"
+# Colors - use fallbacks if tput unavailable
+if command -v tput &>/dev/null && tput sgr0 &>/dev/null; then
+    reset="$(tput sgr0)"
+    highlight="$(tput smso)"
+    dim="$(tput dim)"
+    red="$(tput setaf 1)"
+    blue="$(tput setaf 4)"
+    green="$(tput setaf 2)"
+    yellow="$(tput setaf 3)"
+    bold=$(tput bold)
+    normal=$(tput sgr0)
+    underline="$(tput smul)"
+else
+    reset=""
+    highlight=""
+    dim=""
+    red=""
+    blue=""
+    green=""
+    yellow=""
+    bold=""
+    normal=""
+    underline=""
+fi
 indent="   "
 
 # Error handling
@@ -48,9 +61,9 @@ ${yellow}
 Running...
  _           _        _ _       _
 (_)_ __  ___| |_ __ _| | |  ___| |__
-| | '_ \/ __| __/ _  | | | / __| '_ \
-| | | | \__ \ || (_| | | |_\__ \ | | |
-|_|_| |_|___/\__\__,_|_|_(_)___/_| |_|
+| | '_ \/ __| __/ _  | | | / __| '_ \\
+| | | | \__ \\ || (_| | | |_\__ \\ | | |
+|_|_| |_|___/\\__\\__,_|_|_(_)___/_| |_|
 
 -----
 - Sets up a macOS or Linux based development machine.
@@ -75,8 +88,7 @@ print_info "Interactive shell session: ${INTERACTIVE}"
 # On Linux, we may need to install some packages.
 DISTRO=""
 if [ "${OS}" = "Linux" ]; then
-    if [ -f /etc/os-release ] && grep -iq "Debian" /etc/os-release;
- then
+    if [ -f /etc/os-release ] && grep -iq "Debian" /etc/os-release; then
         DISTRO="Debian"
         print_info "Detected Linux distro: ${DISTRO}"
     fi
@@ -110,18 +122,21 @@ fi
 
 # Generate an SSH key (if none) if we're in an interactive shell
 if [ "${INTERACTIVE}" = true ] && ! [[ -f "${HOME}/.ssh/id_ed25519" ]]; then
-    printf "🔑 Generating new SSH key"
-    ssh-keygen -t ed25519 -f $HOME/.ssh/id_ed25519 -C "matt@eatsleeprepeat.net"
+    printf "🔑 Generating new SSH key\n"
+    # Ensure .ssh directory exists with correct permissions
+    mkdir -p "${HOME}/.ssh"
+    chmod 700 "${HOME}/.ssh"
+    ssh-keygen -t ed25519 -f "${HOME}/.ssh/id_ed25519" -C "${SSH_EMAIL}"
     print_info "Key generated!"
     if [ "${OS}" = "Darwin" ]; then
-      print_info "Adding key to Keychain"
-      ssh-add --apple-use-keychain $HOME/.ssh/id_ed25519
+        print_info "Adding key to Keychain"
+        ssh-add --apple-use-keychain "${HOME}/.ssh/id_ed25519"
     fi
 fi
 
 # Set up repos directory
 if [ ! -d "${HOME}/repos" ]; then
-    mkdir -p $HOME/repos
+    mkdir -p "${HOME}/repos"
 fi
 
 # Install Homebrew
@@ -151,8 +166,7 @@ brew tap thoughtbot/formulae
 for pkg in "${BREW_PACKAGES[@]}"; do
     # Check if $pkg is already installed
     print_info "Checking package ${pkg}"
-    if ! brew list "${pkg}" &>/dev/null;
- then
+    if ! brew list "${pkg}" &>/dev/null; then
         print_info "Installing ${pkg}"
         brew install --quiet "${pkg}"
     else
@@ -171,8 +185,7 @@ if [ "${OS}" = "Darwin" ]; then
     for pkg in "${CASKS[@]:-}"; do
         # Check if $pkg is already installed
         print_info "Checking package ${pkg}"
-        if ! brew list --cask "${pkg}" &>/dev/null;
- then
+        if ! brew list --cask "${pkg}" &>/dev/null; then
             print_info "Installing ${pkg}"
             brew install --cask "${pkg}"
         else
@@ -195,21 +208,24 @@ fi
 
 if [ ! -d "${HOME}/repos/dotfiles" ]; then
     print_info "Cloning dotfiles"
-    git clone ${DOTFILES_REPO} "${HOME}/repos/dotfiles"
+    git clone "${DOTFILES_REPO}" "${HOME}/repos/dotfiles"
 else
     print_info "dotfiles already cloned"
 fi
 
 print_info "Linking dotfiles"
-stow --dir="${HOME}/repos/dotfiles" --target="${HOME}"
+stow --dir="${HOME}/repos/dotfiles" --target="${HOME}" .
 print_success "dotfiles installed"
 
 # --- Configure zsh
 if [ ! -d "${HOME}/.oh-my-zsh" ]; then
     print_info "Installing oh-my-zsh"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-    command -v zsh | sudo tee -a /etc/shells
-    chsh -s $(which zsh)
+    # Use --unattended to prevent oh-my-zsh from changing the shell or starting zsh
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    if ! grep -q "$(command -v zsh)" /etc/shells; then
+        command -v zsh | sudo tee -a /etc/shells
+    fi
+    chsh -s "$(command -v zsh)"
 else
     print_success "oh-my-zsh already installed"
 fi
@@ -222,10 +238,10 @@ else
     print_success "Atuin already installed"
 fi
 
-# Install uv
+# Install uv - skip if already installed via brew
 if ! [ -x "$(command -v uv)" ]; then
-  print_info "Installing uv"
-  curl -LsSf https://astral.sh/uv/install.sh | sh
+    print_info "Installing uv"
+    curl -LsSf https://astral.sh/uv/install.sh | sh
 else
     print_success "uv already installed."
 fi
