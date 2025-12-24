@@ -2,6 +2,8 @@
 
 ✏ dotfiles & installation script for my development environment.
 
+bonk was here
+
 ## Install
 
 There are two major components:
