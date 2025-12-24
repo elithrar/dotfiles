@@ -7,7 +7,7 @@
 There are two major components:
 
 1. `install.sh` - which sets up dependencies, installs Homebrew and related packages, and links in dotfiles, on macOS and Linux
-2. The 'dotfiles' themselves - `.tmuxconf`, `.zshrc`, etc.
+2. The 'dotfiles' themselves - `.tmux.conf`, `.zshrc`, etc.
 
 Install the dependencies: package manager, packages, tooling:
 
