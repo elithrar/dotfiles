@@ -44,11 +44,6 @@ alias sl="ls"
 alias oc="opencode --continue"
 unalias gb
 
-# Keychain + SSH
-ssh-add --apple-use-keychain ~/.ssh/id_ed25519 2>/dev/null
-# macOS screenshots -> clipboard
-defaults write com.apple.screencapture target clipboard 2>/dev/null
-
 # Go
 export GOPATH=$HOME/repos/go
 export GOBIN=$GOPATH/bin
@@ -60,13 +55,20 @@ alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverag
 # macOS specific
 if [ "$(uname -s 2> /dev/null)" = "Darwin" ]; then
 	printf "Applying macOS specific settings\n"
+
+	# Keychain + SSH (macOS only)
+	ssh-add --apple-use-keychain ~/.ssh/id_ed25519 2>/dev/null
+
+	# macOS screenshots -> clipboard
+	defaults write com.apple.screencapture target clipboard 2>/dev/null
+
 	flush-dns() {
 	    sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo "DNS cache flushed"
 	}
 
 	get_new_mac() {
 	    sudo /System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport -z && \
-	    sudo ifconfig en0 ether a0$(openssl rand -hex 5 | sed 's/\(..\)/:\1/g') && \
+	    sudo ifconfig en0 ether a0$(openssl rand -hex 5 | sed 's/\(.\{2\}\)/:\1/g') && \
 	    networksetup -detectnewhardware
 	}
 
@@ -112,7 +114,7 @@ time-at() {
 
 # tmux
 alias tmux="tmux -2 -u"
-if which tmux 2>&1 >/dev/null; then
+if command -v tmux >/dev/null 2>&1; then
     test -z "$TMUX" && (tmux attach || tmux new-session)
 fi
 
@@ -231,4 +233,4 @@ export PATH="/usr/local/opt/curl/bin:$PATH"
 trim_path
 
 # bun completions
-[ -s "/Users/matt/.bun/_bun" ] && source "/Users/matt/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
