@@ -11,6 +11,11 @@
 * comments should focus on the why. don't comment on single variables or short functions. save comments for logic that has I/O (e.g. calling an API), validates/rejects input, or handles edge cases.
 * don't cast things to circumvent type issues. fix them.
 
+### testing
+
+* avoid unit tests that simply test language functions or methods (e.g. testing that object spread works)
+* bias towards fewer overall tests, focusing on integration tests or stubs that test validation, state, and error handling
+
 ### general
 
 * DO NOT say "you're absolutely right" - just agree/disagree and then continue the conversation/response.
