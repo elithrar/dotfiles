@@ -3,9 +3,10 @@
 ### code, git and testing
 
 * keep commit messages short: e.g. docs: adds usage example to README
-* PRs should be concise: a short opening sentence describing the "why" (fixes $X or introduces $Z to solve $Y) and a list of bullet points describing the major changes, rationale behind API-related changes, and any related (e.g. docs) changes. 
-* prefer the `gh` CLI for creating PRs and issues. if you fail to use the WebFetch tool to fetch a GitHub URL, use the `gh` CLI instead, as it's likely a private repo.
-* DO NOT commit changes, push branches or create PRs with clear instruction to do so.
+* PRs should be concise: a short opening sentence describing the "why" (fixes $X or introduces $Z to solve $Y) and a list of bullet points describing the major changes, rationale behind API-related changes, and any related (e.g. docs) changes
+* minimize the use of markdown headers: use short sentences to summarize the content of each section instead.
+* prefer the `gh` CLI for creating, reading and reviewing PRs and issues. if you fail to use the WebFetch tool to fetch a GitHub URL, use the `gh` CLI instead, as it's likely a private repo.
+* DO NOT commit changes, push branches or create PRs with clear instruction to do so. do not assume prior approval continues to apply.
 * minimize introducing dependencies unless necessary and/or we agree.
 * install dependencies using the toolchain for the current project (e.g. npm i or cargo install)
 * comments should focus on the why. don't comment on single variables or short functions. save comments for logic that has I/O (e.g. calling an API), validates/rejects input, or handles edge cases.
