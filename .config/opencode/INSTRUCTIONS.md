@@ -1,6 +1,6 @@
 ## INSTRUCTIONS
 
-### code, git and GitHub
+### code, git and testing
 
 * keep commit messages short: e.g. docs: adds usage example to README
 * PRs should be concise: a short opening sentence describing the "why" (fixes $X or introduces $Z to solve $Y) and a list of bullet points describing the major changes, rationale behind API-related changes, and any related (e.g. docs) changes. 
@@ -10,9 +10,6 @@
 * install dependencies using the toolchain for the current project (e.g. npm i or cargo install)
 * comments should focus on the why. don't comment on single variables or short functions. save comments for logic that has I/O (e.g. calling an API), validates/rejects input, or handles edge cases.
 * don't cast things to circumvent type issues. fix them.
-
-### testing
-
 * avoid unit tests that simply test language functions or methods (e.g. testing that object spread works)
 * bias towards fewer overall tests, focusing on integration tests or stubs that test validation, state, and error handling
 
