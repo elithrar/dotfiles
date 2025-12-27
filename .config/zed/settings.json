@@ -2,7 +2,12 @@
   "agent_buffer_font_size": 15.0,
   "icon_theme": "Zed (Default)",
   "edit_predictions": {
-    "mode": "eager"
+    "mode": "eager",
+    "disabled_globs": [
+      "**/.env*",
+      "**/*.pem",
+      "**/*.key"
+    ]
   },
   "features": {
     "edit_prediction_provider": "zed"
@@ -15,15 +20,19 @@
   "buffer_font_size": 14,
   "ui_font_weight": 500,
   "soft_wrap": "editor_width",
+  "relative_line_numbers": true,
   "theme": {
     "mode": "dark",
     "light": "orng Light",
     "dark": "orng Dark"
   },
-  "formatter": "auto",
   "languages": {
     "Markdown-Inline": {
       "enable_language_server": true
+    },
+    "Markdown": {
+      "soft_wrap": "editor_width",
+      "format_on_save": "off"
     }
   },
   "git_panel": {
@@ -35,7 +44,18 @@
   "outline_panel": {
     "dock": "right"
   },
+  "notification_panel": {
+    "dock": "right"
+  },
+  "collaboration_panel": {
+    "dock": "right"
+  },
   "cursor_shape": "block",
+  "scrollbar": {
+    "show": "auto",
+    "git_diff": true,
+    "diagnostics": "all"
+  },
   "agent": {
     "inline_assistant_model": {
       "provider": "anthropic",
@@ -73,7 +93,7 @@
     "enabled": true,
     "default_model": {
       "provider": "anthropic",
-      "model": "claude-3-7-sonnet-thinking-latest"
+      "model": "claude-sonnet-4-5-latest"
     }
   },
   "terminal": {
