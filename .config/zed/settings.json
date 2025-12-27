@@ -21,6 +21,13 @@
   "ui_font_weight": 500,
   "soft_wrap": "editor_width",
   "relative_line_numbers": true,
+  "current_line_highlight": "gutter",
+  "inlay_hints": {
+    "enabled": true
+  },
+  "vim": {
+    "use_system_clipboard": "always"
+  },
   "theme": {
     "mode": "dark",
     "light": "orng Light",
