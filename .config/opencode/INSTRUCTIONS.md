@@ -7,7 +7,7 @@
 * minimize the use of markdown headers unless absolutely necessary: use short sentences to summarize the content of an issue or PR description. use bullet points to lay out the major changes or decisions.
 * do NOT list out the files changed in a PR. the PR diff tells us what those are.
 * prefer the `gh` CLI for creating, reading and reviewing PRs and issues. if you fail to use the WebFetch tool to fetch a GitHub URL, use the `gh` CLI instead, as it's likely a private repo.
-* prefer to create new branches (off the default branch) when working on a new feature or bug fix. avoid committing directly to the default branch.
+* create new branches (off the default branch) when working on a new feature or bug fix. avoid committing directly to the default branch.
 * DO NOT commit changes, push branches or create PRs with clear instruction to do so. do not assume prior approval continues to apply.
 * minimize introducing dependencies unless necessary and/or we agree.
 * install dependencies using the toolchain for the current project (e.g. npm i or cargo install)
