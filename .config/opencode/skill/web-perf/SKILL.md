@@ -84,6 +84,7 @@ list_network_requests(resourceTypes: ["Script", "Stylesheet", "Document", "Font"
 3. **Missing preloads**: Critical resources (fonts, hero images, key scripts) not preloaded
 4. **Caching issues**: Missing or weak `Cache-Control`, `ETag`, or `Last-Modified` headers
 5. **Large payloads**: Uncompressed or oversized JS/CSS bundles
+6. **Unused preconnects**: If flagged, verify by checking if ANY requests went to that origin. If zero requests, it's definitively unused—recommend removal. If requests exist but loaded late, the preconnect may still be valuable.
 
 For detailed request info:
 ```
@@ -164,4 +165,11 @@ Present findings as:
 3. **Recommendations** - Specific, actionable fixes with code snippets or config changes
 4. **Codebase Findings** - Framework/bundler detected, optimization opportunities
 
-Focus on high-impact, actionable recommendations. Avoid generic advice.
+## Guidelines
+
+- **Be assertive**: Don't hedge with "if not needed" or "consider removing". Verify claims by checking the network requests, DOM, or codebase. If a preconnect is unused, confirm no requests went to that origin—then state definitively "Remove this unused preconnect."
+- **Verify before recommending**: If you suggest removing something, first confirm it's actually unused. Search the codebase or inspect network traffic.
+- **Quantify impact**: Use estimated savings from insights. Don't recommend changes with 0ms estimated savings as high-priority.
+- **Skip non-issues**: If render-blocking resources load in <100ms and have 0ms estimated impact, note they exist but don't recommend action.
+- **Be specific**: Instead of "optimize images", say "compress hero.png (currently 450KB) to WebP" or "add width/height to prevent layout shift on line 47".
+- **Prioritize ruthlessly**: Focus on issues with measurable impact. A site with 200ms LCP and 0 CLS is already excellent—say so and move on.
