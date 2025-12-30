@@ -54,8 +54,6 @@ alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverag
 
 # macOS specific
 if [ "$(uname -s 2> /dev/null)" = "Darwin" ]; then
-	printf "Applying macOS specific settings\n"
-
 	# Keychain + SSH (macOS only)
 	ssh-add --apple-use-keychain ~/.ssh/id_ed25519 2>/dev/null
 
@@ -234,3 +232,4 @@ trim_path
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

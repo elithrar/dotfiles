@@ -6,7 +6,7 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age asciinema atuin bat bun cmake curl delta fd gifski git go htop jq lua make mkcert neovim nmap node pipx python rcm ripgrep tmux tree websocat wget wrk yarn zsh cloudflare/cloudflare/cloudflared stow rbenv ruby-build uv ruff gh shellcheck fzf zoxide)
+BREW_PACKAGES=(age asciinema atuin bat bun cmake curl delta fd gifski git go htop jq lua make mkcert neovim nmap pipx python rcm ripgrep tmux tree websocat wget wrk yarn zsh cloudflare/cloudflare/cloudflared stow rbenv ruby-build uv ruff gh shellcheck fzf zoxide)
 CASKS=(raycast)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 
@@ -236,6 +236,14 @@ if [ ! -d "${HOME}/.atuin" ]; then
     curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
 else
     print_success "Atuin already installed"
+fi
+
+# --- Install nvm
+if [ ! -d "${HOME}/.nvm" ]; then
+    print_info "Installing nvm"
+    PROFILE=/dev/null curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+else
+    print_success "nvm already installed"
 fi
 
 # Install uv - skip if already installed via brew
