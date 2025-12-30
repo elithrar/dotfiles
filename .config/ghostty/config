@@ -19,6 +19,8 @@ mouse-hide-while-typing = true
 
 shell-integration-features = true
 
+link-url = true
+
 auto-update = download
 auto-update-channel = tip
 
