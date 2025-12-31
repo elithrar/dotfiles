@@ -20,7 +20,7 @@
   "buffer_font_size": 14,
   "ui_font_weight": 500,
   "soft_wrap": "editor_width",
-  "relative_line_numbers": true,
+  "relative_line_numbers": "enabled",
   "current_line_highlight": "gutter",
   "inlay_hints": {
     "enabled": true
@@ -28,11 +28,7 @@
   "vim": {
     "use_system_clipboard": "always"
   },
-  "theme": {
-    "mode": "dark",
-    "light": "orng Light",
-    "dark": "orng Dark"
-  },
+  "theme": "Cloudflare Dark",
   "languages": {
     "Markdown-Inline": {
       "enable_language_server": true
