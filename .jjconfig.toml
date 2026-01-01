@@ -1,3 +1,13 @@
 [aliases]
 # https://shaddy.dev/notes/jj-tug/
 tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
+
+[ui]
+pager = "less -FRX"
+diff-formatter = "delta"
+
+[ui.diff]
+format = ":git"
+
+[template-aliases]
+'format_timestamp(timestamp)' = 'timestamp.ago()'
