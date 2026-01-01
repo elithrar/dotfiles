@@ -1,0 +1,3 @@
+[aliases]
+# https://shaddy.dev/notes/jj-tug/
+tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
