@@ -6,7 +6,7 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age asciinema atuin bat bun cmake curl delta fd gifski git go htop jq lua make mkcert neovim nmap pipx python rcm ripgrep tmux tree websocat wget wrk yarn zsh cloudflare/cloudflare/cloudflared stow rbenv ruby-build uv ruff gh shellcheck fzf zoxide)
+BREW_PACKAGES=(age agg asciinema atuin bat bun cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jj jq lua make mkcert neovim nmap node pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree uv websocat wget wrk yarn zoxide zsh cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
 CASKS=(raycast)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 
