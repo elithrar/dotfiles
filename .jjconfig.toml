@@ -11,3 +11,10 @@ format = ":git"
 
 [template-aliases]
 'format_timestamp(timestamp)' = 'timestamp.ago()'
+# Shorter IDs for prompts and compact displays
+'format_short_change_id(id)' = 'id.shortest(4)'
+'format_short_commit_id(id)' = 'id.shortest(4)'
+
+[revset-aliases]
+# Find the closest bookmark ancestor - useful for prompts showing distance from bookmark
+'closest_bookmark(to)' = 'heads(::to & bookmarks())'

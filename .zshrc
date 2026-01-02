@@ -18,6 +18,7 @@ plugins=(
 	git
 	github
 	golang
+	jj
 	pip
 	python
 	tmux
@@ -133,8 +134,47 @@ ZSH_THEME_GIT_PROMPT_SUFFIX=")%f"
 ZSH_THEME_GIT_PROMPT_DIRTY=" ✗"
 ZSH_THEME_GIT_PROMPT_CLEAN=" ✓"
 
+# jj (Jujutsu) prompt integration
+# Detects whether current directory is a jj repo, git repo, or neither.
+# In colocated repos (both .jj and .git), jj takes precedence since git
+# would show an unhelpful "detached HEAD" state.
+_detect_vcs_type() {
+  local dir="/$PWD"
+  while [[ -n "$dir" ]]; do
+    [[ -e "$dir/.jj" ]] && { echo "jj"; return; }
+    [[ -e "$dir/.git" ]] && { echo "git"; return; }
+    dir="${dir%/*}"
+  done
+}
+
+# jj prompt: shows change ID, commit ID, bookmarks, and status indicators
+# Uses --ignore-working-copy for performance (avoids snapshotting on every prompt)
+_jj_prompt_info() {
+  command -v jj &> /dev/null || return
+  local jj_info
+  jj_info=$(jj log --ignore-working-copy --no-pager --no-graph -r @ -T '
+    separate(" ",
+      change_id.shortest(4),
+      commit_id.shortest(4),
+      bookmarks,
+      if(conflict, "conflict"),
+      if(empty, "(empty)"),
+      if(description.first_line() == "", "(no desc)")
+    )
+  ' 2>/dev/null) || return
+  [[ -n "$jj_info" ]] && echo " %F{141}jj:($jj_info)%f"
+}
+
+# VCS prompt: shows jj info in jj repos, git info in git-only repos
+_vcs_prompt_info() {
+  case "$(_detect_vcs_type)" in
+    jj)  _jj_prompt_info ;;
+    git) git_prompt_info ;;
+  esac
+}
+
 NEWLINE=$'\n'
-export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~$(git_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%}➜ '
+export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~$(_vcs_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%}➜ '
 export TERM="xterm-256color"
 
 # editor
@@ -233,3 +273,10 @@ trim_path
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# jj (Jujutsu) dynamic completions
+# https://docs.jj-vcs.dev/latest/install-and-setup/#dynamic-completions
+# Dynamic completions include bookmarks, aliases, revisions, operations, and files
+if command -v jj &> /dev/null; then
+  source <(COMPLETE=zsh jj)
+fi
