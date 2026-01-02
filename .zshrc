@@ -1,6 +1,10 @@
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 
+# Force async git prompt since we wrap git_prompt_info in _vcs_prompt_info
+# and oh-my-zsh's auto-detection doesn't find it in PROMPT directly
+zstyle ':omz:alpha:lib:git' async-prompt force
+
 # Completion options
 CASE_SENSITIVE="false"
 HYPHEN_INSENSITIVE="true"
@@ -139,7 +143,7 @@ ZSH_THEME_GIT_PROMPT_CLEAN=" ✓"
 # In colocated repos (both .jj and .git), jj takes precedence since git
 # would show an unhelpful "detached HEAD" state.
 _detect_vcs_type() {
-  local dir="/$PWD"
+  local dir="$PWD"
   while [[ -n "$dir" ]]; do
     [[ -e "$dir/.jj" ]] && { echo "jj"; return; }
     [[ -e "$dir/.git" ]] && { echo "git"; return; }

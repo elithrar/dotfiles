@@ -6,8 +6,8 @@ tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
 pager = "less -FRX"
 diff-formatter = "delta"
 
-[ui.diff]
-format = ":git"
+[remotes.origin]
+auto-track-bookmarks = "glob:*"
 
 [template-aliases]
 'format_timestamp(timestamp)' = 'timestamp.ago()'
