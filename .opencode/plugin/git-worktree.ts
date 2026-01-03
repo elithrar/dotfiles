@@ -50,11 +50,15 @@ function log(sessionID: string, action: string, detail: string): void {
   console.log(`[git-worktree] session=${sessionID} action=${action} ${detail}`)
 }
 
+const EXEC_TIMEOUT_MS = 30_000
+
 async function safeExec(
   _$: typeof Bun.$,
   command: string[],
-  options?: { cwd?: string }
+  options?: { cwd?: string; timeoutMs?: number }
 ): Promise<{ success: boolean; stdout: string; stderr: string }> {
+  const timeout = options?.timeoutMs ?? EXEC_TIMEOUT_MS
+
   try {
     const proc = Bun.spawn(command, {
       cwd: options?.cwd,
@@ -62,9 +66,19 @@ async function safeExec(
       stderr: "pipe",
     })
 
-    const [stdout, stderr] = await Promise.all([
-      new Response(proc.stdout).text(),
-      new Response(proc.stderr).text(),
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => {
+        proc.kill()
+        reject(new Error(`Command timed out after ${timeout}ms: ${command.join(" ")}`))
+      }, timeout)
+    })
+
+    const [stdout, stderr] = await Promise.race([
+      Promise.all([
+        new Response(proc.stdout).text(),
+        new Response(proc.stderr).text(),
+      ]),
+      timeoutPromise,
     ])
 
     const exitCode = await proc.exited
@@ -340,7 +354,14 @@ async function createWorktree(
 
   // Ensure session directory exists
   const basePath = getSessionBasePath(sessionID)
-  await safeExec($, ["mkdir", "-p", basePath])
+  const mkdirResult = await safeExec($, ["mkdir", "-p", basePath])
+  if (!mkdirResult.success) {
+    return {
+      success: false,
+      message: `Failed to create session directory '${basePath}': ${mkdirResult.stderr}. Check filesystem permissions.`,
+    }
+  }
+  log(sessionID, "mkdir", `path=${basePath}`)
 
   // Build the git worktree add command
   let cmd: string[]
@@ -353,9 +374,11 @@ async function createWorktree(
     cmd = ["git", "worktree", "add", worktreePath, branch]
   }
 
+  log(sessionID, "exec", `cmd="${cmd.join(" ")}" cwd=${repoRoot}`)
   const result = await safeExec($, cmd, { cwd: repoRoot })
 
   if (!result.success) {
+    log(sessionID, "error", `stderr="${result.stderr}"`)
     // Check if branch doesn't exist and suggest creating it
     if (result.stderr.includes("invalid reference") || result.stderr.includes("not a valid")) {
       return {
