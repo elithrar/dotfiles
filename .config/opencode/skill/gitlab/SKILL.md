@@ -22,7 +22,7 @@ git remote -v | grep -i gitlab
 - **Pull logs immediately on failure**: Run `glab ci trace <job-name>` first. The logs contain the answer.
 - **Use draft MRs for WIP**: Create with `--draft`, mark ready with `glab mr update <id> --ready`
 - **Reference issues explicitly**: Use `Closes #123` for auto-close, `Relates to #123` for tracking only
-- **Retry flaky failures, fix real ones**: Retry once with `glab ci retry`. If it fails again, it's a real issue.
+- **Retry flaky failures, fix real ones**: Retry a job with `glab ci retry <job-name>`. If it fails again, it's a real issue.
 
 ## Quick Start: Branch → MR
 
@@ -43,9 +43,9 @@ glab mr create --fill --target-branch main
 | Check pipeline status | `glab ci status` |
 | View pipeline details | `glab ci view` |
 | Pull job logs | `glab ci trace <job-name>` |
-| Retry failed pipeline | `glab ci retry` |
+| Retry failed job | `glab ci retry <job-name>` |
 | Run new pipeline | `glab ci run` |
-| Download artifacts | `glab ci artifact download <job-name>` |
+| Download artifacts | `glab job artifact <ref> <job-name>` |
 
 ## Prerequisites
 
@@ -226,8 +226,8 @@ glab mr merge 123 --remove-source-branch
 ### Fetch Review Comments
 
 ```bash
-# List all notes/comments on an MR
-glab mr note list 123
+# View MR with comments and activities
+glab mr view 123 --comments
 
 # View MR diff
 glab mr diff 123
@@ -237,7 +237,7 @@ glab mr diff 123
 
 1. Read the comments:
    ```bash
-   glab mr note list 123
+   glab mr view 123 --comments
    ```
 
 2. Make requested changes locally
@@ -252,7 +252,7 @@ glab mr diff 123
 4. Reply to comments (via web or API):
    ```bash
    # Add a note to the MR
-   glab mr note create 123 --message "Addressed feedback in latest commit"
+   glab mr note 123 -m "Addressed feedback in latest commit"
    ```
 
 ### Approve a Merge Request
@@ -298,8 +298,8 @@ When a pipeline fails, first identify which jobs failed:
 # View the current pipeline with job breakdown
 glab ci view
 
-# List jobs in a specific pipeline
-glab ci status --pipeline <pipeline-id>
+# View pipeline for a specific branch
+glab ci view main
 ```
 
 The output shows each job's status. Focus on jobs with `failed` status.
@@ -317,7 +317,7 @@ glab ci trace <job-id>
 glab ci trace test
 
 # For jobs in specific pipelines
-glab ci trace <job-name> --pipeline <pipeline-id>
+glab ci trace <job-name> --pipeline-id <pipeline-id>
 ```
 
 **Log analysis tips:**
@@ -363,20 +363,22 @@ glab ci trace <job-name> --pipeline <pipeline-id>
    glab ci view --web
    ```
 
-### Retry and Rerun Pipelines
+### Retry and Rerun Jobs/Pipelines
 
 ```bash
-# Retry the entire pipeline (re-runs failed jobs only)
+# Retry a specific job (interactive selection if no job specified)
 glab ci retry
+glab ci retry <job-name>
+glab ci retry <job-id>
 
-# Retry a specific pipeline
-glab ci retry <pipeline-id>
+# Retry a job in a specific pipeline
+glab ci retry <job-name> --pipeline-id <pipeline-id>
 
 # Trigger a completely new pipeline
 glab ci run
 
 # Trigger with CI variables (useful for conditional jobs)
-glab ci run --variables "FORCE_FULL_TEST=true"
+glab ci run --variables "FORCE_FULL_TEST:true"
 ```
 
 **When to retry vs. fix:**
@@ -406,17 +408,18 @@ glab variable list
 glab variable set DEBUG_CI "true"
 
 # Run pipeline with debug variable
-glab ci run --variables "CI_DEBUG_TRACE=true"
+glab ci run --variables "CI_DEBUG_TRACE:true"
 ```
 
 ### Artifacts and Reports
 
 ```bash
-# Download job artifacts
-glab ci artifact download <job-name>
+# Download job artifacts (requires ref and job name)
+glab job artifact main build
+glab job artifact <branch> <job-name>
 
-# Download from specific pipeline
-glab ci artifact download <job-name> --pipeline <pipeline-id>
+# Download to specific path
+glab job artifact main build --path="./artifacts/"
 ```
 
 Use artifacts to inspect test reports, coverage data, or build outputs that might explain failures.
