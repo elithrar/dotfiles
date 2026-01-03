@@ -30,6 +30,31 @@
  * - "theirs": Keep changes from the worktree branch on conflict
  * - "manual": Stop on conflict and return diff for user decision
  *
+ * ## IMPORTANT: Subagent Limitations
+ *
+ * Plugin tools like `use-git-worktree` are only available to the MAIN AGENT.
+ * Task subagents (general, explore) CANNOT directly use this tool because:
+ * - Plugin tools are loaded at instance scope but subagents run with filtered tool access
+ * - The `external_directory` permission may block operations in non-interactive contexts
+ *
+ * ### Correct Pattern for Concurrent Work with Subagents
+ *
+ * 1. **Main agent creates worktrees** using `use-git-worktree` tool
+ * 2. **Main agent launches Task subagents** with the worktree PATH (not branch):
+ *    ```
+ *    Task(subagent_type="general", prompt="Work in /tmp/opencode-git-worktree-{sessionID}/feature-branch.
+ *         Use Read/Write/Edit/Bash tools to modify files in that directory.")
+ *    ```
+ * 3. **Subagents use standard tools** (Read, Write, Edit, Bash) in their assigned paths
+ * 4. **Main agent handles merge/cleanup** using `use-git-worktree`
+ *
+ * ### Required Configuration
+ *
+ * Your `.opencode/opencode.jsonc` must include:
+ * ```json
+ * { "permission": { "external_directory": "allow" } }
+ * ```
+ *
  * Git worktrees are automatically cleaned up when the session ends.
  */
 
@@ -202,6 +227,10 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
 
 IMPORTANT: Always use this tool instead of running \`git worktree\` commands directly via Bash.
 This tool provides session-scoped worktrees, automatic cleanup, and proper logging.
+
+NOTE: This tool is only available to the MAIN AGENT. Task subagents cannot use this tool directly.
+For concurrent work: main agent creates worktrees first, then launches subagents with the worktree PATH.
+Subagents should use standard tools (Read, Write, Edit, Bash) in their assigned worktree directory.
 
 ## Actions
 
