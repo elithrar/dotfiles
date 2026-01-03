@@ -23,3 +23,7 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# OpenCode plugin dependencies (installed at runtime)
+.opencode/node_modules/
+.opencode/bun.lock
