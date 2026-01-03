@@ -47,11 +47,10 @@ Copy this checklist to track progress:
 ```
 Audit Progress:
 - [ ] Phase 1: Performance trace (navigate + record)
-- [ ] Phase 2: Core Web Vitals analysis
+- [ ] Phase 2: Core Web Vitals analysis (includes CLS culprits)
 - [ ] Phase 3: Network analysis
-- [ ] Phase 4: Layout shift identification
-- [ ] Phase 5: Accessibility snapshot
-- [ ] Phase 6: Codebase analysis (skip if third-party site)
+- [ ] Phase 4: Accessibility snapshot
+- [ ] Phase 5: Codebase analysis (skip if third-party site)
 ```
 
 ### Phase 1: Performance Trace
@@ -83,7 +82,7 @@ Common insight names:
 | Metric | Insight Name | What to Look For |
 |--------|--------------|------------------|
 | LCP | `LCPBreakdown` | Time to largest contentful paint; breakdown of TTFB, resource load, render delay |
-| CLS | `CLSCulprits` | Elements causing layout shifts |
+| CLS | `CLSCulprits` | Elements causing layout shifts (images without dimensions, injected content, font swaps) |
 | Render Blocking | `RenderBlocking` | CSS/JS blocking first paint |
 | Document Latency | `DocumentLatency` | Server response time issues |
 | Network Dependencies | `NetworkRequestsDepGraph` | Request chains delaying critical resources |
@@ -94,8 +93,10 @@ performance_analyze_insight(insightSetId: "<id-from-trace>", insightName: "LCPBr
 ```
 
 **Key thresholds (good/needs-improvement/poor):**
+- TTFB: < 800ms / < 1.8s / > 1.8s
 - FCP: < 1.8s / < 3s / > 3s
-- LCP: < 2.5s / < 4s / > 4s  
+- LCP: < 2.5s / < 4s / > 4s
+- INP: < 200ms / < 500ms / > 500ms
 - TBT: < 200ms / < 600ms / > 600ms
 - CLS: < 0.1 / < 0.25 / > 0.25
 - Speed Index: < 3.4s / < 5.8s / > 5.8s
@@ -121,13 +122,7 @@ For detailed request info:
 get_network_request(reqid: <id>)
 ```
 
-### Phase 4: Layout Shift Identification
-
-From the performance trace insights, identify:
-- Elements causing CLS (images without dimensions, dynamically injected content, web fonts causing FOIT/FOUT)
-- Ads or embeds pushing content down
-
-### Phase 5: Accessibility Snapshot
+### Phase 4: Accessibility Snapshot
 
 Take an accessibility tree snapshot:
 ```
@@ -140,9 +135,11 @@ take_snapshot(verbose: true)
 - Focus traps or missing focus indicators
 - Interactive elements without accessible names
 
-## Codebase Analysis
+## Phase 5: Codebase Analysis
 
-After the browser audit, analyze the codebase to understand where improvements can be made. Skip this phase if auditing a third-party site without codebase access.
+**Skip if auditing a third-party site without codebase access.**
+
+Analyze the codebase to understand where improvements can be made.
 
 ### Detect Framework & Bundler
 
@@ -193,6 +190,4 @@ Present findings as:
 1. **Core Web Vitals Summary** - Table with metric, value, and rating (good/needs-improvement/poor)
 2. **Top Issues** - Prioritized list of problems with estimated impact (high/medium/low)
 3. **Recommendations** - Specific, actionable fixes with code snippets or config changes
-4. **Codebase Findings** - Framework/bundler detected, optimization opportunities
-
-
+4. **Codebase Findings** - Framework/bundler detected, optimization opportunities (omit if no codebase access)
