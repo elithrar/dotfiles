@@ -7,6 +7,13 @@
  *
  * ## Agent Usage Guide
  *
+ * IMPORTANT: Always use the `use-git-worktree` tool for ALL git worktree operations.
+ * Do NOT use `git worktree` commands directly via Bash - the plugin provides:
+ * - Session-scoped isolation (worktrees are namespaced per session)
+ * - Automatic cleanup when sessions end
+ * - Proper conflict resolution strategies
+ * - Logging and observability for non-interactive workflows
+ *
  * Use the `use-git-worktree` tool when you need to:
  * - Work on multiple unrelated changes concurrently
  * - Isolate changes for different branches without affecting the main worktree
@@ -152,6 +159,21 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
   const repoRoot = worktree || directory
 
   return {
+    "tool.execute.before": async (input, output) => {
+      // Intercept direct `git worktree` commands and guide the agent to use the plugin
+      if (input.tool === "bash" && typeof output.args?.command === "string") {
+        const cmd = output.args.command
+        if (/\bgit\s+worktree\b/.test(cmd)) {
+          throw new Error(
+            `Direct 'git worktree' commands are not allowed. ` +
+            `Use the 'use-git-worktree' tool instead for session-scoped worktree management, ` +
+            `automatic cleanup, and proper logging. ` +
+            `Available actions: create, list, remove, merge, status, cleanup.`
+          )
+        }
+      }
+    },
+
     event: async ({ event }) => {
       try {
         if (
@@ -177,6 +199,9 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
     tool: {
       "use-git-worktree": tool({
         description: `Manage git worktrees for concurrent branch development.
+
+IMPORTANT: Always use this tool instead of running \`git worktree\` commands directly via Bash.
+This tool provides session-scoped worktrees, automatic cleanup, and proper logging.
 
 ## Actions
 
