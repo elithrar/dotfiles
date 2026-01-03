@@ -7,9 +7,11 @@ description: Analyzes web performance using Chrome DevTools MCP. Measures Core W
 
 Audit web page performance using Chrome DevTools MCP tools. This skill focuses on Core Web Vitals, network optimization, and high-level accessibility gaps.
 
-## Prerequisites
+## FIRST: Verify MCP Tools Available
 
-This skill requires the `chrome-devtools` MCP server. If tools like `performance_start_trace` or `navigate_page` are unavailable, ask the user to install it in their MCP config:
+**Run this before starting.** Try calling `navigate_page` or `performance_start_trace`. If unavailable, STOP—the chrome-devtools MCP server isn't configured.
+
+Ask the user to add this to their MCP config:
 
 ```json
 "chrome-devtools": {
@@ -17,6 +19,26 @@ This skill requires the `chrome-devtools` MCP server. If tools like `performance
   "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
 }
 ```
+
+## Key Guidelines
+
+- **Be assertive**: Verify claims by checking network requests, DOM, or codebase—then state findings definitively.
+- **Verify before recommending**: Confirm something is unused before suggesting removal.
+- **Quantify impact**: Use estimated savings from insights. Don't prioritize changes with 0ms impact.
+- **Skip non-issues**: If render-blocking resources have 0ms estimated impact, note but don't recommend action.
+- **Be specific**: Say "compress hero.png (450KB) to WebP" not "optimize images".
+- **Prioritize ruthlessly**: A site with 200ms LCP and 0 CLS is already excellent—say so.
+
+## Quick Reference
+
+| Task | Tool Call |
+|------|-----------|
+| Load page | `navigate_page(url: "...")` |
+| Start trace | `performance_start_trace(autoStop: true, reload: true)` |
+| Analyze insight | `performance_analyze_insight(insightSetId: "...", insightName: "...")` |
+| List requests | `list_network_requests(resourceTypes: ["Script", "Stylesheet", ...])` |
+| Request details | `get_network_request(reqid: <id>)` |
+| A11y snapshot | `take_snapshot(verbose: true)` |
 
 ## Workflow
 
@@ -29,7 +51,7 @@ Audit Progress:
 - [ ] Phase 3: Network analysis
 - [ ] Phase 4: Layout shift identification
 - [ ] Phase 5: Accessibility snapshot
-- [ ] Phase 6: Codebase analysis (if applicable)
+- [ ] Phase 6: Codebase analysis (skip if third-party site)
 ```
 
 ### Phase 1: Performance Trace
@@ -46,9 +68,17 @@ Audit Progress:
 
 3. Wait for trace completion, then retrieve results.
 
+**Troubleshooting:**
+- If trace returns empty or fails, verify the page loaded correctly with `navigate_page` first
+- If insight names don't match, inspect the trace response to list available insights
+
 ### Phase 2: Core Web Vitals Analysis
 
-Use `performance_analyze_insight` to extract key metrics. Common insight names (assumes latest Chrome DevTools; names may vary across versions—use the insight set IDs returned by the trace to discover available insights):
+Use `performance_analyze_insight` to extract key metrics.
+
+**Note:** Insight names may vary across Chrome DevTools versions. If an insight name doesn't work, check the `insightSetId` from the trace response to discover available insights.
+
+Common insight names:
 
 | Metric | Insight Name | What to Look For |
 |--------|--------------|------------------|
@@ -165,11 +195,4 @@ Present findings as:
 3. **Recommendations** - Specific, actionable fixes with code snippets or config changes
 4. **Codebase Findings** - Framework/bundler detected, optimization opportunities
 
-## Guidelines
 
-- **Be assertive**: Don't hedge with "if not needed" or "consider removing". Verify claims by checking the network requests, DOM, or codebase. If a preconnect is unused, confirm no requests went to that origin—then state definitively "Remove this unused preconnect."
-- **Verify before recommending**: If you suggest removing something, first confirm it's actually unused. Search the codebase or inspect network traffic.
-- **Quantify impact**: Use estimated savings from insights. Don't recommend changes with 0ms estimated savings as high-priority.
-- **Skip non-issues**: If render-blocking resources load in <100ms and have 0ms estimated impact, note they exist but don't recommend action.
-- **Be specific**: Instead of "optimize images", say "compress hero.png (currently 450KB) to WebP" or "add width/height to prevent layout shift on line 47".
-- **Prioritize ruthlessly**: Focus on issues with measurable impact. A site with 200ms LCP and 0 CLS is already excellent—say so and move on.

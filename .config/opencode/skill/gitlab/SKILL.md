@@ -157,13 +157,13 @@ glab mr create --fill
 ### List Merge Requests
 
 ```bash
-# List open MRs
+# List open MRs (default)
 glab mr list
 
-# List MRs by state
-glab mr list --state merged
-glab mr list --state closed
-glab mr list --state all
+# List by state
+glab mr list --merged      # merged MRs only
+glab mr list --closed      # closed MRs only
+glab mr list --all         # all MRs (open, merged, closed)
 
 # Filter by author or assignee
 glab mr list --author @me
@@ -171,6 +171,9 @@ glab mr list --assignee @me
 
 # Filter by label
 glab mr list --label bug,urgent
+
+# Limit results
+glab mr list --per-page 10
 ```
 
 ### View Merge Request Details
