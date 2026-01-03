@@ -28,7 +28,6 @@
 
 import { type Plugin, tool } from "@opencode-ai/plugin"
 
-// Type definitions for better safety
 interface WorktreeInfo {
   path: string
   branch: string
@@ -45,27 +44,35 @@ interface WorktreeResult {
   worktrees?: WorktreeInfo[]
 }
 
-// In-memory tracking of worktrees per session
 const sessionWorktrees = new Map<string, WorktreeInfo[]>()
 
-/**
- * Safely execute a shell command and handle errors gracefully
- */
+function log(sessionID: string, action: string, detail: string): void {
+  console.log(`[worktree] session=${sessionID} action=${action} ${detail}`)
+}
+
 async function safeExec(
-  $: typeof Bun.$,
+  _$: typeof Bun.$,
   command: string[],
   options?: { cwd?: string }
 ): Promise<{ success: boolean; stdout: string; stderr: string }> {
   try {
-    const cmd = command.join(" ")
-    const result = options?.cwd
-      ? await $`cd ${options.cwd} && ${cmd}`.quiet()
-      : await $`${cmd}`.quiet()
+    const proc = Bun.spawn(command, {
+      cwd: options?.cwd,
+      stdout: "pipe",
+      stderr: "pipe",
+    })
+
+    const [stdout, stderr] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ])
+
+    const exitCode = await proc.exited
 
     return {
-      success: result.exitCode === 0,
-      stdout: result.stdout.toString().trim(),
-      stderr: result.stderr.toString().trim(),
+      success: exitCode === 0,
+      stdout: stdout.trim(),
+      stderr: stderr.trim(),
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
@@ -77,25 +84,23 @@ async function safeExec(
   }
 }
 
-/**
- * Get the base path for session worktrees
- */
 function getSessionBasePath(sessionID: string): string {
   return `/tmp/opencode-worktree-${sessionID}`
 }
 
-/**
- * Get the full worktree path for a branch
- */
+function sanitizeBranchName(branch: string): string {
+  // Reject branches with shell metacharacters or git-unsafe patterns
+  if (/[\s;&|`$(){}[\]<>\\'"!*?~^]/.test(branch) || branch.startsWith("-")) {
+    throw new Error(`Invalid branch name: contains unsafe characters`)
+  }
+  return branch
+}
+
 function getWorktreePath(sessionID: string, branch: string): string {
-  // Sanitize branch name for filesystem safety
-  const safeBranch = branch.replace(/[^a-zA-Z0-9_-]/g, "_")
+  const safeBranch = branch.replace(/[^a-zA-Z0-9_\-/]/g, "_")
   return `${getSessionBasePath(sessionID)}/${safeBranch}`
 }
 
-/**
- * Clean up all worktrees for a session
- */
 async function cleanupSessionWorktrees(
   $: typeof Bun.$,
   sessionID: string,
@@ -104,6 +109,8 @@ async function cleanupSessionWorktrees(
   const worktrees = sessionWorktrees.get(sessionID) || []
   const errors: string[] = []
   let cleaned = 0
+
+  log(sessionID, "cleanup", `worktrees=${worktrees.length}`)
 
   for (const wt of worktrees) {
     const result = await safeExec($, ["git", "worktree", "remove", "--force", wt.path], {
@@ -116,36 +123,23 @@ async function cleanupSessionWorktrees(
     }
   }
 
-  // Also try to remove the session base directory
   const basePath = getSessionBasePath(sessionID)
   await safeExec($, ["rm", "-rf", basePath])
 
-  // Prune any dangling worktree references
   await safeExec($, ["git", "worktree", "prune"], { cwd: directory })
 
-  // Clear tracking
   sessionWorktrees.delete(sessionID)
 
   return { cleaned, errors }
 }
 
-/**
- * Worktree Plugin
- *
- * Provides the `use-worktree` tool and handles automatic cleanup on session end.
- */
 export const WorktreePlugin: Plugin = async (ctx) => {
   const { $, directory, worktree } = ctx
   const repoRoot = worktree || directory
 
   return {
-    /**
-     * Event handler for session lifecycle management
-     * Automatically cleans up worktrees when session ends
-     */
     event: async ({ event }) => {
       try {
-        // Clean up on session end or error
         if (
           event.type === "session.deleted" ||
           event.type === "session.error"
@@ -162,14 +156,10 @@ export const WorktreePlugin: Plugin = async (ctx) => {
           }
         }
       } catch (error) {
-        // Never let plugin errors crash OpenCode
         console.error("[worktree] Event handler error:", error)
       }
     },
 
-    /**
-     * Register the use-worktree tool
-     */
     tool: {
       "use-worktree": tool({
         description: `Manage git worktrees for concurrent branch development.
@@ -309,9 +299,6 @@ Worktrees are stored at \`/tmp/opencode-worktree-{sessionID}/{branch}\` and are 
   }
 }
 
-/**
- * Create a new worktree
- */
 async function createWorktree(
   $: typeof Bun.$,
   sessionID: string,
@@ -324,6 +311,16 @@ async function createWorktree(
     return {
       success: false,
       message: "Branch name is required for create action",
+    }
+  }
+
+  try {
+    sanitizeBranchName(branch)
+    if (baseBranch) sanitizeBranchName(baseBranch)
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : String(error),
     }
   }
 
@@ -379,7 +376,6 @@ async function createWorktree(
     }
   }
 
-  // Track the worktree
   const worktreeInfo: WorktreeInfo = {
     path: worktreePath,
     branch,
@@ -391,6 +387,8 @@ async function createWorktree(
   }
   sessionWorktrees.get(sessionID)!.push(worktreeInfo)
 
+  log(sessionID, "create", `branch=${branch} path=${worktreePath}`)
+
   return {
     success: true,
     message: `Created worktree for branch '${branch}'`,
@@ -399,9 +397,6 @@ async function createWorktree(
   }
 }
 
-/**
- * List all worktrees in the session
- */
 async function listWorktrees(
   $: typeof Bun.$,
   sessionID: string,
@@ -434,9 +429,6 @@ async function listWorktrees(
   }
 }
 
-/**
- * Remove a worktree
- */
 async function removeWorktree(
   $: typeof Bun.$,
   sessionID: string,
@@ -471,11 +463,12 @@ async function removeWorktree(
     }
   }
 
-  // Remove from tracking
   const index = tracked.indexOf(worktree)
   if (index > -1) {
     tracked.splice(index, 1)
   }
+
+  log(sessionID, "remove", `branch=${branch} path=${worktree.path}`)
 
   return {
     success: true,
@@ -484,9 +477,6 @@ async function removeWorktree(
   }
 }
 
-/**
- * Merge worktree changes into a target branch
- */
 async function mergeWorktree(
   $: typeof Bun.$,
   sessionID: string,
@@ -508,6 +498,16 @@ async function mergeWorktree(
       success: false,
       message:
         "Target branch is required for merge action. Specify which branch to merge into.",
+    }
+  }
+
+  try {
+    sanitizeBranchName(branch)
+    sanitizeBranchName(targetBranch)
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : String(error),
     }
   }
 
@@ -605,6 +605,8 @@ async function mergeWorktree(
     }
   }
 
+  log(sessionID, "merge", `branch=${branch} target=${targetBranch} strategy=${strategy}`)
+
   return {
     success: true,
     message: `Successfully merged '${branch}' into '${targetBranch}'`,
@@ -612,9 +614,6 @@ async function mergeWorktree(
   }
 }
 
-/**
- * Get status of a worktree
- */
 async function getWorktreeStatus(
   $: typeof Bun.$,
   sessionID: string,
@@ -643,10 +642,10 @@ async function getWorktreeStatus(
     cwd: worktree.path,
   })
 
-  // Get commits ahead/behind
+  // Get commits ahead/behind (ignore errors if remote branch doesn't exist)
   const logResult = await safeExec(
     $,
-    ["git", "log", "--oneline", `origin/${branch}..${branch}`, "2>/dev/null", "||", "true"],
+    ["git", "log", "--oneline", `origin/${branch}..${branch}`],
     { cwd: worktree.path }
   )
 
@@ -672,9 +671,6 @@ async function getWorktreeStatus(
   }
 }
 
-/**
- * Clean up all worktrees in the session
- */
 async function cleanupAll(
   $: typeof Bun.$,
   sessionID: string,
@@ -695,9 +691,6 @@ async function cleanupAll(
   }
 }
 
-/**
- * Format a result for display
- */
 function formatResult(result: WorktreeResult): string {
   let output = result.success ? "SUCCESS" : "ERROR"
   output += `\n\n${result.message}`
