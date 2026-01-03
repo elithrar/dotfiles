@@ -254,4 +254,12 @@ else
     print_success "uv already installed."
 fi
 
+# Install Rust via rustup
+if ! [ -x "$(command -v rustc)" ]; then
+    print_info "Installing Rust via rustup"
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+else
+    print_success "Rust already installed."
+fi
+
 print_success "All done! Visit https://github.com/elithrar/dotfiles for the full source & related configs."
