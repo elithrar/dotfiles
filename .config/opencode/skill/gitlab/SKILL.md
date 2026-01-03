@@ -1,11 +1,40 @@
 ---
 name: gitlab
-description: Helps with complex GitLab workflows using the glab CLI. Use when a git remote contains "gitlab" in the URL. Handles cloning repos, creating and updating merge requests, fetching and addressing review comments, checking CI job status, pulling logs from failed jobs, diagnosing and fixing CI failures, searching across GitLab projects/issues/MRs, and coordinating changes across multiple repositories.
+description: Use for GitLab repos (when remote contains "gitlab"). Provides glab CLI commands for MRs, CI/CD, and issues.
 ---
 
 # GitLab Workflow
 
-Work with GitLab repositories, merge requests, issues, and CI/CD pipelines using the `glab` CLI. This skill applies when the git remote URL contains "gitlab".
+Work with GitLab repositories, merge requests, issues, and CI/CD pipelines using the `glab` CLI.
+
+## FIRST: Verify GitLab Remote
+
+**Run this before any `glab` command.** If no match, STOP—this skill doesn't apply.
+
+```bash
+git remote -v | grep -i gitlab
+```
+
+## Key Guidelines
+
+- **Verify remote first**: No GitLab remote = don't use `glab`
+- **Check CI before requesting review**: Run `glab ci status` after pushing. Fix failures before requesting reviews.
+- **Pull logs immediately on failure**: Run `glab ci trace <job-name>` first. The logs contain the answer.
+- **Use draft MRs for WIP**: Create with `--draft`, mark ready with `glab mr update <id> --ready`
+- **Reference issues explicitly**: Use `Closes #123` for auto-close, `Relates to #123` for tracking only
+- **Retry flaky failures, fix real ones**: Retry once with `glab ci retry`. If it fails again, it's a real issue.
+
+## Quick Start: Branch → MR
+
+The most common workflow—create a branch, make changes, open an MR:
+
+```bash
+git checkout -b feature/my-feature
+# make changes
+git add . && git commit -m "feat: add new feature"
+git push -u origin feature/my-feature
+glab mr create --fill --target-branch main
+```
 
 ## Quick Reference: CI Commands
 
@@ -38,32 +67,13 @@ Authentication must be configured. Run `glab auth status` to check. If not authe
 glab auth login
 ```
 
-## Detecting GitLab Remotes
+---
 
-Before using `glab`, verify you're working with a GitLab repository:
+# Detailed Reference
 
-```bash
-git remote -v | grep -i gitlab
-```
+## Repository Setup
 
-If the output contains "gitlab.com" or a self-managed GitLab instance, proceed with `glab` commands. Otherwise, this skill does not apply.
-
-## Workflow
-
-Copy this checklist to track progress:
-
-```
-GitLab Workflow:
-- [ ] Phase 1: Repository setup (clone/verify remote)
-- [ ] Phase 2: Branch and changes
-- [ ] Phase 3: Merge request creation/update
-- [ ] Phase 4: Review and iteration
-- [ ] Phase 5: CI/CD monitoring and failure remediation
-```
-
-### Phase 1: Repository Setup
-
-#### Clone a Repository
+### Clone a Repository
 
 ```bash
 # Clone via glab (uses authenticated user context)
@@ -76,7 +86,7 @@ glab repo clone <owner>/<repo> -- --branch <branch>
 glab repo clone <owner>/<repo> <directory>
 ```
 
-#### Fork a Repository
+### Fork a Repository
 
 ```bash
 # Fork to your namespace
@@ -86,16 +96,16 @@ glab repo fork <owner>/<repo>
 glab repo fork <owner>/<repo> --clone
 ```
 
-#### View Repository Info
+### View Repository Info
 
 ```bash
 glab repo view
 glab repo view <owner>/<repo>
 ```
 
-### Phase 2: Branch and Changes
+## Branch and Changes
 
-#### Create a Branch
+### Create a Branch
 
 ```bash
 git checkout -b feature/my-feature
@@ -104,15 +114,15 @@ git add .
 git commit -m "feat: add new feature"
 ```
 
-#### Push Branch
+### Push Branch
 
 ```bash
 git push -u origin feature/my-feature
 ```
 
-### Phase 3: Merge Request Operations
+## Merge Request Operations
 
-#### Create a Merge Request
+### Create a Merge Request
 
 ```bash
 # Interactive creation
@@ -144,7 +154,7 @@ glab mr create --draft --title "WIP: feature in progress"
 glab mr create --fill
 ```
 
-#### List Merge Requests
+### List Merge Requests
 
 ```bash
 # List open MRs
@@ -163,7 +173,7 @@ glab mr list --assignee @me
 glab mr list --label bug,urgent
 ```
 
-#### View Merge Request Details
+### View Merge Request Details
 
 ```bash
 # View current branch's MR
@@ -176,7 +186,7 @@ glab mr view 123
 glab mr view 123 --web
 ```
 
-#### Update a Merge Request
+### Update a Merge Request
 
 ```bash
 # Update title
@@ -195,7 +205,7 @@ glab mr update 123 --ready
 glab mr update 123 --reviewer user1,user2
 ```
 
-#### Merge a Merge Request
+### Merge a Merge Request
 
 ```bash
 # Merge when pipeline succeeds
@@ -211,9 +221,9 @@ glab mr merge 123 --squash
 glab mr merge 123 --remove-source-branch
 ```
 
-### Phase 4: Review and Iteration
+## Review and Iteration
 
-#### Fetch Review Comments
+### Fetch Review Comments
 
 ```bash
 # List all notes/comments on an MR
@@ -223,7 +233,7 @@ glab mr note list 123
 glab mr diff 123
 ```
 
-#### Address Review Comments
+### Address Review Comments
 
 1. Read the comments:
    ```bash
@@ -245,24 +255,24 @@ glab mr diff 123
    glab mr note create 123 --message "Addressed feedback in latest commit"
    ```
 
-#### Approve a Merge Request
+### Approve a Merge Request
 
 ```bash
 glab mr approve 123
 ```
 
-#### Check Out an MR Locally
+### Check Out an MR Locally
 
 ```bash
 # Check out MR branch locally for testing
 glab mr checkout 123
 ```
 
-### Phase 5: CI/CD Monitoring and Failure Remediation
+## CI/CD Monitoring and Failure Remediation
 
-CI job failures are the most common blocker for merging MRs. This phase covers checking pipeline status, diagnosing failures, and addressing them systematically.
+CI job failures are the most common blocker for merging MRs.
 
-#### Check Pipeline Status
+### Check Pipeline Status
 
 ```bash
 # Quick status check for current branch
@@ -280,7 +290,7 @@ glab mr view 123  # Shows pipeline status in MR details
 
 **Pipeline states**: `pending`, `running`, `success`, `failed`, `canceled`, `skipped`
 
-#### Identify Failed Jobs
+### Identify Failed Jobs
 
 When a pipeline fails, first identify which jobs failed:
 
@@ -294,7 +304,7 @@ glab ci status --pipeline <pipeline-id>
 
 The output shows each job's status. Focus on jobs with `failed` status.
 
-#### Pull and Analyze Job Logs
+### Pull and Analyze Job Logs
 
 ```bash
 # Stream logs from a running or completed job
@@ -316,7 +326,7 @@ glab ci trace <job-name> --pipeline <pipeline-id>
 - Check for timeout messages if the job hung
 - Note the stage and job name for context
 
-#### Common CI Failure Patterns
+### Common CI Failure Patterns
 
 | Pattern | Log Signature | Typical Fix |
 |---------|---------------|-------------|
@@ -327,7 +337,7 @@ glab ci trace <job-name> --pipeline <pipeline-id>
 | Missing env/secret | `undefined`, `missing required`, `authentication failed` | Check CI variables configuration |
 | Dependency issue | `404 Not Found`, `version not found` | Update dependency versions, check registry access |
 
-#### Address Failures Locally
+### Address Failures Locally
 
 1. **Reproduce the failure locally** (when possible):
    ```bash
@@ -353,7 +363,7 @@ glab ci trace <job-name> --pipeline <pipeline-id>
    glab ci view --web
    ```
 
-#### Retry and Rerun Pipelines
+### Retry and Rerun Pipelines
 
 ```bash
 # Retry the entire pipeline (re-runs failed jobs only)
@@ -373,7 +383,7 @@ glab ci run --variables "FORCE_FULL_TEST=true"
 - **Retry**: Flaky tests, transient network errors, runner issues
 - **Fix**: Genuine code errors, missing dependencies, configuration problems
 
-#### CI Failure Remediation Workflow
+### CI Failure Remediation Workflow
 
 Follow this process when an MR pipeline fails:
 
@@ -386,7 +396,7 @@ Follow this process when an MR pipeline fails:
 7. **Verify**: `glab ci status --live` to watch new pipeline
 8. **If still failing**: Repeat from step 2
 
-#### Advanced: Debug with CI Variables
+### Advanced: Debug with CI Variables
 
 ```bash
 # List CI/CD variables (requires maintainer access)
@@ -399,7 +409,7 @@ glab variable set DEBUG_CI "true"
 glab ci run --variables "CI_DEBUG_TRACE=true"
 ```
 
-#### Artifacts and Reports
+### Artifacts and Reports
 
 ```bash
 # Download job artifacts
@@ -567,14 +577,8 @@ glab api projects/:id/issues --method POST --field title="New issue"
 glab api projects/:id/issues --paginate
 ```
 
-## Guidelines
+## Additional Notes
 
-- **Verify remote first**: Run `git remote -v | grep -i gitlab` before any `glab` command. If no GitLab remote exists, this skill does not apply.
-- **Check authentication on errors**: If `glab` commands fail with 401/403 or "not authenticated", run `glab auth status` and re-authenticate with `glab auth login`.
-- **Always check CI before requesting review**: Run `glab ci status` after pushing. Don't request reviews on failing pipelines—fix CI failures first.
-- **Pull logs immediately on failure**: When CI fails, run `glab ci trace <job-name>` before asking for help. The logs contain the answer.
-- **Use draft MRs for WIP**: Create with `--draft` for incomplete work. Mark ready with `glab mr update <id> --ready`.
-- **Reference issues explicitly**: Use `Closes #123` in MR descriptions for automatic issue closure. Use `Relates to #123` for tracking without auto-close.
+- **Check authentication on errors**: If `glab` commands fail with 401/403, run `glab auth status` and re-authenticate with `glab auth login`.
 - **Consistent branch naming**: Use `feature/`, `fix/`, `docs/`, `chore/` prefixes. For security fixes, include the CVE: `fix/CVE-2024-12345`.
-- **Retry flaky failures, fix real ones**: If a job fails with transient errors (network, runner issues), retry once with `glab ci retry`. If it fails again, it's a real issue—read the logs and fix it.
 - **Self-managed instances**: Set `GITLAB_HOST` environment variable or authenticate with `glab auth login --hostname gitlab.example.com`.

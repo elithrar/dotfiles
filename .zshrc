@@ -268,6 +268,9 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # Go
 export PATH="$GOBIN:$PATH"
 
+# Bun
+export PATH="$HOME/.bun/bin:$PATH"
+
 # Homebrew curl (override system curl)
 export PATH="/usr/local/opt/curl/bin:$PATH"
 
