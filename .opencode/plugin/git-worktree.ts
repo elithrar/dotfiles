@@ -1,5 +1,5 @@
 /**
- * Worktree Plugin for OpenCode
+ * Git Worktree Plugin for OpenCode
  *
  * Provides git worktree management for concurrent branch development.
  * Enables working on multiple unrelated changes simultaneously without
@@ -7,23 +7,23 @@
  *
  * ## Agent Usage Guide
  *
- * Use the `use-worktree` tool when you need to:
+ * Use the `use-git-worktree` tool when you need to:
  * - Work on multiple unrelated changes concurrently
  * - Isolate changes for different branches without affecting the main worktree
  * - Review or test code from another branch while preserving current work
  *
  * ### Workflow Example
- * 1. Create a worktree: `use-worktree` with action "create" and branch name
- * 2. Work in the worktree directory (returned in the result)
- * 3. Merge changes back: `use-worktree` with action "merge"
- * 4. Clean up: `use-worktree` with action "remove" or let session cleanup handle it
+ * 1. Create a git worktree: `use-git-worktree` with action "create" and branch name
+ * 2. Work in the git worktree directory (returned in the result)
+ * 3. Merge changes back: `use-git-worktree` with action "merge"
+ * 4. Clean up: `use-git-worktree` with action "remove" or let session cleanup handle it
  *
  * ### Merge Strategies
  * - "ours": Keep changes from the target branch on conflict
  * - "theirs": Keep changes from the worktree branch on conflict
  * - "manual": Stop on conflict and return diff for user decision
  *
- * Worktrees are automatically cleaned up when the session ends.
+ * Git worktrees are automatically cleaned up when the session ends.
  */
 
 import { type Plugin, tool } from "@opencode-ai/plugin"
@@ -47,7 +47,7 @@ interface WorktreeResult {
 const sessionWorktrees = new Map<string, WorktreeInfo[]>()
 
 function log(sessionID: string, action: string, detail: string): void {
-  console.log(`[worktree] session=${sessionID} action=${action} ${detail}`)
+  console.log(`[git-worktree] session=${sessionID} action=${action} ${detail}`)
 }
 
 async function safeExec(
@@ -85,7 +85,7 @@ async function safeExec(
 }
 
 function getSessionBasePath(sessionID: string): string {
-  return `/tmp/opencode-worktree-${sessionID}`
+  return `/tmp/opencode-git-worktree-${sessionID}`
 }
 
 function sanitizeBranchName(branch: string): string {
@@ -133,7 +133,7 @@ async function cleanupSessionWorktrees(
   return { cleaned, errors }
 }
 
-export const WorktreePlugin: Plugin = async (ctx) => {
+export const GitWorktreePlugin: Plugin = async (ctx) => {
   const { $, directory, worktree } = ctx
   const repoRoot = worktree || directory
 
@@ -149,40 +149,40 @@ export const WorktreePlugin: Plugin = async (ctx) => {
             const result = await cleanupSessionWorktrees($, sessionID, repoRoot)
             if (result.errors.length > 0) {
               console.error(
-                `[worktree] Cleanup errors for session ${sessionID}:`,
+                `[git-worktree] Cleanup errors for session ${sessionID}:`,
                 result.errors
               )
             }
           }
         }
       } catch (error) {
-        console.error("[worktree] Event handler error:", error)
+        console.error("[git-worktree] Event handler error:", error)
       }
     },
 
     tool: {
-      "use-worktree": tool({
+      "use-git-worktree": tool({
         description: `Manage git worktrees for concurrent branch development.
 
 ## Actions
 
-- **create**: Create a new worktree for a branch
-- **list**: List all worktrees in the current session
-- **remove**: Remove a specific worktree
-- **merge**: Merge worktree changes back to a target branch
-- **status**: Get the status of a worktree (changes, commits ahead/behind)
-- **cleanup**: Remove all session worktrees
+- **create**: Create a new git worktree for a branch
+- **list**: List all git worktrees in the current session
+- **remove**: Remove a specific git worktree
+- **merge**: Merge git worktree changes back to a target branch
+- **status**: Get the status of a git worktree (changes, commits ahead/behind)
+- **cleanup**: Remove all session git worktrees
 
 ## Merge Strategies
 
 When merging, use the \`mergeStrategy\` parameter:
 - **ours**: On conflict, keep changes from the target branch
-- **theirs**: On conflict, keep changes from the worktree branch  
+- **theirs**: On conflict, keep changes from the git worktree branch  
 - **manual**: Stop on conflict and return diff for user to decide
 
 ## Example Usage
 
-1. Create a worktree for a feature branch:
+1. Create a git worktree for a feature branch:
    \`\`\`
    action: "create", branch: "feature/new-ui"
    \`\`\`
@@ -197,12 +197,12 @@ When merging, use the \`mergeStrategy\` parameter:
    action: "remove", branch: "feature/new-ui"
    \`\`\`
 
-Worktrees are stored at \`/tmp/opencode-worktree-{sessionID}/{branch}\` and are automatically cleaned up when the session ends.`,
+Git worktrees are stored at \`/tmp/opencode-git-worktree-{sessionID}/{branch}\` and are automatically cleaned up when the session ends.`,
 
         args: {
           action: tool.schema
             .enum(["create", "list", "remove", "merge", "status", "cleanup"])
-            .describe("The worktree action to perform"),
+            .describe("The git worktree action to perform"),
           branch: tool.schema
             .string()
             .optional()
@@ -289,7 +289,7 @@ Worktrees are stored at \`/tmp/opencode-worktree-{sessionID}/{branch}\` and are 
               success: false,
               message: `Unexpected error: ${message}`,
             }
-            console.error("[worktree] Tool execution error:", error)
+            console.error("[git-worktree] Tool execution error:", error)
           }
 
           return formatResult(result)
@@ -710,4 +710,4 @@ function formatResult(result: WorktreeResult): string {
   return output
 }
 
-export default WorktreePlugin
+export default GitWorktreePlugin
