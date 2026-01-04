@@ -370,7 +370,7 @@ async function cloneRepo(ctx: ToolContext,
 
   const tokenResult = await getTargetRepoToken(owner, repo)
   if ("error" in tokenResult) {
-    ctx.log("error", "Failed to get token", { owner, repo, error: tokenResult.error })
+    ctx.log?.("error", "Failed to get token", { owner, repo, error: tokenResult.error })
     return { success: false, error: tokenResult.error }
   }
 
@@ -390,7 +390,7 @@ async function cloneRepo(ctx: ToolContext,
   const cloneResult = await run(cloneArgs)
 
   if (!cloneResult.success) {
-    ctx.log("error", "Clone failed", { owner, repo, error: cloneResult.stderr })
+    ctx.log?.("error", "Clone failed", { owner, repo, error: cloneResult.stderr })
     return { success: false, error: `Clone failed: ${cloneResult.stderr}` }
   }
 
@@ -406,7 +406,7 @@ async function cloneRepo(ctx: ToolContext,
     defaultBranch,
   })
 
-  ctx.log("info", "Cloned repository", { owner, repo, path: clonePath, defaultBranch })
+  ctx.log?.("info", "Cloned repository", { owner, repo, path: clonePath, defaultBranch })
 
   return { success: true, path: clonePath, defaultBranch }
 }
@@ -421,7 +421,7 @@ async function createBranch(ctx: ToolContext,
   if (!result.success) {
     const checkoutResult = await run(["git", "checkout", branchName], 30_000, repoPath)
     if (!checkoutResult.success) {
-      ctx.log("error", "Failed to create/checkout branch", { branch: branchName, error: result.stderr })
+      ctx.log?.("error", "Failed to create/checkout branch", { branch: branchName, error: result.stderr })
       return { success: false, error: `Failed to create/checkout branch: ${result.stderr}` }
     }
   }
@@ -436,7 +436,7 @@ async function commitChanges(ctx: ToolContext,
 ): Promise<{ success: boolean; commit?: string; error?: string }> {
   const addResult = await run(["git", "add", "-A"], 30_000, repoPath)
   if (!addResult.success) {
-    ctx.log("error", "Failed to stage changes", { error: addResult.stderr })
+    ctx.log?.("error", "Failed to stage changes", { error: addResult.stderr })
     return { success: false, error: `Failed to stage changes: ${addResult.stderr}` }
   }
 
@@ -447,7 +447,7 @@ async function commitChanges(ctx: ToolContext,
 
   const commitResult = await run(["git", "commit", "-m", message], 30_000, repoPath)
   if (!commitResult.success) {
-    ctx.log("error", "Failed to commit", { error: commitResult.stderr })
+    ctx.log?.("error", "Failed to commit", { error: commitResult.stderr })
     return { success: false, error: `Failed to commit: ${commitResult.stderr}` }
   }
 
@@ -476,7 +476,7 @@ async function pushBranch(ctx: ToolContext,
   const pushResult = await run(["git", "push", "-u", "origin", branch], 120_000, repoPath)
 
   if (!pushResult.success) {
-    ctx.log("error", "Push failed", { branch, error: pushResult.stderr })
+    ctx.log?.("error", "Push failed", { branch, error: pushResult.stderr })
     return { success: false, error: `Push failed: ${pushResult.stderr}` }
   }
 
@@ -502,7 +502,7 @@ async function createPR(ctx: ToolContext,
   const prResult = await run(prArgs, 60_000, repoPath)
 
   if (!prResult.success) {
-    ctx.log("error", "PR creation failed", { head: headBranch, base, error: prResult.stderr })
+    ctx.log?.("error", "PR creation failed", { head: headBranch, base, error: prResult.stderr })
     return { success: false, error: `PR creation failed: ${prResult.stderr}` }
   }
 
@@ -510,7 +510,7 @@ async function createPR(ctx: ToolContext,
   const prNumberMatch = prUrl.match(/\/pull\/(\d+)/)
   const prNumber = prNumberMatch ? parseInt(prNumberMatch[1], 10) : undefined
 
-  ctx.log("info", "PR created", { url: prUrl, prNumber })
+  ctx.log?.("info", "PR created", { url: prUrl, prNumber })
   return { success: true, prUrl, prNumber }
 }
 
@@ -526,7 +526,7 @@ async function readFile(ctx: ToolContext,
 
   const result = await run(["cat", fullPath])
   if (!result.success) {
-    ctx.log("error", "Failed to read file", { path: filePath, error: result.stderr })
+    ctx.log?.("error", "Failed to read file", { path: filePath, error: result.stderr })
     return { success: false, error: `Failed to read file: ${result.stderr}` }
   }
 
@@ -552,7 +552,7 @@ async function writeFile(ctx: ToolContext,
   const result = await runShell(`echo ${shellEscape(base64Content)} | base64 -d > ${shellEscape(fullPath)}`)
 
   if (!result.success) {
-    ctx.log("error", "Failed to write file", { path: filePath, error: result.stderr })
+    ctx.log?.("error", "Failed to write file", { path: filePath, error: result.stderr })
     return { success: false, error: `Failed to write file: ${result.stderr}` }
   }
 
@@ -572,7 +572,7 @@ async function listFiles(ctx: ToolContext,
   const result = await runShell(`find ${shellEscape(targetPath)} -type f ! -path '*/.git/*' | sed 's|^${repoPath}/||'`)
 
   if (!result.success) {
-    ctx.log("error", "Failed to list files", { path: subPath || "/", error: result.stderr })
+    ctx.log?.("error", "Failed to list files", { path: subPath || "/", error: result.stderr })
     return { success: false, error: `Failed to list files: ${result.stderr}` }
   }
 
@@ -799,7 +799,7 @@ The tool handles authentication automatically based on execution context:
     } catch (error) {
       // Catch-all for any unhandled errors - never crash OpenCode
       const message = error instanceof Error ? error.message : String(error)
-      ctx.log("error", "Unexpected error", { operation: args.operation, error: message })
+      ctx.log?.("error", "Unexpected error", { operation: args.operation, error: message })
       return stringify({ success: false, error: `Unexpected error: ${message}` })
     }
   },
