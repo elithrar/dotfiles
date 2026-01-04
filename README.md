@@ -42,6 +42,35 @@ Dotfiles & installation script for my development environment.
 3. Dotfiles in this repository contain your personalized configurations
 4. GNU Stow creates symlinks from the repo to your home directory, keeping configs version-controlled
 
+## Prerequisites
+
+Before running the install script, ensure you have the following tools available:
+
+### Required Tools
+
+- **git** - for cloning this repository
+- **curl** - for downloading packages and scripts
+- **bash** - the install script requires bash (v3.2+)
+
+### OS-Specific Requirements
+
+**macOS:**
+- macOS 10.15 (Catalina) or later
+- Xcode Command Line Tools (`xcode-select --install`)
+- Admin privileges for Homebrew installation
+
+**Linux:**
+- A Debian/Ubuntu-based distribution (for apt package manager) or equivalent
+- `sudo` access for installing system packages
+- `build-essential` package (or equivalent) for compiling some tools
+
+### WSL Compatibility
+
+This setup is fully compatible with Windows Subsystem for Linux (WSL). For best results:
+- Use WSL 2 with Ubuntu 20.04 or later
+- Ensure Windows Terminal is installed for optimal terminal experience
+- Some GUI-dependent tools may require additional configuration
+
 ## Install
 
 ```sh
