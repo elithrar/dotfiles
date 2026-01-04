@@ -2,6 +2,46 @@
 
 Dotfiles & installation script for my development environment.
 
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         install.sh                              │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     Package Managers                            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
+│  │  Homebrew   │  │     apt     │  │   Others    │              │
+│  │   (macOS)   │  │   (Linux)   │  │             │              │
+│  └─────────────┘  └─────────────┘  └─────────────┘              │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                        Dotfiles                                 │
+│  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐        │
+│  │  .zshrc   │ │.tmux.conf │ │  .vimrc   │ │ .config/* │        │
+│  └───────────┘ └───────────┘ └───────────┘ └───────────┘        │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    GNU Stow (Symlinks)                          │
+│                                                                 │
+│    ~/repos/dotfiles/.zshrc  ──────►  ~/.zshrc                   │
+│    ~/repos/dotfiles/.vimrc  ──────►  ~/.vimrc                   │
+│    ~/repos/dotfiles/.config ──────►  ~/.config                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Flow:**
+1. `install.sh` detects your OS and installs the appropriate package manager (Homebrew on macOS, apt on Linux)
+2. Package managers install required tools and dependencies (zsh, tmux, vim, etc.)
+3. Dotfiles in this repository contain your personalized configurations
+4. GNU Stow creates symlinks from the repo to your home directory, keeping configs version-controlled
+
 ## Install
 
 ```sh
