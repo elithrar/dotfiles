@@ -46,13 +46,8 @@ const clonedRepos = new Map<string, RepoState>()
 // Cache gh CLI availability
 let ghCliAvailable: boolean | null = null
 
-function log(sessionID: string, action: string, detail: string): void {
-  console.log(`[cross-repo] session=${sessionID} action=${action} ${detail}`)
-}
-
-function logError(sessionID: string, action: string, error: string): void {
-  console.error(`[cross-repo] session=${sessionID} action=${action} error=${error}`)
-}
+// Type for the SDK log helper
+type LogFn = (level: "info" | "error" | "warn", message: string, extra?: Record<string, unknown>) => Promise<void>
 
 function getClonePath(sessionID: string, owner: string, repo: string): string {
   return `${tmpdir()}/${sessionID}/${owner}-${repo}`
@@ -357,6 +352,7 @@ async function getTargetRepoToken(owner: string, repo: string): Promise<{ token:
 // Operation implementations
 
 async function cloneRepo(
+  log: LogFn,
   sessionID: string,
   owner: string,
   repo: string,
@@ -366,7 +362,7 @@ async function cloneRepo(
 
   if (clonedRepos.has(repoKey)) {
     const state = clonedRepos.get(repoKey)!
-    log(sessionID, "clone", `repo=${owner}/${repo} already_cloned=true path=${state.path}`)
+    await log("info", "Repository already cloned", { sessionID, owner, repo, path: state.path })
     return {
       success: true,
       path: state.path,
@@ -376,7 +372,7 @@ async function cloneRepo(
 
   const tokenResult = await getTargetRepoToken(owner, repo)
   if ("error" in tokenResult) {
-    logError(sessionID, "clone", tokenResult.error)
+    await log("error", "Failed to get token", { sessionID, owner, repo, error: tokenResult.error })
     return { success: false, error: tokenResult.error }
   }
 
@@ -396,7 +392,7 @@ async function cloneRepo(
   const cloneResult = await run(cloneArgs)
 
   if (!cloneResult.success) {
-    logError(sessionID, "clone", cloneResult.stderr)
+    await log("error", "Clone failed", { sessionID, owner, repo, error: cloneResult.stderr })
     return { success: false, error: `Clone failed: ${cloneResult.stderr}` }
   }
 
@@ -412,12 +408,13 @@ async function cloneRepo(
     defaultBranch,
   })
 
-  log(sessionID, "clone", `repo=${owner}/${repo} path=${clonePath} defaultBranch=${defaultBranch}`)
+  await log("info", "Repository cloned", { sessionID, owner, repo, path: clonePath, defaultBranch })
 
   return { success: true, path: clonePath, defaultBranch }
 }
 
 async function createBranch(
+  log: LogFn,
   sessionID: string,
   repoPath: string,
   branchName: string
@@ -427,23 +424,24 @@ async function createBranch(
   if (!result.success) {
     const checkoutResult = await run(["git", "checkout", branchName], 30_000, repoPath)
     if (!checkoutResult.success) {
-      logError(sessionID, "branch", result.stderr)
+      await log("error", "Failed to create/checkout branch", { sessionID, branch: branchName, error: result.stderr })
       return { success: false, error: `Failed to create/checkout branch: ${result.stderr}` }
     }
   }
 
-  log(sessionID, "branch", `branch=${branchName}`)
+  await log("info", "Branch created/checked out", { sessionID, branch: branchName })
   return { success: true, branch: branchName }
 }
 
 async function commitChanges(
+  log: LogFn,
   sessionID: string,
   repoPath: string,
   message: string
 ): Promise<{ success: boolean; commit?: string; error?: string }> {
   const addResult = await run(["git", "add", "-A"], 30_000, repoPath)
   if (!addResult.success) {
-    logError(sessionID, "commit", addResult.stderr)
+    await log("error", "Failed to stage changes", { sessionID, error: addResult.stderr })
     return { success: false, error: `Failed to stage changes: ${addResult.stderr}` }
   }
 
@@ -454,18 +452,19 @@ async function commitChanges(
 
   const commitResult = await run(["git", "commit", "-m", message], 30_000, repoPath)
   if (!commitResult.success) {
-    logError(sessionID, "commit", commitResult.stderr)
+    await log("error", "Failed to commit", { sessionID, error: commitResult.stderr })
     return { success: false, error: `Failed to commit: ${commitResult.stderr}` }
   }
 
   const shaResult = await run(["git", "rev-parse", "HEAD"], 10_000, repoPath)
   const commit = shaResult.stdout.trim()
 
-  log(sessionID, "commit", `commit=${commit}`)
+  await log("info", "Changes committed", { sessionID, commit })
   return { success: true, commit }
 }
 
 async function pushBranch(
+  log: LogFn,
   sessionID: string,
   repoPath: string,
   token: string
@@ -484,15 +483,16 @@ async function pushBranch(
   const pushResult = await run(["git", "push", "-u", "origin", branch], 120_000, repoPath)
 
   if (!pushResult.success) {
-    logError(sessionID, "push", pushResult.stderr)
+    await log("error", "Push failed", { sessionID, branch, error: pushResult.stderr })
     return { success: false, error: `Push failed: ${pushResult.stderr}` }
   }
 
-  log(sessionID, "push", `branch=${branch}`)
+  await log("info", "Branch pushed", { sessionID, branch })
   return { success: true }
 }
 
 async function createPR(
+  log: LogFn,
   sessionID: string,
   repoPath: string,
   token: string,
@@ -511,7 +511,7 @@ async function createPR(
   const prResult = await run(prArgs, 60_000, repoPath)
 
   if (!prResult.success) {
-    logError(sessionID, "pr", prResult.stderr)
+    await log("error", "PR creation failed", { sessionID, head: headBranch, base, error: prResult.stderr })
     return { success: false, error: `PR creation failed: ${prResult.stderr}` }
   }
 
@@ -519,11 +519,12 @@ async function createPR(
   const prNumberMatch = prUrl.match(/\/pull\/(\d+)/)
   const prNumber = prNumberMatch ? parseInt(prNumberMatch[1], 10) : undefined
 
-  log(sessionID, "pr", `url=${prUrl}`)
+  await log("info", "PR created", { sessionID, url: prUrl, prNumber })
   return { success: true, prUrl, prNumber }
 }
 
 async function readFile(
+  log: LogFn,
   sessionID: string,
   repoPath: string,
   filePath: string
@@ -535,15 +536,16 @@ async function readFile(
 
   const result = await run(["cat", fullPath])
   if (!result.success) {
-    logError(sessionID, "read", result.stderr)
+    await log("error", "Failed to read file", { sessionID, path: filePath, error: result.stderr })
     return { success: false, error: `Failed to read file: ${result.stderr}` }
   }
 
-  log(sessionID, "read", `path=${filePath}`)
+  await log("info", "File read", { sessionID, path: filePath })
   return { success: true, content: result.stdout }
 }
 
 async function writeFile(
+  log: LogFn,
   sessionID: string,
   repoPath: string,
   filePath: string,
@@ -562,15 +564,16 @@ async function writeFile(
   const result = await runShell(`echo ${shellEscape(base64Content)} | base64 -d > ${shellEscape(fullPath)}`)
 
   if (!result.success) {
-    logError(sessionID, "write", result.stderr)
+    await log("error", "Failed to write file", { sessionID, path: filePath, error: result.stderr })
     return { success: false, error: `Failed to write file: ${result.stderr}` }
   }
 
-  log(sessionID, "write", `path=${filePath}`)
+  await log("info", "File written", { sessionID, path: filePath })
   return { success: true }
 }
 
 async function listFiles(
+  log: LogFn,
   sessionID: string,
   repoPath: string,
   subPath?: string
@@ -583,23 +586,24 @@ async function listFiles(
   const result = await runShell(`find ${shellEscape(targetPath)} -type f ! -path '*/.git/*' | sed 's|^${repoPath}/||'`)
 
   if (!result.success) {
-    logError(sessionID, "list", result.stderr)
+    await log("error", "Failed to list files", { sessionID, path: subPath || "/", error: result.stderr })
     return { success: false, error: `Failed to list files: ${result.stderr}` }
   }
 
   const files = result.stdout.trim().split("\n").filter(Boolean)
-  log(sessionID, "list", `path=${subPath || "/"} count=${files.length}`)
+  await log("info", "Files listed", { sessionID, path: subPath || "/", count: files.length })
   return { success: true, files }
 }
 
 async function execCommand(
+  log: LogFn,
   sessionID: string,
   repoPath: string,
   command: string
 ): Promise<{ success: boolean; stdout?: string; stderr?: string; error?: string }> {
   const result = await runShell(`cd ${shellEscape(repoPath)} && ${command}`)
 
-  log(sessionID, "exec", `command=${command.substring(0, 50)}...`)
+  await log("info", "Command executed", { sessionID, command: command.substring(0, 50), success: result.success })
   return {
     success: result.success,
     stdout: result.stdout,
@@ -684,8 +688,18 @@ In GitHub Actions, the token is scoped to only the target repository with minima
   },
 
   async execute(args, ctx: ToolContext) {
-    const { sessionID } = ctx
+    const { sessionID, client } = ctx
     const repoKey = getRepoKey(sessionID, args.owner, args.repo)
+
+    // Helper to log via SDK
+    const log: LogFn = async (level, message, extra) => {
+      await client.app.log({
+        service: "cross-repo",
+        level,
+        message,
+        extra,
+      }).catch(() => {})
+    }
 
     const stringify = (result: object) => JSON.stringify(result)
 
@@ -711,7 +725,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
 
       switch (args.operation) {
         case "clone":
-          return stringify(await cloneRepo(sessionID, args.owner, args.repo, args.branch))
+          return stringify(await cloneRepo(log, sessionID, args.owner, args.repo, args.branch))
 
         case "branch": {
           const state = clonedRepos.get(repoKey)
@@ -724,7 +738,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (!args.branch) {
             return stringify({ success: false, error: "Branch name required for 'branch' operation" })
           }
-          return stringify(await createBranch(sessionID, state.path, args.branch))
+          return stringify(await createBranch(log, sessionID, state.path, args.branch))
         }
 
         case "commit": {
@@ -738,7 +752,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (!args.message) {
             return stringify({ success: false, error: "Commit message required for 'commit' operation" })
           }
-          return stringify(await commitChanges(sessionID, state.path, args.message))
+          return stringify(await commitChanges(log, sessionID, state.path, args.message))
         }
 
         case "push": {
@@ -749,7 +763,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
               error: `Repository ${args.owner}/${args.repo} not cloned. Run clone operation first.`,
             })
           }
-          return stringify(await pushBranch(sessionID, state.path, state.token))
+          return stringify(await pushBranch(log, sessionID, state.path, state.token))
         }
 
         case "pr": {
@@ -763,7 +777,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (!args.title) {
             return stringify({ success: false, error: "PR title required for 'pr' operation" })
           }
-          return stringify(await createPR(sessionID, state.path, state.token, args.title, args.message, args.base || state.defaultBranch))
+          return stringify(await createPR(log, sessionID, state.path, state.token, args.title, args.message, args.base || state.defaultBranch))
         }
 
         case "exec": {
@@ -777,7 +791,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (!args.command) {
             return stringify({ success: false, error: "Command required for 'exec' operation" })
           }
-          return stringify(await execCommand(sessionID, state.path, args.command))
+          return stringify(await execCommand(log, sessionID, state.path, args.command))
         }
 
         case "read": {
@@ -791,7 +805,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (!args.path) {
             return stringify({ success: false, error: "Path required for 'read' operation" })
           }
-          return stringify(await readFile(sessionID, state.path, args.path))
+          return stringify(await readFile(log, sessionID, state.path, args.path))
         }
 
         case "write": {
@@ -808,7 +822,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (args.content === undefined) {
             return stringify({ success: false, error: "Content required for 'write' operation" })
           }
-          return stringify(await writeFile(sessionID, state.path, args.path, args.content))
+          return stringify(await writeFile(log, sessionID, state.path, args.path, args.content))
         }
 
         case "list": {
@@ -819,7 +833,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
               error: `Repository ${args.owner}/${args.repo} not cloned. Run clone operation first.`,
             })
           }
-          return stringify(await listFiles(sessionID, state.path, args.path))
+          return stringify(await listFiles(log, sessionID, state.path, args.path))
         }
 
         default:
@@ -828,7 +842,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
     } catch (error) {
       // Catch-all for any unhandled errors - never crash OpenCode
       const message = error instanceof Error ? error.message : String(error)
-      logError(sessionID, args.operation, message)
+      await log("error", "Unexpected error", { sessionID, operation: args.operation, error: message })
       return stringify({ success: false, error: `Unexpected error: ${message}` })
     }
   },
