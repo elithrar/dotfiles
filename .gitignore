@@ -24,6 +24,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# OpenCode plugin dependencies (installed at runtime)
+# OpenCode plugin dependencies and runtime data
 .opencode/node_modules/
 .opencode/bun.lock
+.opencode/worktrees/
