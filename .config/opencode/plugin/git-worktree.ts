@@ -2,8 +2,8 @@
  * Git Worktree Plugin for OpenCode
  *
  * Provides git worktree management for concurrent branch development.
- * Worktrees are stored in a session-scoped directory within the project's
- * .opencode/worktrees/ folder to maintain isolation between sessions.
+ * Worktrees are stored in $XDG_DATA_HOME/opencode/worktree/{projectID}/{name}
+ * using OpenCode's managed worktree API.
  *
  * ## Agent Usage Guide
  *
@@ -14,9 +14,9 @@
  *   hook ONLY applies to the main agent - subagents bypass plugin hooks entirely
  *
  * The plugin provides:
- * - Session-scoped worktrees with automatic cleanup
- * - Proper conflict resolution strategies
- * - Logging and observability for non-interactive workflows
+ * - Project-scoped worktrees via managed API
+ * - Proper conflict resolution strategies for merging
+ * - Logging via OpenCode SDK
  *
  * Use the `use-git-worktree` tool when you need to:
  * - Work on multiple unrelated changes concurrently
@@ -54,8 +54,6 @@
  *    ```
  * 3. **Subagents use standard tools** (Read, Write, Edit, Bash) in their assigned paths
  * 4. **Main agent handles merge/cleanup** using `use-git-worktree` after subagents complete
- *
- * Git worktrees are stored in .opencode/worktrees/{sessionID}/{name}/.
  */
 
 import { type Plugin, tool } from "@opencode-ai/plugin"
@@ -73,14 +71,7 @@ interface WorktreeResult {
   branch?: string
   conflicts?: string[]
   diff?: string
-  worktrees?: WorktreeInfo[]
-}
-
-// Session-scoped tracking of worktrees created in this session
-const sessionWorktrees = new Map<string, WorktreeInfo[]>()
-
-function log(sessionID: string, action: string, detail: string): void {
-  console.log(`[git-worktree] session=${sessionID} action=${action} ${detail}`)
+  worktrees?: string[]
 }
 
 const EXEC_TIMEOUT_MS = 30_000
@@ -138,10 +129,30 @@ function sanitizeBranchName(branch: string): string {
 }
 
 export const GitWorktreePlugin: Plugin = async (ctx) => {
-  const { directory, worktree } = ctx
+  const { client, directory, worktree } = ctx
   const repoRoot = worktree || directory
-  // Worktrees are stored within the project directory to avoid permission issues
-  const worktreeBaseDir = `${repoRoot}/.opencode/worktrees`
+
+  // Helper to log via SDK
+  const log = async (level: "info" | "error" | "warn", message: string, extra?: Record<string, any>) => {
+    await client.app.log({ 
+      service: "git-worktree", 
+      level, 
+      message, 
+      extra 
+    }).catch(() => {})
+  }
+
+  // Helper to find worktree directory by name
+  const findWorktreeByName = async (name: string): Promise<string | undefined> => {
+    const response = await client.worktree.list().catch(() => ({ data: [] }))
+    const list = response.data ?? []
+    
+    // The API returns full directory paths, find one that ends with the name
+    return list.find(dir => {
+      const parts = dir.split('/')
+      return parts[parts.length - 1] === name
+    })
+  }
 
   return {
     "tool.execute.before": async (input, output) => {
@@ -159,23 +170,6 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
       }
     },
 
-    event: async ({ event }) => {
-      try {
-        if (
-          event.type === "session.deleted" ||
-          event.type === "session.error"
-        ) {
-          const sessionID = event.properties?.sessionID
-          if (sessionID && sessionWorktrees.has(sessionID)) {
-            log(sessionID, "cleanup", "session ended, clearing local tracking")
-            sessionWorktrees.delete(sessionID)
-          }
-        }
-      } catch (error) {
-        console.error("[git-worktree] Event handler error:", error)
-      }
-    },
-
     tool: {
       "use-git-worktree": tool({
         description: `Manage git worktrees for concurrent branch development.
@@ -186,12 +180,12 @@ CRITICAL: This tool MUST be used for ALL git worktree operations.
 
 ## Actions
 
-- **create**: Create a new git worktree with a session-scoped branch
-- **list**: List all git worktrees in the current session
-- **remove**: Remove a specific git worktree
+- **create**: Create a new git worktree with a project-scoped branch
+- **list**: List all project worktrees
+- **remove**: Remove a specific git worktree by name
 - **merge**: Merge git worktree changes back to a target branch
 - **status**: Get the status of a git worktree (changes, commits ahead/behind)
-- **cleanup**: Remove all session git worktrees
+- **cleanup**: Remove all project worktrees
 
 ## Merge Strategies
 
@@ -211,12 +205,12 @@ When merging, use the \`mergeStrategy\` parameter:
 
 3. After making changes, merge back to main:
    \`\`\`
-   action: "merge", branch: "opencode/feature-work", targetBranch: "main", mergeStrategy: "theirs"
+   action: "merge", name: "feature-work", targetBranch: "main", mergeStrategy: "theirs"
    \`\`\`
 
 4. Clean up when done:
    \`\`\`
-   action: "remove", branch: "opencode/feature-work"
+   action: "remove", name: "feature-work"
    \`\`\`
 
 ## Subagent Pattern for Concurrent Work
@@ -232,7 +226,7 @@ Since plugin tools are NOT available to Task subagents:
    \`\`\`
 4. **Main agent handles merge/cleanup** after subagents complete
 
-Git worktrees are stored at \`.opencode/worktrees/{sessionID}/{name}\` with branches named \`opencode/{name}\`.`,
+Worktrees are stored in \`$XDG_DATA_HOME/opencode/worktree/{projectID}/{name}\` with branches named \`opencode/{name}\`.`,
 
         args: {
           action: tool.schema
@@ -241,11 +235,7 @@ Git worktrees are stored at \`.opencode/worktrees/{sessionID}/{name}\` with bran
           name: tool.schema
             .string()
             .optional()
-            .describe("Worktree name for create action (optional - auto-generated like 'calm-comet' if not provided)"),
-          branch: tool.schema
-            .string()
-            .optional()
-            .describe("Branch name. For create: custom branch name (default: 'opencode/{name}'). For remove/merge/status: the branch to operate on."),
+            .describe("Worktree name for create/remove/merge/status actions (auto-generated like 'calm-comet' if not provided for create)"),
           targetBranch: tool.schema
             .string()
             .optional()
@@ -274,28 +264,29 @@ Git worktrees are stored at \`.opencode/worktrees/{sessionID}/{name}\` with bran
             switch (args.action) {
               case "create":
                 result = await createWorktree(
-                  repoRoot,
-                  worktreeBaseDir,
+                  client,
+                  log,
                   sessionID,
                   args.name,
-                  args.branch,
                   args.startCommand
                 )
                 break
 
               case "list":
-                result = await listWorktrees(sessionID, repoRoot)
+                result = await listWorktrees(client, repoRoot, log)
                 break
 
               case "remove":
-                result = await removeWorktree(sessionID, repoRoot, args.branch)
+                result = await removeWorktree(client, findWorktreeByName, repoRoot, log, sessionID, args.name)
                 break
 
               case "merge":
                 result = await mergeWorktree(
-                  sessionID,
+                  findWorktreeByName,
                   repoRoot,
-                  args.branch,
+                  log,
+                  sessionID,
+                  args.name,
                   args.targetBranch,
                   args.mergeStrategy,
                   args.commitMessage
@@ -303,11 +294,11 @@ Git worktrees are stored at \`.opencode/worktrees/{sessionID}/{name}\` with bran
                 break
 
               case "status":
-                result = await getWorktreeStatus(sessionID, repoRoot, args.branch)
+                result = await getWorktreeStatus(findWorktreeByName, log, sessionID, args.name)
                 break
 
               case "cleanup":
-                result = await cleanupAll(sessionID, repoRoot)
+                result = await cleanupAll(client, repoRoot, log, sessionID)
                 break
 
               default:
@@ -322,7 +313,7 @@ Git worktrees are stored at \`.opencode/worktrees/{sessionID}/{name}\` with bran
               success: false,
               message: `Unexpected error: ${message}`,
             }
-            console.error("[git-worktree] Tool execution error:", error)
+            await log("error", "Tool execution error", { error: message, sessionID })
           }
 
           return formatResult(result)
@@ -332,112 +323,45 @@ Git worktrees are stored at \`.opencode/worktrees/{sessionID}/{name}\` with bran
   }
 }
 
-function generateWorktreeName(): string {
-  const adjectives = ["calm", "swift", "bright", "bold", "quiet", "keen", "warm", "cool", "soft", "wild"]
-  const nouns = ["comet", "river", "storm", "cloud", "flame", "frost", "dawn", "dusk", "peak", "wave"]
-  const adj = adjectives[Math.floor(Math.random() * adjectives.length)]
-  const noun = nouns[Math.floor(Math.random() * nouns.length)]
-  return `${adj}-${noun}`
-}
-
 async function createWorktree(
-  repoRoot: string,
-  worktreeBaseDir: string,
+  client: any,
+  log: (level: string, message: string, extra?: Record<string, any>) => Promise<void>,
   sessionID: string,
   name?: string,
-  branch?: string,
   startCommand?: string
 ): Promise<WorktreeResult> {
-  const worktreeName = name ?? generateWorktreeName()
-  const branchName = branch ?? `opencode/${worktreeName}`
-  
-  log(sessionID, "create", `name=${worktreeName} branch=${branchName} startCommand=${startCommand ?? "none"}`)
+  await log("info", "Creating worktree", { sessionID, name, startCommand: startCommand ?? "none" })
 
   try {
-    // Sanitize branch name
-    sanitizeBranchName(branchName)
-    
-    // Create session-scoped worktree directory
-    const sessionWorktreeDir = `${worktreeBaseDir}/${sessionID}`
-    const worktreePath = `${sessionWorktreeDir}/${worktreeName}`
-    
-    // Ensure the base directory exists
-    const mkdirResult = await safeExec(["mkdir", "-p", sessionWorktreeDir])
-    if (!mkdirResult.success) {
+    const response = await client.worktree.create({
+      name,
+      startCommand,
+    })
+
+    if (!response.data) {
       return {
         success: false,
-        message: `Failed to create worktree directory: ${mkdirResult.stderr}`,
-      }
-    }
-    
-    // Check if worktree already exists
-    const existingWorktrees = sessionWorktrees.get(sessionID) || []
-    const existing = existingWorktrees.find(w => w.name === worktreeName)
-    if (existing) {
-      return {
-        success: true,
-        message: `Worktree '${worktreeName}' already exists`,
-        path: existing.directory,
-        branch: existing.branch,
-      }
-    }
-    
-    // Create the worktree with a new branch
-    const gitResult = await safeExec(
-      ["git", "worktree", "add", "-b", branchName, worktreePath, "HEAD"],
-      { cwd: repoRoot }
-    )
-    
-    if (!gitResult.success) {
-      // If branch already exists, try without -b
-      if (gitResult.stderr.includes("already exists")) {
-        const retryResult = await safeExec(
-          ["git", "worktree", "add", worktreePath, branchName],
-          { cwd: repoRoot }
-        )
-        if (!retryResult.success) {
-          return {
-            success: false,
-            message: `Failed to create worktree: ${retryResult.stderr}`,
-          }
-        }
-      } else {
-        return {
-          success: false,
-          message: `Failed to create worktree: ${gitResult.stderr}`,
-        }
+        message: "Failed to create worktree: No data returned from API",
       }
     }
 
-    const worktreeInfo: WorktreeInfo = {
-      name: worktreeName,
-      branch: branchName,
-      directory: worktreePath,
-    }
-
-    // Track in session
-    if (!sessionWorktrees.has(sessionID)) {
-      sessionWorktrees.set(sessionID, [])
-    }
-    sessionWorktrees.get(sessionID)!.push(worktreeInfo)
-
-    // Run start command if provided
-    if (startCommand) {
-      log(sessionID, "start-command", `running: ${startCommand}`)
-      await safeExec(["sh", "-c", startCommand], { cwd: worktreePath })
-    }
-
-    log(sessionID, "created", `name=${worktreeName} branch=${branchName} path=${worktreePath}`)
+    const worktree = response.data
+    await log("info", "Worktree created", { 
+      sessionID, 
+      name: worktree.name, 
+      branch: worktree.branch, 
+      directory: worktree.directory 
+    })
 
     return {
       success: true,
-      message: `Created worktree '${worktreeName}' with branch '${branchName}'`,
-      path: worktreePath,
-      branch: branchName,
+      message: `Created worktree '${worktree.name}' with branch '${worktree.branch}'`,
+      path: worktree.directory,
+      branch: worktree.branch,
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    log(sessionID, "error", `create failed: ${message}`)
+    await log("error", "Failed to create worktree", { sessionID, error: message })
     return {
       success: false,
       message: `Failed to create worktree: ${message}`,
@@ -446,119 +370,127 @@ async function createWorktree(
 }
 
 async function listWorktrees(
-  sessionID: string,
-  repoRoot: string
+  client: any,
+  repoRoot: string,
+  log: (level: string, message: string, extra?: Record<string, any>) => Promise<void>
 ): Promise<WorktreeResult> {
-  const tracked = sessionWorktrees.get(sessionID) || []
+  try {
+    // Get project worktrees from managed API
+    const response = await client.worktree.list().catch(() => ({ data: [] }))
+    const worktrees = response.data ?? []
 
-  // Get all git worktrees to show the full picture
-  const gitResult = await safeExec(["git", "worktree", "list", "--porcelain"], {
-    cwd: repoRoot,
-  })
+    // Also get all git worktrees for full picture
+    const gitResult = await safeExec(["git", "worktree", "list", "--porcelain"], {
+      cwd: repoRoot,
+    })
 
-  let message = `Session worktrees: ${tracked.length}\n`
+    let message = `Project worktrees: ${worktrees.length}\n`
 
-  if (tracked.length > 0) {
-    message += "\nSession-managed worktrees:\n"
-    for (const wt of tracked) {
-      message += `  - ${wt.name} (${wt.branch}): ${wt.directory}\n`
+    if (worktrees.length > 0) {
+      message += "\nManaged worktrees:\n"
+      for (const dir of worktrees) {
+        const name = dir.split('/').pop()
+        message += `  - ${name}: ${dir}\n`
+      }
     }
-  }
 
-  if (gitResult.success && gitResult.stdout) {
-    message += `\nAll repository worktrees:\n${gitResult.stdout}`
-  }
+    if (gitResult.success && gitResult.stdout) {
+      message += `\nAll repository worktrees:\n${gitResult.stdout}`
+    }
 
-  return {
-    success: true,
-    message,
-    worktrees: tracked,
+    return {
+      success: true,
+      message,
+      worktrees,
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    await log("error", "Failed to list worktrees", { error: message })
+    return {
+      success: false,
+      message: `Failed to list worktrees: ${message}`,
+    }
   }
 }
 
 async function removeWorktree(
-  sessionID: string,
+  client: any,
+  findWorktreeByName: (name: string) => Promise<string | undefined>,
   repoRoot: string,
-  branch?: string
+  log: (level: string, message: string, extra?: Record<string, any>) => Promise<void>,
+  sessionID: string,
+  name?: string
 ): Promise<WorktreeResult> {
-  if (!branch) {
+  if (!name) {
     return {
       success: false,
-      message: "Branch name is required for remove action",
+      message: "Worktree name is required for remove action",
     }
   }
 
-  const tracked = sessionWorktrees.get(sessionID) || []
-  const worktree = tracked.find((w) => w.branch === branch)
-
-  if (!worktree) {
-    // Try to find by name if branch doesn't match
-    const byName = tracked.find((w) => w.name === branch || `opencode/${w.name}` === branch)
-    if (byName) {
-      return removeWorktreeByInfo(sessionID, repoRoot, byName, tracked)
-    }
+  const directory = await findWorktreeByName(name)
+  if (!directory) {
     return {
       success: false,
-      message: `No worktree found for branch '${branch}' in this session. Use 'list' action to see available worktrees.`,
+      message: `No worktree found with name '${name}'. Use 'list' action to see available worktrees.`,
     }
   }
 
-  return removeWorktreeByInfo(sessionID, repoRoot, worktree, tracked)
-}
-
-async function removeWorktreeByInfo(
-  sessionID: string,
-  repoRoot: string,
-  worktree: WorktreeInfo,
-  tracked: WorktreeInfo[]
-): Promise<WorktreeResult> {
-  const result = await safeExec(["git", "worktree", "remove", "--force", worktree.directory], {
+  const result = await safeExec(["git", "worktree", "remove", "--force", directory], {
     cwd: repoRoot,
   })
 
   if (!result.success) {
+    await log("error", "Failed to remove worktree", { sessionID, name, directory, error: result.stderr })
     return {
       success: false,
       message: `Failed to remove worktree: ${result.stderr}`,
     }
   }
 
-  const index = tracked.indexOf(worktree)
-  if (index > -1) {
-    tracked.splice(index, 1)
-  }
-
-  log(sessionID, "remove", `name=${worktree.name} branch=${worktree.branch} path=${worktree.directory}`)
+  await log("info", "Worktree removed", { sessionID, name, directory })
 
   return {
     success: true,
-    message: `Removed worktree '${worktree.name}'`,
-    branch: worktree.branch,
+    message: `Removed worktree '${name}'`,
   }
 }
 
 async function mergeWorktree(
-  sessionID: string,
+  findWorktreeByName: (name: string) => Promise<string | undefined>,
   repoRoot: string,
-  branch?: string,
+  log: (level: string, message: string, extra?: Record<string, any>) => Promise<void>,
+  sessionID: string,
+  name?: string,
   targetBranch?: string,
   mergeStrategy?: "ours" | "theirs" | "manual",
   commitMessage?: string
 ): Promise<WorktreeResult> {
-  if (!branch) {
+  if (!name) {
     return {
       success: false,
-      message: "Branch name is required for merge action",
+      message: "Worktree name is required for merge action",
     }
   }
 
   if (!targetBranch) {
     return {
       success: false,
-      message:
-        "Target branch is required for merge action. Specify which branch to merge into.",
+      message: "Target branch is required for merge action. Specify which branch to merge into.",
     }
   }
+
+  // Find the worktree to determine its branch
+  const directory = await findWorktreeByName(name)
+  if (!directory) {
+    return {
+      success: false,
+      message: `No worktree found with name '${name}'. Use 'list' action to see available worktrees.`,
+    }
+  }
+
+  // Construct the branch name (convention: opencode/{name})
+  const branch = `opencode/${name}`
 
   try {
     sanitizeBranchName(branch)
@@ -653,7 +585,7 @@ async function mergeWorktree(
     }
   }
 
-  log(sessionID, "merge", `branch=${branch} target=${targetBranch} strategy=${strategy}`)
+  await log("info", "Worktree merged", { sessionID, name, branch, targetBranch, strategy })
 
   return {
     success: true,
@@ -663,46 +595,42 @@ async function mergeWorktree(
 }
 
 async function getWorktreeStatus(
+  findWorktreeByName: (name: string) => Promise<string | undefined>,
+  log: (level: string, message: string, extra?: Record<string, any>) => Promise<void>,
   sessionID: string,
-  repoRoot: string,
-  branch?: string
+  name?: string
 ): Promise<WorktreeResult> {
-  if (!branch) {
+  if (!name) {
     return {
       success: false,
-      message: "Branch name is required for status action",
+      message: "Worktree name is required for status action",
     }
   }
 
-  const tracked = sessionWorktrees.get(sessionID) || []
-  let worktree = tracked.find((w) => w.branch === branch)
-  
-  // Try to find by name if branch doesn't match
-  if (!worktree) {
-    worktree = tracked.find((w) => w.name === branch || `opencode/${w.name}` === branch)
-  }
-
-  if (!worktree) {
+  const directory = await findWorktreeByName(name)
+  if (!directory) {
     return {
       success: false,
-      message: `No worktree found for '${branch}' in this session. Use 'list' action to see available worktrees.`,
+      message: `No worktree found with name '${name}'. Use 'list' action to see available worktrees.`,
     }
   }
+
+  const branch = `opencode/${name}`
 
   // Get status in the worktree
   const statusResult = await safeExec(["git", "status", "--porcelain"], {
-    cwd: worktree.directory,
+    cwd: directory,
   })
 
   // Get commits ahead/behind (ignore errors if remote branch doesn't exist)
   const logResult = await safeExec(
-    ["git", "log", "--oneline", `origin/${worktree.branch}..${worktree.branch}`],
-    { cwd: worktree.directory }
+    ["git", "log", "--oneline", `origin/${branch}..${branch}`],
+    { cwd: directory }
   )
 
-  let message = `Worktree status for '${worktree.name}':\n`
-  message += `Path: ${worktree.directory}\n`
-  message += `Branch: ${worktree.branch}\n\n`
+  let message = `Worktree status for '${name}':\n`
+  message += `Path: ${directory}\n`
+  message += `Branch: ${branch}\n\n`
 
   if (statusResult.stdout) {
     message += `Changed files:\n${statusResult.stdout}\n`
@@ -717,46 +645,63 @@ async function getWorktreeStatus(
   return {
     success: true,
     message,
-    path: worktree.directory,
-    branch: worktree.branch,
+    path: directory,
+    branch,
   }
 }
 
 async function cleanupAll(
-  sessionID: string,
-  repoRoot: string
+  client: any,
+  repoRoot: string,
+  log: (level: string, message: string, extra?: Record<string, any>) => Promise<void>,
+  sessionID: string
 ): Promise<WorktreeResult> {
-  const worktrees = sessionWorktrees.get(sessionID) || []
-  const errors: string[] = []
-  let cleaned = 0
+  try {
+    // Get all worktrees from managed API
+    const response = await client.worktree.list().catch(() => ({ data: [] }))
+    const worktrees = response.data ?? []
 
-  log(sessionID, "cleanup", `worktrees=${worktrees.length}`)
+    await log("info", "Cleaning up worktrees", { sessionID, count: worktrees.length })
 
-  for (const wt of worktrees) {
-    const result = await safeExec(["git", "worktree", "remove", "--force", wt.directory], {
-      cwd: repoRoot,
-    })
-    if (result.success) {
-      cleaned++
-    } else {
-      errors.push(`Failed to remove ${wt.name}: ${result.stderr}`)
+    const errors: string[] = []
+    let cleaned = 0
+
+    for (const directory of worktrees) {
+      const name = directory.split('/').pop()
+      const result = await safeExec(["git", "worktree", "remove", "--force", directory], {
+        cwd: repoRoot,
+      })
+      if (result.success) {
+        cleaned++
+      } else {
+        errors.push(`Failed to remove ${name}: ${result.stderr}`)
+      }
     }
-  }
 
-  await safeExec(["git", "worktree", "prune"], { cwd: repoRoot })
+    // Prune stale worktree references
+    await safeExec(["git", "worktree", "prune"], { cwd: repoRoot })
 
-  sessionWorktrees.delete(sessionID)
+    if (errors.length > 0) {
+      await log("warn", "Cleanup completed with errors", { sessionID, cleaned, errors })
+      return {
+        success: false,
+        message: `Cleaned ${cleaned} worktrees with errors:\n${errors.join("\n")}`,
+      }
+    }
 
-  if (errors.length > 0) {
+    await log("info", "Cleanup completed", { sessionID, cleaned })
+
+    return {
+      success: true,
+      message: `Cleaned up ${cleaned} worktrees`,
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    await log("error", "Cleanup failed", { sessionID, error: message })
     return {
       success: false,
-      message: `Cleaned ${cleaned} worktrees with errors:\n${errors.join("\n")}`,
+      message: `Cleanup failed: ${message}`,
     }
-  }
-
-  return {
-    success: true,
-    message: `Cleaned up ${cleaned} worktrees`,
   }
 }
 
