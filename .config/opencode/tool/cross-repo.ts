@@ -27,6 +27,9 @@ import { tool, type ToolContext } from "@opencode-ai/plugin"
 import { Shescape } from "shescape"
 import { tmpdir } from "os"
 
+const PLUGIN_NAME = "cross-repo"
+const EXEC_TIMEOUT_MS = 60_000
+
 const shescape = new Shescape({ shell: "bash" })
 
 function shellEscape(str: string): string {
@@ -45,9 +48,6 @@ const clonedRepos = new Map<string, RepoState>()
 
 // Cache gh CLI availability
 let ghCliAvailable: boolean | null = null
-
-// Type for the SDK log helper
-type LogFn = (level: "info" | "error" | "warn", message: string, extra?: Record<string, unknown>) => Promise<void>
 
 function getClonePath(sessionID: string, owner: string, repo: string): string {
   return `${tmpdir()}/${sessionID}/${owner}-${repo}`
@@ -116,7 +116,7 @@ function isInteractive(): boolean {
  */
 async function run(
   command: string[],
-  timeoutMs: number = 60_000,
+  timeoutMs: number = EXEC_TIMEOUT_MS,
   cwd?: string
 ): Promise<{ success: boolean; stdout: string; stderr: string }> {
   try {
@@ -151,7 +151,7 @@ async function run(
         new Response(proc.stderr).text(),
       ])
       const exitCode = await proc.exited
-      return { success: exitCode === 0, stdout, stderr }
+      return { success: exitCode === 0, stdout: stdout.trim(), stderr: stderr.trim() }
     })()
 
     return await Promise.race([resultPromise, timeoutPromise])
@@ -170,7 +170,7 @@ async function run(
  */
 async function runShell(
   command: string,
-  timeoutMs: number = 60_000
+  timeoutMs: number = EXEC_TIMEOUT_MS
 ): Promise<{ success: boolean; stdout: string; stderr: string }> {
   try {
     const proc = Bun.spawn(["bash", "-c", command], {
@@ -202,7 +202,7 @@ async function runShell(
         new Response(proc.stderr).text(),
       ])
       const exitCode = await proc.exited
-      return { success: exitCode === 0, stdout, stderr }
+      return { success: exitCode === 0, stdout: stdout.trim(), stderr: stderr.trim() }
     })()
 
     return await Promise.race([resultPromise, timeoutPromise])
@@ -352,7 +352,7 @@ async function getTargetRepoToken(owner: string, repo: string): Promise<{ token:
 // Operation implementations
 
 async function cloneRepo(
-  log: LogFn,
+  client: any,
   sessionID: string,
   owner: string,
   repo: string,
@@ -362,7 +362,7 @@ async function cloneRepo(
 
   if (clonedRepos.has(repoKey)) {
     const state = clonedRepos.get(repoKey)!
-    await log("info", "Repository already cloned", { sessionID, owner, repo, path: state.path })
+    await log(client, "info", "Repository already cloned", { sessionID, owner, repo, path: state.path })
     return {
       success: true,
       path: state.path,
@@ -372,7 +372,7 @@ async function cloneRepo(
 
   const tokenResult = await getTargetRepoToken(owner, repo)
   if ("error" in tokenResult) {
-    await log("error", "Failed to get token", { sessionID, owner, repo, error: tokenResult.error })
+    await log(client, "error", "Failed to get token", { sessionID, owner, repo, error: tokenResult.error })
     return { success: false, error: tokenResult.error }
   }
 
@@ -392,7 +392,7 @@ async function cloneRepo(
   const cloneResult = await run(cloneArgs)
 
   if (!cloneResult.success) {
-    await log("error", "Clone failed", { sessionID, owner, repo, error: cloneResult.stderr })
+    await log(client, "error", "Clone failed", { sessionID, owner, repo, error: cloneResult.stderr })
     return { success: false, error: `Clone failed: ${cloneResult.stderr}` }
   }
 
@@ -408,13 +408,13 @@ async function cloneRepo(
     defaultBranch,
   })
 
-  await log("info", "Repository cloned", { sessionID, owner, repo, path: clonePath, defaultBranch })
+  await log(client, "info", "Repository cloned", { sessionID, owner, repo, path: clonePath, defaultBranch })
 
   return { success: true, path: clonePath, defaultBranch }
 }
 
 async function createBranch(
-  log: LogFn,
+  client: any,
   sessionID: string,
   repoPath: string,
   branchName: string
@@ -424,24 +424,24 @@ async function createBranch(
   if (!result.success) {
     const checkoutResult = await run(["git", "checkout", branchName], 30_000, repoPath)
     if (!checkoutResult.success) {
-      await log("error", "Failed to create/checkout branch", { sessionID, branch: branchName, error: result.stderr })
+      await log(client, "error", "Failed to create/checkout branch", { sessionID, branch: branchName, error: result.stderr })
       return { success: false, error: `Failed to create/checkout branch: ${result.stderr}` }
     }
   }
 
-  await log("info", "Branch created/checked out", { sessionID, branch: branchName })
+  await log(client, "info", "Branch created/checked out", { sessionID, branch: branchName })
   return { success: true, branch: branchName }
 }
 
 async function commitChanges(
-  log: LogFn,
+  client: any,
   sessionID: string,
   repoPath: string,
   message: string
 ): Promise<{ success: boolean; commit?: string; error?: string }> {
   const addResult = await run(["git", "add", "-A"], 30_000, repoPath)
   if (!addResult.success) {
-    await log("error", "Failed to stage changes", { sessionID, error: addResult.stderr })
+    await log(client, "error", "Failed to stage changes", { sessionID, error: addResult.stderr })
     return { success: false, error: `Failed to stage changes: ${addResult.stderr}` }
   }
 
@@ -452,19 +452,19 @@ async function commitChanges(
 
   const commitResult = await run(["git", "commit", "-m", message], 30_000, repoPath)
   if (!commitResult.success) {
-    await log("error", "Failed to commit", { sessionID, error: commitResult.stderr })
+    await log(client, "error", "Failed to commit", { sessionID, error: commitResult.stderr })
     return { success: false, error: `Failed to commit: ${commitResult.stderr}` }
   }
 
   const shaResult = await run(["git", "rev-parse", "HEAD"], 10_000, repoPath)
   const commit = shaResult.stdout.trim()
 
-  await log("info", "Changes committed", { sessionID, commit })
+  await log(client, "info", "Changes committed", { sessionID, commit })
   return { success: true, commit }
 }
 
 async function pushBranch(
-  log: LogFn,
+  client: any,
   sessionID: string,
   repoPath: string,
   token: string
@@ -483,16 +483,16 @@ async function pushBranch(
   const pushResult = await run(["git", "push", "-u", "origin", branch], 120_000, repoPath)
 
   if (!pushResult.success) {
-    await log("error", "Push failed", { sessionID, branch, error: pushResult.stderr })
+    await log(client, "error", "Push failed", { sessionID, branch, error: pushResult.stderr })
     return { success: false, error: `Push failed: ${pushResult.stderr}` }
   }
 
-  await log("info", "Branch pushed", { sessionID, branch })
+  await log(client, "info", "Branch pushed", { sessionID, branch })
   return { success: true }
 }
 
 async function createPR(
-  log: LogFn,
+  client: any,
   sessionID: string,
   repoPath: string,
   token: string,
@@ -511,7 +511,7 @@ async function createPR(
   const prResult = await run(prArgs, 60_000, repoPath)
 
   if (!prResult.success) {
-    await log("error", "PR creation failed", { sessionID, head: headBranch, base, error: prResult.stderr })
+    await log(client, "error", "PR creation failed", { sessionID, head: headBranch, base, error: prResult.stderr })
     return { success: false, error: `PR creation failed: ${prResult.stderr}` }
   }
 
@@ -519,12 +519,12 @@ async function createPR(
   const prNumberMatch = prUrl.match(/\/pull\/(\d+)/)
   const prNumber = prNumberMatch ? parseInt(prNumberMatch[1], 10) : undefined
 
-  await log("info", "PR created", { sessionID, url: prUrl, prNumber })
+  await log(client, "info", "PR created", { sessionID, url: prUrl, prNumber })
   return { success: true, prUrl, prNumber }
 }
 
 async function readFile(
-  log: LogFn,
+  client: any,
   sessionID: string,
   repoPath: string,
   filePath: string
@@ -536,16 +536,16 @@ async function readFile(
 
   const result = await run(["cat", fullPath])
   if (!result.success) {
-    await log("error", "Failed to read file", { sessionID, path: filePath, error: result.stderr })
+    await log(client, "error", "Failed to read file", { sessionID, path: filePath, error: result.stderr })
     return { success: false, error: `Failed to read file: ${result.stderr}` }
   }
 
-  await log("info", "File read", { sessionID, path: filePath })
+  await log(client, "info", "File read", { sessionID, path: filePath })
   return { success: true, content: result.stdout }
 }
 
 async function writeFile(
-  log: LogFn,
+  client: any,
   sessionID: string,
   repoPath: string,
   filePath: string,
@@ -564,16 +564,16 @@ async function writeFile(
   const result = await runShell(`echo ${shellEscape(base64Content)} | base64 -d > ${shellEscape(fullPath)}`)
 
   if (!result.success) {
-    await log("error", "Failed to write file", { sessionID, path: filePath, error: result.stderr })
+    await log(client, "error", "Failed to write file", { sessionID, path: filePath, error: result.stderr })
     return { success: false, error: `Failed to write file: ${result.stderr}` }
   }
 
-  await log("info", "File written", { sessionID, path: filePath })
+  await log(client, "info", "File written", { sessionID, path: filePath })
   return { success: true }
 }
 
 async function listFiles(
-  log: LogFn,
+  client: any,
   sessionID: string,
   repoPath: string,
   subPath?: string
@@ -586,24 +586,24 @@ async function listFiles(
   const result = await runShell(`find ${shellEscape(targetPath)} -type f ! -path '*/.git/*' | sed 's|^${repoPath}/||'`)
 
   if (!result.success) {
-    await log("error", "Failed to list files", { sessionID, path: subPath || "/", error: result.stderr })
+    await log(client, "error", "Failed to list files", { sessionID, path: subPath || "/", error: result.stderr })
     return { success: false, error: `Failed to list files: ${result.stderr}` }
   }
 
   const files = result.stdout.trim().split("\n").filter(Boolean)
-  await log("info", "Files listed", { sessionID, path: subPath || "/", count: files.length })
+  await log(client, "info", "Files listed", { sessionID, path: subPath || "/", count: files.length })
   return { success: true, files }
 }
 
 async function execCommand(
-  log: LogFn,
+  client: any,
   sessionID: string,
   repoPath: string,
   command: string
 ): Promise<{ success: boolean; stdout?: string; stderr?: string; error?: string }> {
   const result = await runShell(`cd ${shellEscape(repoPath)} && ${command}`)
 
-  await log("info", "Command executed", { sessionID, command: command.substring(0, 50), success: result.success })
+  await log(client, "info", "Command executed", { sessionID, command: command.substring(0, 50), success: result.success })
   return {
     success: result.success,
     stdout: result.stdout,
@@ -612,14 +612,24 @@ async function execCommand(
   }
 }
 
+// Global logging helper
+async function log(client: any, level: "info" | "error" | "warn" | "debug", message: string, extra?: Record<string, unknown>) {
+  await client.app.log({
+    service: PLUGIN_NAME,
+    level,
+    message,
+    extra,
+  }).catch(() => {})
+}
+
 export default tool({
   description: `Operate on GitHub repositories other than the current working repository.
 
 Use this tool when you need to:
-- Clone and make changes to a different repository (e.g. "also update the docs repo")
-- Create coordinated changes across multiple repos (e.g. "update the SDK and the examples repo")
+- Clone and make changes to a different repository
+- Create coordinated changes across multiple repos
 - Open PRs in related repositories based on changes in the current repo
-- Summarize changes from the current repo and apply related changes to another repo
+- Apply changes from the current repo to another repo
 
 The tool handles authentication automatically based on execution context:
 
@@ -629,14 +639,14 @@ The tool handles authentication automatically based on execution context:
 
 ## Supported Operations
 
-- **clone**: Shallow clone a repo to {tmpdir}/{sessionID}/{owner}-{repo}. Returns the local path. Session-scoped paths prevent concurrent agents from clobbering each other.
+- **clone**: Clone a repo to {tmpdir}/{sessionID}/{owner}-{repo}. Returns the local path.
 - **read**: Read a file from the cloned repo (path relative to repo root).
 - **write**: Write content to a file in the cloned repo (path relative to repo root).
 - **list**: List files in the cloned repo (optionally under a subpath).
 - **branch**: Create and checkout a new branch from the default branch.
 - **commit**: Stage all changes and commit with a message.
 - **push**: Push the current branch to remote.
-- **pr**: Create a pull request using gh CLI. IMPORTANT: Always include a meaningful PR body/description via the 'message' parameter.
+- **pr**: Create a pull request using gh CLI. IMPORTANT: Always include a meaningful PR body via the 'message' parameter.
 - **exec**: Run arbitrary shell commands in the cloned repo directory.
 
 ## Typical Workflow
@@ -646,23 +656,7 @@ The tool handles authentication automatically based on execution context:
 3. branch to create a feature branch
 4. commit your changes
 5. push the branch
-6. pr to create a pull request with a descriptive body (use message parameter with markdown formatting)
-
-## Prerequisites (GitHub Actions mode)
-
-- The Bonk GitHub App must be installed on the target repository
-- The workflow must have 'id-token: write' permission
-- The target repo must be in the same org as the source repo
-- The actor must have write access to the target repository
-
-## Prerequisites (local/CI/other environments)
-
-- Authenticated via 'gh auth login' with appropriate permissions, or
-- GH_TOKEN/GITHUB_TOKEN env var set with appropriate permissions
-
-## Security
-
-In GitHub Actions, the token is scoped to only the target repository with minimal permissions (contents:write, pull_requests:write, issues:write).`,
+6. pr to create a pull request with a descriptive body (use message parameter with markdown formatting)`,
 
   args: {
     owner: tool.schema.string().describe("Repository owner (org or user)"),
@@ -678,7 +672,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
       .string()
       .optional()
       .describe(
-        "Commit message for 'commit' operation. For 'pr' operation, this is the PR body/description - include a meaningful summary of changes (use markdown with ## Summary header)."
+        "Commit message for 'commit' operation. For 'pr' operation, this is the PR body/description - include a meaningful summary of changes."
       ),
     title: tool.schema.string().optional().describe("PR title for 'pr' operation"),
     base: tool.schema.string().optional().describe("Base branch for PR (defaults to repo's default branch)"),
@@ -690,16 +684,6 @@ In GitHub Actions, the token is scoped to only the target repository with minima
   async execute(args, ctx: ToolContext) {
     const { sessionID, client } = ctx
     const repoKey = getRepoKey(sessionID, args.owner, args.repo)
-
-    // Helper to log via SDK
-    const log: LogFn = async (level, message, extra) => {
-      await client.app.log({
-        service: "cross-repo",
-        level,
-        message,
-        extra,
-      }).catch(() => {})
-    }
 
     const stringify = (result: object) => JSON.stringify(result)
 
@@ -725,7 +709,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
 
       switch (args.operation) {
         case "clone":
-          return stringify(await cloneRepo(log, sessionID, args.owner, args.repo, args.branch))
+          return stringify(await cloneRepo(client, sessionID, args.owner, args.repo, args.branch))
 
         case "branch": {
           const state = clonedRepos.get(repoKey)
@@ -738,7 +722,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (!args.branch) {
             return stringify({ success: false, error: "Branch name required for 'branch' operation" })
           }
-          return stringify(await createBranch(log, sessionID, state.path, args.branch))
+          return stringify(await createBranch(client, sessionID, state.path, args.branch))
         }
 
         case "commit": {
@@ -752,7 +736,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (!args.message) {
             return stringify({ success: false, error: "Commit message required for 'commit' operation" })
           }
-          return stringify(await commitChanges(log, sessionID, state.path, args.message))
+          return stringify(await commitChanges(client, sessionID, state.path, args.message))
         }
 
         case "push": {
@@ -763,7 +747,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
               error: `Repository ${args.owner}/${args.repo} not cloned. Run clone operation first.`,
             })
           }
-          return stringify(await pushBranch(log, sessionID, state.path, state.token))
+          return stringify(await pushBranch(client, sessionID, state.path, state.token))
         }
 
         case "pr": {
@@ -777,7 +761,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (!args.title) {
             return stringify({ success: false, error: "PR title required for 'pr' operation" })
           }
-          return stringify(await createPR(log, sessionID, state.path, state.token, args.title, args.message, args.base || state.defaultBranch))
+          return stringify(await createPR(client, sessionID, state.path, state.token, args.title, args.message, args.base || state.defaultBranch))
         }
 
         case "exec": {
@@ -791,7 +775,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (!args.command) {
             return stringify({ success: false, error: "Command required for 'exec' operation" })
           }
-          return stringify(await execCommand(log, sessionID, state.path, args.command))
+          return stringify(await execCommand(client, sessionID, state.path, args.command))
         }
 
         case "read": {
@@ -805,7 +789,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (!args.path) {
             return stringify({ success: false, error: "Path required for 'read' operation" })
           }
-          return stringify(await readFile(log, sessionID, state.path, args.path))
+          return stringify(await readFile(client, sessionID, state.path, args.path))
         }
 
         case "write": {
@@ -822,7 +806,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
           if (args.content === undefined) {
             return stringify({ success: false, error: "Content required for 'write' operation" })
           }
-          return stringify(await writeFile(log, sessionID, state.path, args.path, args.content))
+          return stringify(await writeFile(client, sessionID, state.path, args.path, args.content))
         }
 
         case "list": {
@@ -833,7 +817,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
               error: `Repository ${args.owner}/${args.repo} not cloned. Run clone operation first.`,
             })
           }
-          return stringify(await listFiles(log, sessionID, state.path, args.path))
+          return stringify(await listFiles(client, sessionID, state.path, args.path))
         }
 
         default:
@@ -842,7 +826,7 @@ In GitHub Actions, the token is scoped to only the target repository with minima
     } catch (error) {
       // Catch-all for any unhandled errors - never crash OpenCode
       const message = error instanceof Error ? error.message : String(error)
-      await log("error", "Unexpected error", { sessionID, operation: args.operation, error: message })
+      await log(client, "error", "Unexpected error", { sessionID, operation: args.operation, error: message })
       return stringify({ success: false, error: `Unexpected error: ${message}` })
     }
   },
