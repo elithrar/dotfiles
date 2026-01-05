@@ -5,20 +5,33 @@
  * Worktrees are stored in $XDG_DATA_HOME/opencode/worktree/{projectID}/{name}
  * using OpenCode's managed worktree API.
  *
- * ## Agent Usage Guide
+ * IMPORTANT: Agents should ALWAYS use this tool for any git worktree operations.
+ * Direct `git worktree` commands are blocked and will error.
  *
- * Use the `use-git-worktree` tool when you need to:
- * - Work on multiple unrelated changes concurrently
- * - Isolate changes for different branches without affecting the main worktree
- * - Review or test code from another branch while preserving current work
+ * ## When to Use
  *
- * ### Workflow Example
- * 1. Create a git worktree: `use-git-worktree` with action "create"
- * 2. Work in the git worktree directory (returned in the result)
+ * - User requests worktree operations (create, list, remove, merge)
+ * - Running subagents that make concurrent changes to the same repository
+ * - Performing parallel tasks that modify files in the repo
+ * - Isolating branch work without affecting the main worktree
+ * - Reviewing/testing code from another branch while preserving current work
+ *
+ * ## Concurrent Subagent Pattern
+ *
+ * When spawning multiple subagents to work on the same repo:
+ * 1. Create a worktree for each subagent
+ * 2. Each subagent works in its isolated worktree directory
+ * 3. Merge results back to the target branch when complete
+ *
+ * ## Workflow Example
+ *
+ * 1. Create: `use-git-worktree` with action "create"
+ * 2. Work in the returned worktree directory
  * 3. Merge changes back: `use-git-worktree` with action "merge"
  * 4. Clean up: `use-git-worktree` with action "remove"
  *
- * ### Merge Strategies
+ * ## Merge Strategies
+ *
  * - "ours": Keep changes from the target branch on conflict
  * - "theirs": Keep changes from the worktree branch on conflict
  * - "manual": Stop on conflict and return diff for user decision
@@ -147,13 +160,19 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
 
     tool: {
       "use-git-worktree": tool({
-        description: `Manage git worktrees for concurrent branch development.
+        description: `REQUIRED: Use this tool for ALL git worktree operations. Do NOT run \`git worktree\` commands directly via bash.
 
-Use this tool when you need to:
-- Operate on git worktrees: use this tool and do NOT use `git worktree` commands directly.
-- Work on multiple unrelated changes concurrently
-- Isolate changes for different branches without affecting the main worktree
-- Review or test code from another branch while preserving current work
+## When to use this tool
+
+**Always use this tool when:**
+- The user asks to create, list, remove, or manage git worktrees
+- The user mentions "worktree", "worktrees", or wants isolated branch work
+- You need to work on a branch without affecting the current working directory
+- Running subagents that make concurrent changes to the same repository (each subagent should use its own worktree to avoid conflicts)
+- Performing parallel tasks that modify files (e.g., multiple refactors, concurrent feature work)
+- Testing or reviewing code from another branch while preserving current uncommitted changes
+
+**Concurrent/parallel work pattern:** When spawning multiple subagents to work on the same repo simultaneously, create a worktree for each subagent. This prevents git conflicts and allows each agent to work independently. Merge results back when complete.
 
 ## Actions
 
@@ -171,7 +190,7 @@ When merging, use the \`mergeStrategy\` parameter:
 - **theirs**: On conflict, keep changes from the git worktree branch
 - **manual**: Stop on conflict and return diff for user to decide
 
-## Example Usage
+## Example Workflow
 
 1. Create: action "create", name "feature-work"
 2. Work in the returned worktree directory
