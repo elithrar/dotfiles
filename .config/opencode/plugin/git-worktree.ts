@@ -150,6 +150,7 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
         description: `Manage git worktrees for concurrent branch development.
 
 Use this tool when you need to:
+- Operate on git worktrees: use this tool and do NOT use `git worktree` commands directly.
 - Work on multiple unrelated changes concurrently
 - Isolate changes for different branches without affecting the main worktree
 - Review or test code from another branch while preserving current work
