@@ -1,6 +1,6 @@
 ---
 name: gitlab
-description: Use for GitLab repos (when remote contains "gitlab"). Provides glab CLI commands for MRs, CI/CD, and issues.
+description: Load before running any glab commands to ensure correct CLI syntax. Use when creating/viewing MRs, checking pipelines, managing issues, or any GitLab operations (when remote contains "gitlab").
 ---
 
 # GitLab Workflow
