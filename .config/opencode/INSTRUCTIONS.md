@@ -3,7 +3,30 @@
 ### code, git and testing
 
 * keep commit messages short: e.g. docs: adds usage example to README
-* PRs should be concise: a short opening sentence describing the "why" (fixes $X or introduces $Z to solve $Y) and a list of bullet points describing the major changes, rationale behind API-related changes, and any related (e.g. docs) changes
+* PRs should follow this structure:
+  - short opening sentence describing the fix/feature
+  - **problem**: explain the issue with concrete context
+  - **example**: (optional) show real-world data or code demonstrating the problem
+  - **solution**: numbered list or brief explanation of the fix
+  - code snippet showing the user-facing result (if applicable)
+  - brief mention of related improvements
+* example PR body:
+  ```
+  Fixes an issue where remote config overrides local config.
+
+  **problem**: Remote config was loaded last, meaning organizational
+  defaults couldn't be overridden by users in their local config.
+
+  **example**: we ship MCP servers disabled by default. Users can't
+  enable them via `mcp: { "jira": { "enabled": true } }` in local config.
+
+  **solution**: Reorder config loading so remote loads first:
+  1. Remote config — organizational defaults
+  2. Global config — user preferences
+  3. Project config — project-specific overrides
+
+  Also added error handling so a failed fetch doesn't break config loading.
+  ```
 * minimize the use of markdown headers unless absolutely necessary: use short sentences to summarize the content of an issue or PR description. use bullet points to lay out the major changes or decisions.
 * do NOT list out the files changed in a PR. the PR diff tells us what those are.
 * prefer the `gh` CLI for creating, reading and reviewing PRs and issues. if you fail to use the WebFetch tool to fetch a GitHub URL, use the `gh` CLI instead, as it's likely a private repo.
