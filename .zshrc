@@ -185,12 +185,12 @@ export TERM="xterm-256color"
 unalias zed 2>/dev/null || true
 zed() {
   if [ -d "/Applications/Zed Preview.app" ]; then
-    open "$1" -a "Zed Preview" --wait
+    open "$1" -a "Zed Preview"
   else
-    open "$1" -a "Zed" --wait
+    open "$1" -a "Zed"
   fi
 }
-export EDITOR="zed"
+export EDITOR="zed --wait"
 
 
 # ripgrep
