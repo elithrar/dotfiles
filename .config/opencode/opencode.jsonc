@@ -13,6 +13,12 @@
       "type": "remote",
       "url": "https://docs.mcp.cloudflare.com/mcp",
     },
+    "google-workspace": {
+      "type": "remote",
+      "url": "https://google-workspace-mcp.cto.cfdata.org/mcp",
+      "oauth": {},
+      "enabled": false,
+    },
     "cloudflare-builds": {
       "type": "remote",
       "url": "https://builds.mcp.cloudflare.com/mcp",
