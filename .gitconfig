@@ -17,6 +17,9 @@
 [diff]
     algorithm = histogram
     colorMoved = default
+    tool = zed
+[difftool "zed"]
+    cmd = zed --wait "$LOCAL" "$REMOTE"
 [rerere]
     enabled = true
 [branch]
