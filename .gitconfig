@@ -2,7 +2,7 @@
     name = Matt Silverlock
     email = "matt@eatsleeprepeat.net"
 [core]
-    editor = "zed --wait"
+    editor = "/usr/local/bin/zed --wait"
     excludesfile = ~/.gitignore
     fileMode = false
     # https://notes.takashiidobe.com/tools/git/delta
@@ -19,7 +19,7 @@
     colorMoved = default
     tool = zed
 [difftool "zed"]
-    cmd = zed --wait "$LOCAL" "$REMOTE"
+	cmd = \"/usr/local/bin/zed\" --wait $LOCAL $REMOTE
 [rerere]
     enabled = true
 [branch]

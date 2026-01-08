@@ -3,7 +3,7 @@ import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const SOUND_PATH = join(__dirname, "smb_1-up.wav")
+const SOUND_PATH = join(__dirname, "smb_coin.wav")
 
 export const IdleNotificationPlugin: Plugin = async ({ $ }) => {
   return {
@@ -11,11 +11,18 @@ export const IdleNotificationPlugin: Plugin = async ({ $ }) => {
       if (event.type === "session.idle") {
         const sessionId = event.properties.sessionID ?? "Unknown"
 
-        // play the 1-up sound
-        $`afplay ${SOUND_PATH}`.quiet()
+        // play the coin sound at 10% volume
+        $`afplay -v 0.1 ${SOUND_PATH}`.quiet()
 
-        // show macOS notification
-        await $`osascript -e 'display notification "${sessionId} is now idle/complete" with title "OpenCode"'`
+        // show macOS notification (terminal-notifier preferred, osascript fallback)
+        const message = `${sessionId} is now idle/complete`
+        const hasTerminalNotifier = await $`which terminal-notifier`.quiet().then(() => true, () => false)
+        if (hasTerminalNotifier) {
+          await $`terminal-notifier -title OpenCode -message ${message} -activate com.mitchellh.ghostty`
+        } else {
+          const script = `display notification "${message}" with title "OpenCode"`
+          await $`osascript -e ${script}`
+        }
       }
     },
   }
