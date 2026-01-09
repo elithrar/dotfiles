@@ -1,5 +1,5 @@
 ---
-description: Review code changes with @review subagents
+description: Review changes with parallel @code-review subagents
 agent: plan
 ---
 
