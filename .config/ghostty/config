@@ -25,3 +25,5 @@ auto-update = download
 auto-update-channel = tip
 
 keybind = shift+enter=text:\n
+
+command-palette-entry = title:vim mode,action:activate_key_table:vim
