@@ -172,11 +172,11 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
       // Intercept direct `git worktree` commands
       if (input.tool === "bash" && typeof output.args?.command === "string") {
         const cmd = output.args.command;
-        if (/\bgit\s+worktree\b/.test(cmd)) {
+        if (/(?:^|[\s\/])git\s+worktree\b/.test(cmd)) {
           throw new Error(
             `Direct 'git worktree' commands are not allowed. ` +
               `Use the 'use-git-worktree' tool instead for managed worktree operations. ` +
-              `Available actions: create, list, merge.`,
+              `Available actions: create, list, merge, remove, prune.`,
           );
         }
       }
@@ -203,6 +203,8 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
 - **create**: Create a new git worktree with a project-scoped branch
 - **list**: List all project worktrees
 - **merge**: Merge git worktree changes back to a target branch
+- **remove**: Remove a worktree and optionally delete its branch
+- **prune**: Remove stale worktree entries (where the directory no longer exists)
 
 ## Merge Strategies
 
@@ -216,12 +218,13 @@ When merging, use the \`mergeStrategy\` parameter:
 1. Create: action "create", name "feature-work"
 2. Work in the returned worktree directory
 3. Merge: action "merge", name "feature-work", targetBranch "main", mergeStrategy "theirs"
+4. Prune: action "prune" to clean up stale entries
 
 Worktrees are stored in \`{repoRoot}/.opencode/worktrees/{name}\` with branches named \`opencode/{name}\`.`,
 
         args: {
           action: tool.schema
-            .enum(["create", "list", "merge"])
+            .enum(["create", "list", "merge", "remove", "prune"])
             .describe("The git worktree action to perform"),
           name: tool.schema
             .string()
@@ -284,6 +287,21 @@ Worktrees are stored in \`{repoRoot}/.opencode/worktrees/{name}\` with branches 
                   args.mergeStrategy,
                   args.commitMessage,
                 );
+                break;
+
+              case "remove":
+                result = await removeWorktree(
+                  client,
+                  $,
+                  findWorktreeByName,
+                  repoRoot,
+                  sessionID,
+                  args.name,
+                );
+                break;
+
+              case "prune":
+                result = await pruneWorktrees(client, $, repoRoot, sessionID);
                 break;
 
               default: {
@@ -407,6 +425,139 @@ async function createWorktree(
   return {
     success: false,
     message: `Failed to create worktree after ${MAX_NAME_RETRIES} attempts due to name collisions`,
+  };
+}
+
+/**
+ * Removes a worktree and deletes its branch.
+ */
+async function removeWorktree(
+  client: any,
+  $: any,
+  findWorktreeByName: (name: string) => Promise<string | undefined>,
+  repoRoot: string,
+  sessionID: string,
+  name?: string,
+): Promise<WorktreeResult> {
+  if (!name) {
+    return {
+      success: false,
+      message: "Worktree name is required for remove action",
+    };
+  }
+
+  const directory = await findWorktreeByName(name);
+  if (!directory) {
+    return {
+      success: false,
+      message: `No worktree found with name '${name}'. Use 'list' action to see available worktrees.`,
+    };
+  }
+
+  // Don't allow removing the main worktree
+  if (directory === repoRoot) {
+    return {
+      success: false,
+      message: "Cannot remove the main worktree",
+    };
+  }
+
+  const branch = `opencode/${name}`;
+
+  await log(client, "info", "Removing worktree", {
+    sessionID,
+    name,
+    directory,
+    branch,
+  });
+
+  // Remove the worktree (--force handles uncommitted changes)
+  const result = await $`git worktree remove --force ${directory}`
+    .quiet()
+    .nothrow()
+    .cwd(repoRoot);
+
+  if (result.exitCode !== 0) {
+    const stderr = getStderr(result);
+    await log(client, "error", "Failed to remove worktree", {
+      sessionID,
+      error: stderr,
+    });
+    return {
+      success: false,
+      message: `Failed to remove worktree: ${stderr}`,
+    };
+  }
+
+  // Delete the branch if it exists
+  const branchResult = await $`git branch -D ${branch}`
+    .quiet()
+    .nothrow()
+    .cwd(repoRoot);
+
+  const branchDeleted = branchResult.exitCode === 0;
+
+  await log(client, "info", "Worktree removed", {
+    sessionID,
+    name,
+    branchDeleted,
+  });
+
+  return {
+    success: true,
+    message: branchDeleted
+      ? `Removed worktree '${name}' and deleted branch '${branch}'`
+      : `Removed worktree '${name}' (branch '${branch}' was not found or already deleted)`,
+  };
+}
+
+/**
+ * Prunes stale worktree entries (where the directory no longer exists).
+ */
+async function pruneWorktrees(
+  client: any,
+  $: any,
+  repoRoot: string,
+  sessionID: string,
+): Promise<WorktreeResult> {
+  await log(client, "info", "Pruning stale worktrees", { sessionID });
+
+  // Run with verbose flag to capture what was pruned
+  const result = await $`git worktree prune -v`.quiet().nothrow().cwd(repoRoot);
+
+  if (result.exitCode !== 0) {
+    const stderr = getStderr(result);
+    await log(client, "error", "Failed to prune worktrees", {
+      sessionID,
+      error: stderr,
+    });
+    return {
+      success: false,
+      message: `Failed to prune worktrees: ${stderr}`,
+    };
+  }
+
+  const stdout = getStdout(result);
+  const prunedEntries = stdout
+    .split("\n")
+    .filter((line) => line.startsWith("Removing"))
+    .map((line) => line.replace(/^Removing\s+/, "").replace(/:.*$/, ""));
+
+  await log(client, "info", "Worktrees pruned", {
+    sessionID,
+    pruned: prunedEntries.length,
+  });
+
+  if (prunedEntries.length === 0) {
+    return {
+      success: true,
+      message: "No stale worktree entries to prune",
+    };
+  }
+
+  return {
+    success: true,
+    message: `Pruned ${prunedEntries.length} stale worktree entries:\n${prunedEntries.map((e) => `  - ${e}`).join("\n")}`,
   };
 }
 
