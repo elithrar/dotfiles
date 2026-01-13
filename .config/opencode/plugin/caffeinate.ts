@@ -2,8 +2,14 @@ import type { Plugin } from "@opencode-ai/plugin"
 import type { Subprocess } from "bun"
 
 export const CaffeinatePlugin: Plugin = async ({ client }) => {
+  // macOS only
+  if (process.platform !== "darwin") {
+    return { event: async () => {} }
+  }
+
   const busySessions = new Set<string>()
   let caffeinateProc: Subprocess | null = null
+  let starting = false
 
   const log = (message: string) =>
     client.app.log({
@@ -13,12 +19,19 @@ export const CaffeinatePlugin: Plugin = async ({ client }) => {
     })
 
   const startCaffeinate = async () => {
-    if (caffeinateProc) return
-    caffeinateProc = Bun.spawn(["caffeinate", "-i"], {
-      stdout: "ignore",
-      stderr: "ignore",
-    })
-    await log("preventing system sleep")
+    if (caffeinateProc || starting) return
+    starting = true
+    try {
+      caffeinateProc = Bun.spawn(["caffeinate", "-i"], {
+        stdout: "ignore",
+        stderr: "ignore",
+      })
+      await log("preventing system sleep")
+    } catch (err) {
+      await log(`failed to start caffeinate: ${err}`)
+    } finally {
+      starting = false
+    }
   }
 
   const stopCaffeinate = async () => {
@@ -28,7 +41,10 @@ export const CaffeinatePlugin: Plugin = async ({ client }) => {
     await log("allowing system sleep")
   }
 
-  process.on("exit", () => stopCaffeinate())
+  // sync cleanup on exit (async won't complete)
+  process.on("exit", () => {
+    caffeinateProc?.kill()
+  })
 
   return {
     event: async ({ event }) => {
