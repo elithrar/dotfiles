@@ -1,4 +1,14 @@
 {
+  "agent_servers": {
+    "opencode": {
+      "type": "extension",
+      "favorite_models": [
+        "anthropic/claude-opus-4-5-20251101"
+      ],
+      "default_config_options": {},
+      "favorite_config_option_values": {}
+    }
+  },
   "agent_buffer_font_size": 15.0,
   "icon_theme": "Zed (Default)",
   "edit_predictions": {
