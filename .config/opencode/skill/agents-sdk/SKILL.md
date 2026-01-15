@@ -18,10 +18,12 @@ Agents require a binding in `wrangler.jsonc`:
 ```jsonc
 {
   "durable_objects": {
-    "bindings": [{ "name": "MyAgent", "class_name": "MyAgent" }]
+    // "class_name" must match your Agent class name exactly
+    "bindings": [{ "name": "Counter", "class_name": "Counter" }]
   },
   "migrations": [
-    { "tag": "v1", "new_sqlite_classes": ["MyAgent"] }
+    // Include all Agent classes here to enable SQLite storage
+    { "tag": "v1", "new_sqlite_classes": ["Counter"] }
   ]
 }
 ```

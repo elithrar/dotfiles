@@ -21,30 +21,32 @@ Code Mode:
 
 ```jsonc
 {
+  "name": "my-agent-worker",
   "compatibility_flags": ["experimental", "enable_ctx_exports"],
   "durable_objects": {
+    // "class_name" must match your Agent class name exactly
     "bindings": [{ "name": "MyAgent", "class_name": "MyAgent" }]
   },
   "migrations": [
+    // Include all Agent classes here to enable SQLite storage
     { "tag": "v1", "new_sqlite_classes": ["MyAgent"] }
   ],
   "services": [
     {
       "binding": "globalOutbound",
-      "service": "my-worker-name",
+      // "service" must match "name" above
+      "service": "my-agent-worker",
       "entrypoint": "globalOutbound"
     },
     {
       "binding": "CodeModeProxy",
-      "service": "my-worker-name",
+      "service": "my-agent-worker",
       "entrypoint": "CodeModeProxy"
     }
   ],
   "worker_loaders": [{ "binding": "LOADER" }]
 }
 ```
-
-Replace `my-worker-name` with your actual worker name (matches `name` in wrangler.jsonc).
 
 ### 2. Export Required Classes
 
