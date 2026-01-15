@@ -13,50 +13,39 @@ SSH_EMAIL="matt@eatsleeprepeat.net"
 # Colors - use fallbacks if tput unavailable
 if command -v tput &>/dev/null && tput sgr0 &>/dev/null; then
     reset="$(tput sgr0)"
-    highlight="$(tput smso)"
-    dim="$(tput dim)"
     red="$(tput setaf 1)"
     blue="$(tput setaf 4)"
     green="$(tput setaf 2)"
     yellow="$(tput setaf 3)"
-    bold=$(tput bold)
-    normal=$(tput sgr0)
-    underline="$(tput smul)"
 else
     reset=""
-    highlight=""
-    dim=""
     red=""
     blue=""
     green=""
     yellow=""
-    bold=""
-    normal=""
-    underline=""
 fi
-indent="   "
 
 # Error handling
-trap 'ret=$?; test $ret -ne 0 && printf "${red}Setup failed${reset}\n" >&2; exit $ret' EXIT
+trap 'ret=$?; [[ $ret -ne 0 ]] && printf "%s\n" "${red}Setup failed${reset}" >&2; exit $ret' EXIT
 set -euo pipefail
 
 # --- Helpers
 print_success() {
-    printf "${green}✔ success:${reset} %b\n" "$1"
+    printf "%s %b\n" "${green}✔ success:${reset}" "$1"
 }
 
 print_error() {
-    printf "${red}✖ error:${reset} %b\n" "$1"
+    printf "%s %b\n" "${red}✖ error:${reset}" "$1"
 }
 
 print_info() {
-    printf "${blue}ⓘ info:${reset} %b\n" "$1"
+    printf "%s %b\n" "${blue}ⓘ info:${reset}" "$1"
 }
 
 # ------
 # Setup
 # ------
-printf "
+cat <<EOF
 ${yellow}
 Running...
  _           _        _ _       _
@@ -73,7 +62,7 @@ Running...
 - Deeply inspired by https://github.com/minamarkham/formation
 -----
 ${reset}
-"
+EOF
 
 # Check environments
 OS=$(uname -s 2> /dev/null)
@@ -100,7 +89,7 @@ if [ "${OS}" = "Darwin" ]; then
     ping_timeout_flag="-t1"
 fi
 
-if ! ping -q ${ping_timeout_flag} -c1 google.com &>/dev/null; then
+if ! ping -q "${ping_timeout_flag}" -c1 google.com &>/dev/null; then
     print_error "Cannot connect to the Internet"
     exit 1
 else
@@ -182,7 +171,7 @@ fi
 # Casks
 if [ "${OS}" = "Darwin" ]; then
     print_info "Installing Homebrew Casks"
-    for pkg in "${CASKS[@]:-}"; do
+    for pkg in "${CASKS[@]}"; do
         # Check if $pkg is already installed
         print_info "Checking package ${pkg}"
         if ! brew list --cask "${pkg}" &>/dev/null; then
@@ -241,7 +230,7 @@ fi
 # --- Install nvm
 if [ ! -d "${HOME}/.nvm" ]; then
     print_info "Installing nvm"
-    PROFILE=/dev/null curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | PROFILE=/dev/null bash
 else
     print_success "nvm already installed"
 fi

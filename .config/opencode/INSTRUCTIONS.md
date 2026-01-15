@@ -2,6 +2,8 @@
 
 ### code, git and testing
 
+* codebases should be left better than they were. write maintainable code that is easy to understand. being clever doesn't win you points.
+* don't build arbitrary abstractions until they are needed. prefer to inline vs. unnecessary helper functions. 
 * keep commit messages short: e.g. docs: adds usage example to README
 * minimize the use of markdown headers unless absolutely necessary: use short sentences to summarize the content of an issue or PR description. use bullet points to lay out the major changes or decisions.
 * do NOT list out the files changed in a PR. the PR diff tells us what those are.

@@ -52,7 +52,7 @@ unalias gb
 # Go
 export GOPATH=$HOME/repos/go
 export GOBIN=$GOPATH/bin
-alias todo="godoc -notes="TODO" ."
+alias todo='godoc -notes="TODO" .'
 alias gtvc="go test -v -race -cover ."
 alias godoc-this="godoc -http=:6060; open http://localhost:6060/pkg"
 alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverage.out -o coverage.html"
@@ -71,7 +71,7 @@ if [ "$(uname -s 2> /dev/null)" = "Darwin" ]; then
 
 	get_new_mac() {
 	    sudo /System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport -z && \
-	    sudo ifconfig en0 ether a0$(openssl rand -hex 5 | sed 's/\(.\{2\}\)/:\1/g') && \
+	    sudo ifconfig en0 ether "a0$(openssl rand -hex 5 | sed 's/\(.\{2\}\)/:\1/g')" && \
 	    networksetup -detectnewhardware
 	}
 
@@ -86,8 +86,8 @@ if [ "$(uname -s 2> /dev/null)" = "Linux" ]; then
 	# WSL specific
 	if [[ -n "$USERPROFILE" ]]; then
 		cdpath+=(
-			$USERPROFILE/Dropbox
-			$USERPROFILE/Downloads
+			"$USERPROFILE/Dropbox"
+			"$USERPROFILE/Downloads"
 		)
 	fi
 fi
@@ -100,19 +100,19 @@ bindkey '^x^e' edit-command-line
 
 # helper functions
 mins-ago() {
-    echo $(expr $(unixts) - 60 \* $1)
+    echo $(($(date +%s) - 60 * $1))
 }
 
 hours-ago() {
-    echo $(expr $(unixts) - 3600 \* $1)
+    echo $(($(date +%s) - 3600 * $1))
 }
 
 yesterday() {
-    echo $(expr $(unixts) - 86400)
+    echo $(($(date +%s) - 86400))
 }
 
 time-at() {
-    date -r $1
+    date -r "$1"
 }
 
 # tmux
@@ -126,7 +126,8 @@ fi
 # https://github.com/gabebw/dotfiles/blob/master/zsh/path.zsh
 trim_path() {
   # http://chunchung.blogspot.com/2007/11/remove-duplicate-paths-from-path-in.html
-  export PATH=$(awk -F: '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=":"}}}'<<<$PATH)
+  PATH=$(awk -F: '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=":"}}}'<<<"$PATH")
+  export PATH
 }
 
 env-update() { export PATH=$PATH; }
@@ -184,11 +185,9 @@ export TERM="xterm-256color"
 # editor
 unalias zed 2>/dev/null || true
 zed() {
-  if [ -d "/Applications/Zed Preview.app" ]; then
-    open "$1" -a "Zed Preview"
-  else
-    open "$1" -a "Zed"
-  fi
+  local app="Zed"
+  [[ -d "/Applications/Zed Preview.app" ]] && app="Zed Preview"
+  open "$@" -a "$app"
 }
 export EDITOR="zed --wait"
 
