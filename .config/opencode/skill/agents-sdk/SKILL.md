@@ -75,10 +75,16 @@ export default {
 
 ## Streaming Chat Agent
 
-Use `AIChatAgent` for chat with automatic message persistence and resumable streaming:
+Use `AIChatAgent` for chat with automatic message persistence and resumable streaming.
+
+Install additional dependencies:
+```bash
+npm install @cloudflare/ai-chat ai @ai-sdk/openai
+```
 
 ```typescript
 import { AIChatAgent } from "@cloudflare/ai-chat";
+import { routeAgentRequest } from "agents";
 import { streamText, convertToModelMessages } from "ai";
 import { openai } from "@ai-sdk/openai";
 
@@ -92,6 +98,10 @@ export class Chat extends AIChatAgent<Env> {
     return result.toUIMessageStreamResponse();
   }
 }
+
+export default {
+  fetch: (req, env) => routeAgentRequest(req, env) ?? new Response("Not found", { status: 404 })
+};
 ```
 
 **Client** (React):
