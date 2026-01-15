@@ -73,7 +73,7 @@ The `onStateUpdate` callback receives state changes from the server. Use local R
 
 ## Scheduling
 
-Schedule methods to run at specific times. Uses Durable Object alarms internally.
+Schedule methods to run at specific times using `this.schedule()`.
 
 ### Schedule Types
 
@@ -181,7 +181,7 @@ const items = this.sql<{ id: string; name: string }>`
 
 ```typescript
 export class MyAgent extends Agent<Env, State> {
-  // Called when DO starts (after hibernation or first create)
+  // Called when agent starts (after hibernation or first create)
   async onStart() {
     console.log("Agent started:", this.name);
   }

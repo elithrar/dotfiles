@@ -73,7 +73,7 @@ await this.removeMcpServer(serverId);
 
 ## Building an MCP Server
 
-Use `McpAgent` to create an MCP server as a Durable Object:
+Use `McpAgent` from the SDK to create an MCP server:
 
 ```typescript
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
