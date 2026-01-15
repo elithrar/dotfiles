@@ -1,6 +1,6 @@
 ---
 name: agents-sdk
-description: Build stateful AI agents with Cloudflare's agents-sdk. Load when creating agents with persistent state, scheduling, RPC, MCP servers, email handling, or streaming chat. Covers Agent class, AIChatAgent, state management, and codemode for reduced token usage.
+description: Build stateful AI agents using the Cloudflare Agents SDK. Load when creating agents with persistent state, scheduling, RPC, MCP servers, email handling, or streaming chat. Covers Agent class, AIChatAgent, state management, and Code Mode for reduced token usage.
 ---
 
 # Cloudflare Agents SDK
