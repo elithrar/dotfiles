@@ -22,7 +22,7 @@ Agents require a binding in `wrangler.jsonc`:
     "bindings": [{ "name": "Counter", "class_name": "Counter" }]
   },
   "migrations": [
-    // Include all Agent classes here to enable SQLite storage
+    // Required: list all Agent classes for SQLite storage
     { "tag": "v1", "new_sqlite_classes": ["Counter"] }
   ]
 }

@@ -28,7 +28,7 @@ Code Mode:
     "bindings": [{ "name": "MyAgent", "class_name": "MyAgent" }]
   },
   "migrations": [
-    // Include all Agent classes here to enable SQLite storage
+    // Required: list all Agent classes for SQLite storage
     { "tag": "v1", "new_sqlite_classes": ["MyAgent"] }
   ],
   "services": [
