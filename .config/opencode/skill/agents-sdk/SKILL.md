@@ -5,7 +5,7 @@ description: Build stateful AI agents with Cloudflare's agents-sdk. Load when cr
 
 # Cloudflare Agents SDK
 
-Build persistent, stateful AI agents on Cloudflare Workers using Durable Objects.
+Build persistent, stateful AI agents on Cloudflare Workers using the `agents` npm package.
 
 ## FIRST: Verify Installation
 
@@ -13,7 +13,7 @@ Build persistent, stateful AI agents on Cloudflare Workers using Durable Objects
 npm install agents @cloudflare/ai-chat ai
 ```
 
-Agents require a Durable Object binding in `wrangler.jsonc`:
+Agents require a binding in `wrangler.jsonc`:
 
 ```jsonc
 {
@@ -25,7 +25,7 @@ Agents require a Durable Object binding in `wrangler.jsonc`:
 
 ## Key Concepts
 
-- **Agent** extends Durable Objects with state, scheduling, RPC, MCP, and email
+- **Agent** base class provides state, scheduling, RPC, MCP, and email capabilities
 - **AIChatAgent** adds streaming chat with automatic message persistence and resumable streams
 - **Codemode** generates executable code instead of tool calls—reduces token usage significantly
 - **this.state / this.setState()** - automatic persistence to SQLite, broadcasts to clients
