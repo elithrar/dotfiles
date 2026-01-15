@@ -10,7 +10,7 @@ Build persistent, stateful AI agents on Cloudflare Workers using the `agents` np
 ## FIRST: Verify Installation
 
 ```bash
-npm install agents @cloudflare/ai-chat ai
+npm install agents
 ```
 
 Agents require a binding in `wrangler.jsonc`:
