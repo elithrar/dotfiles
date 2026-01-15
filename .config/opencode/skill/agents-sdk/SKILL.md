@@ -19,7 +19,10 @@ Agents require a binding in `wrangler.jsonc`:
 {
   "durable_objects": {
     "bindings": [{ "name": "MyAgent", "class_name": "MyAgent" }]
-  }
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["MyAgent"] }
+  ]
 }
 ```
 
