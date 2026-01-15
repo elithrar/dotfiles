@@ -1,15 +1,15 @@
-# Codemode (Experimental)
+# Code Mode (Experimental)
 
-Codemode generates executable JavaScript instead of making individual tool calls. This significantly reduces token usage and enables complex multi-tool workflows.
+Code Mode generates executable JavaScript instead of making individual tool calls. This significantly reduces token usage and enables complex multi-tool workflows.
 
-## Why Codemode?
+## Why Code Mode?
 
 Traditional tool calling:
 - One tool call per LLM request
 - Multiple round-trips for chained operations
 - High token usage for complex workflows
 
-Codemode:
+Code Mode:
 - LLM generates code that orchestrates multiple tools
 - Single execution for complex workflows
 - Self-debugging and error recovery
@@ -68,7 +68,7 @@ export const globalOutbound = {
 };
 ```
 
-### 3. Use Codemode in Agent
+### 3. Use Code Mode in Agent
 
 ```typescript
 import { experimental_codemode as codemode } from "@cloudflare/codemode/ai";
@@ -149,7 +149,7 @@ async function executeTask() {
 
 ## MCP Server Orchestration
 
-Codemode excels at orchestrating multiple MCP servers:
+Code Mode excels at orchestrating multiple MCP servers:
 
 ```javascript
 async function executeTask() {
@@ -176,7 +176,7 @@ async function executeTask() {
 
 ## When to Use
 
-| Scenario | Use Codemode? |
+| Scenario | Use Code Mode? |
 |----------|---------------|
 | Single tool call | No |
 | Chained tool calls | Yes |

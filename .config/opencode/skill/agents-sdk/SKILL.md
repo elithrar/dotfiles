@@ -27,7 +27,7 @@ Agents require a binding in `wrangler.jsonc`:
 
 - **Agent** base class provides state, scheduling, RPC, MCP, and email capabilities
 - **AIChatAgent** adds streaming chat with automatic message persistence and resumable streams
-- **Codemode** generates executable code instead of tool calls—reduces token usage significantly
+- **Code Mode** generates executable code instead of tool calls—reduces token usage significantly
 - **this.state / this.setState()** - automatic persistence to SQLite, broadcasts to clients
 - **this.schedule()** - schedule tasks at Date, delay (seconds), or cron expression
 - **@callable** decorator - expose methods to clients via WebSocket RPC
@@ -105,9 +105,9 @@ const { messages, input, handleSubmit } = useAgentChat({ agent });
 - **[references/codemode.md](references/codemode.md)** - Generate code instead of tool calls (token savings)
 - **[references/mcp-email.md](references/mcp-email.md)** - MCP server integration, email routing
 
-## When to Use Codemode
+## When to Use Code Mode
 
-Codemode generates executable JavaScript instead of making individual tool calls. Use it when:
+Code Mode generates executable JavaScript instead of making individual tool calls. Use it when:
 
 - Chaining multiple tool calls in sequence
 - Complex conditional logic across tools
@@ -122,5 +122,5 @@ See [references/codemode.md](references/codemode.md) for setup and examples.
 2. **Use AIChatAgent for chat**: Handles message persistence and resumable streams automatically
 3. **Type your state**: `Agent<Env, State>` ensures type safety for `this.state`
 4. **Use @callable for RPC**: Cleaner than manual WebSocket message handling
-5. **Codemode for complex workflows**: Reduces round-trips and token usage
+5. **Code Mode for complex workflows**: Reduces round-trips and token usage
 6. **Schedule vs Queue**: Use `schedule()` for time-based, `queue()` for sequential processing
