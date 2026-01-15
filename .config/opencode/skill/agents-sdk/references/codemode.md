@@ -73,12 +73,21 @@ export const globalOutbound = {
 };
 ```
 
-### 3. Use Code Mode in Agent
+### 3. Install Dependencies
+
+```bash
+npm install @cloudflare/codemode ai @ai-sdk/openai zod
+```
+
+### 4. Use Code Mode in Agent
 
 ```typescript
+import { Agent } from "agents";
 import { experimental_codemode as codemode } from "@cloudflare/codemode/ai";
-import { streamText, tool } from "ai";
+import { streamText, tool, convertToModelMessages } from "ai";
+import { openai } from "@ai-sdk/openai";
 import { env } from "cloudflare:workers";
+import { z } from "zod";
 
 const tools = {
   getWeather: tool({

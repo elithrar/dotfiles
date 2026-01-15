@@ -28,6 +28,14 @@ Agents require a binding in `wrangler.jsonc`:
 }
 ```
 
+## Choosing an Agent Type
+
+| Use Case | Base Class | Package |
+|----------|------------|---------|
+| Custom state + RPC, no chat | `Agent` | `agents` |
+| Chat with message persistence | `AIChatAgent` | `@cloudflare/ai-chat` |
+| Building an MCP server | `McpAgent` | `agents/mcp` |
+
 ## Key Concepts
 
 - **Agent** base class provides state, scheduling, RPC, MCP, and email capabilities
@@ -54,7 +62,7 @@ Agents require a binding in `wrangler.jsonc`:
 ## Minimal Agent
 
 ```typescript
-import { Agent, routeAgentRequest } from "agents";
+import { Agent, routeAgentRequest, callable } from "agents";
 
 type State = { count: number };
 
@@ -77,9 +85,19 @@ export default {
 
 Use `AIChatAgent` for chat with automatic message persistence and resumable streaming.
 
-Install additional dependencies:
+**Install additional dependencies first:**
 ```bash
 npm install @cloudflare/ai-chat ai @ai-sdk/openai
+```
+
+**Add wrangler.jsonc config** (same pattern as base Agent):
+```jsonc
+{
+  "durable_objects": {
+    "bindings": [{ "name": "Chat", "class_name": "Chat" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Chat"] }]
+}
 ```
 
 ```typescript
@@ -118,7 +136,8 @@ const { messages, input, handleSubmit } = useAgentChat({ agent });
 - **[references/state-scheduling.md](references/state-scheduling.md)** - State persistence, scheduling, queues
 - **[references/streaming-chat.md](references/streaming-chat.md)** - AIChatAgent, resumable streams, UI patterns
 - **[references/codemode.md](references/codemode.md)** - Generate code instead of tool calls (token savings)
-- **[references/mcp-email.md](references/mcp-email.md)** - MCP server integration, email routing
+- **[references/mcp.md](references/mcp.md)** - MCP server integration
+- **[references/email.md](references/email.md)** - Email routing and handling
 
 ## When to Use Code Mode
 

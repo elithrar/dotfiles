@@ -1,12 +1,12 @@
-# MCP Servers & Email Handling
-
-## MCP Server Integration
+# MCP Server Integration
 
 Agents include a multi-server MCP client for connecting to external MCP servers.
 
-### Add an MCP Server
+## Add an MCP Server
 
 ```typescript
+import { Agent, callable } from "agents";
+
 export class MyAgent extends Agent<Env, State> {
   @callable()
   async addServer(name: string, url: string) {
@@ -27,7 +27,7 @@ export class MyAgent extends Agent<Env, State> {
 }
 ```
 
-### Use MCP Tools
+## Use MCP Tools
 
 ```typescript
 async onChatMessage() {
@@ -49,7 +49,7 @@ async onChatMessage() {
 }
 ```
 
-### List MCP Resources
+## List MCP Resources
 
 ```typescript
 // List all registered servers
@@ -65,7 +65,7 @@ const resources = this.mcp.listResources();
 const prompts = this.mcp.listPrompts();
 ```
 
-### Remove Server
+## Remove Server
 
 ```typescript
 await this.removeMcpServer(serverId);
@@ -73,8 +73,24 @@ await this.removeMcpServer(serverId);
 
 ## Building an MCP Server
 
-Use `McpAgent` from the SDK to create an MCP server:
+Use `McpAgent` from the SDK to create an MCP server.
 
+**Install dependencies:**
+```bash
+npm install @modelcontextprotocol/sdk zod
+```
+
+**Wrangler config:**
+```jsonc
+{
+  "durable_objects": {
+    "bindings": [{ "name": "MyMCP", "class_name": "MyMCP" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["MyMCP"] }]
+}
+```
+
+**Server implementation:**
 ```typescript
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { McpAgent } from "agents/mcp";
@@ -114,7 +130,7 @@ export class MyMCP extends McpAgent<Env, State, {}> {
 }
 ```
 
-### Serve MCP Server
+## Serve MCP Server
 
 ```typescript
 export default {
@@ -134,110 +150,4 @@ export default {
     return new Response("Not found", { status: 404 });
   }
 };
-```
-
-## Email Handling
-
-Agents can receive and reply to emails via Cloudflare Email Routing.
-
-### Implement onEmail
-
-```typescript
-import { Agent, AgentEmail } from "agents";
-
-export class EmailAgent extends Agent<Env, State> {
-  async onEmail(email: AgentEmail) {
-    console.log("From:", email.from);
-    console.log("To:", email.to);
-    console.log("Subject:", email.headers.get("subject"));
-
-    // Get raw email content
-    const raw = await email.getRaw();
-
-    // Parse with postal-mime if needed
-    const parsed = await PostalMime.parse(raw);
-
-    // Update state
-    this.setState({
-      emails: [...this.state.emails, {
-        from: email.from,
-        subject: parsed.subject,
-        text: parsed.text,
-        timestamp: new Date()
-      }]
-    });
-
-    // Reply
-    await this.replyToEmail(email, {
-      fromName: "My Agent",
-      subject: `Re: ${email.headers.get("subject")}`,
-      body: "Thanks for your email! I'll process it shortly.",
-      contentType: "text/plain"
-    });
-  }
-}
-```
-
-### Route Emails to Agent
-
-```typescript
-import { routeAgentEmail, createAddressBasedEmailResolver } from "agents";
-
-export default {
-  async email(message, env) {
-    await routeAgentEmail(message, env, {
-      resolver: createAddressBasedEmailResolver("EmailAgent")
-    });
-  },
-
-  async fetch(request, env) {
-    return routeAgentRequest(request, env) ?? new Response("Not found", { status: 404 });
-  }
-};
-```
-
-### Email Wrangler Config
-
-```jsonc
-{
-  "send_email": [
-    { "name": "SEB", "destination_address": "reply@yourdomain.com" }
-  ]
-}
-```
-
-Configure Email Routing in Cloudflare dashboard to forward to your Worker.
-
-## Custom Email Resolvers
-
-### Header-Based Resolver
-
-Routes based on X-Agent headers in replies:
-
-```typescript
-import { createHeaderBasedEmailResolver } from "agents";
-
-await routeAgentEmail(message, env, {
-  resolver: createHeaderBasedEmailResolver()
-});
-```
-
-### Custom Resolver
-
-```typescript
-const customResolver = async (email, env) => {
-  // Parse recipient to determine agent
-  const [localPart] = email.to.split("@");
-  
-  if (localPart.startsWith("support-")) {
-    return {
-      agentName: "SupportAgent",
-      agentId: localPart.replace("support-", "")
-    };
-  }
-  
-  return null; // Don't route
-};
-
-await routeAgentEmail(message, env, { resolver: customResolver });
 ```

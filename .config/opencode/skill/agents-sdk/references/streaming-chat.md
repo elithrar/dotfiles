@@ -157,7 +157,7 @@ export class MyAgent extends Agent<Env> {
       stream.send(`Result ${i}: ${query}`);
       await sleep(100);
     }
-    stream.end("Complete");
+    stream.close();
   }
 }
 ```
