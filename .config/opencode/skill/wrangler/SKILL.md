@@ -1,6 +1,6 @@
 ---
 name: wrangler
-description: Cloudflare Workers CLI for deploying, developing, and managing Workers, KV, R2, D1, Vectorize, Hyperdrive, and Workers AI. Load before running wrangler commands to ensure correct syntax and best practices.
+description: Cloudflare Workers CLI for deploying, developing, and managing Workers, KV, R2, D1, Vectorize, Hyperdrive, Workers AI, Containers, Queues, Workflows, Pipelines, and Secrets Store. Load before running wrangler commands to ensure correct syntax and best practices.
 ---
 
 # Wrangler CLI
@@ -447,7 +447,7 @@ wrangler vectorize create my-index --preset @cf/baai/bge-base-en-v1.5
 wrangler vectorize list
 
 # Get index info
-wrangler vectorize info my-index
+wrangler vectorize get my-index
 
 # Delete index
 wrangler vectorize delete my-index
@@ -536,6 +536,25 @@ wrangler ai finetune list
 
 ## Queues
 
+### Manage Queues
+
+```bash
+# Create queue
+wrangler queues create my-queue
+
+# List queues
+wrangler queues list
+
+# Delete queue
+wrangler queues delete my-queue
+
+# Add consumer to queue
+wrangler queues consumer add my-queue my-worker
+
+# Remove consumer
+wrangler queues consumer remove my-queue my-worker
+```
+
 ### Config Binding
 
 ```jsonc
@@ -552,6 +571,190 @@ wrangler ai finetune list
       }
     ]
   }
+}
+```
+
+---
+
+## Containers
+
+### Build and Push Images
+
+```bash
+# Build container image
+wrangler containers build -t my-app:latest .
+
+# Build and push in one command
+wrangler containers build -t my-app:latest . --push
+
+# Push existing image to Cloudflare registry
+wrangler containers push my-app:latest
+```
+
+### Manage Containers
+
+```bash
+# List containers
+wrangler containers list
+
+# Get container info
+wrangler containers info <CONTAINER_ID>
+
+# Delete container
+wrangler containers delete <CONTAINER_ID>
+```
+
+### Manage Images
+
+```bash
+# List images in registry
+wrangler containers images list
+
+# Delete image
+wrangler containers images delete my-app:latest
+```
+
+### Manage External Registries
+
+```bash
+# List configured registries
+wrangler containers registries list
+
+# Configure external registry (e.g., ECR)
+wrangler containers registries configure <DOMAIN> \
+  --public-credential <AWS_ACCESS_KEY_ID>
+
+# Delete registry configuration
+wrangler containers registries delete <DOMAIN>
+```
+
+---
+
+## Workflows
+
+### Manage Workflows
+
+```bash
+# List workflows
+wrangler workflows list
+
+# Describe workflow
+wrangler workflows describe my-workflow
+
+# Trigger workflow instance
+wrangler workflows trigger my-workflow
+
+# Trigger with parameters
+wrangler workflows trigger my-workflow --params '{"key": "value"}'
+
+# Delete workflow
+wrangler workflows delete my-workflow
+```
+
+### Manage Workflow Instances
+
+```bash
+# List instances
+wrangler workflows instances list my-workflow
+
+# Describe instance
+wrangler workflows instances describe my-workflow <INSTANCE_ID>
+
+# Terminate instance
+wrangler workflows instances terminate my-workflow <INSTANCE_ID>
+```
+
+### Config Binding
+
+```jsonc
+{
+  "workflows": [
+    {
+      "binding": "MY_WORKFLOW",
+      "name": "my-workflow",
+      "class_name": "MyWorkflow"
+    }
+  ]
+}
+```
+
+---
+
+## Pipelines
+
+### Manage Pipelines
+
+```bash
+# Create pipeline
+wrangler pipelines create my-pipeline --r2 my-bucket
+
+# List pipelines
+wrangler pipelines list
+
+# Show pipeline details
+wrangler pipelines show my-pipeline
+
+# Update pipeline
+wrangler pipelines update my-pipeline --batch-max-mb 100
+
+# Delete pipeline
+wrangler pipelines delete my-pipeline
+```
+
+### Config Binding
+
+```jsonc
+{
+  "pipelines": [
+    { "binding": "MY_PIPELINE", "pipeline": "my-pipeline" }
+  ]
+}
+```
+
+---
+
+## Secrets Store
+
+### Manage Stores
+
+```bash
+# Create store
+wrangler secrets-store store create my-store
+
+# List stores
+wrangler secrets-store store list
+
+# Delete store
+wrangler secrets-store store delete <STORE_ID>
+```
+
+### Manage Secrets in Store
+
+```bash
+# Add secret to store
+wrangler secrets-store secret put <STORE_ID> my-secret
+
+# List secrets in store
+wrangler secrets-store secret list <STORE_ID>
+
+# Get secret
+wrangler secrets-store secret get <STORE_ID> my-secret
+
+# Delete secret from store
+wrangler secrets-store secret delete <STORE_ID> my-secret
+```
+
+### Config Binding
+
+```jsonc
+{
+  "secrets_store_secrets": [
+    {
+      "binding": "MY_SECRET",
+      "store_id": "<STORE_ID>",
+      "secret_name": "my-secret"
+    }
+  ]
 }
 ```
 
