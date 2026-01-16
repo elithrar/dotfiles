@@ -6,7 +6,8 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age agg asciinema atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jj jq lua make mkcert neovim nmap node pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree uv websocat wget wrk yarn zoxide zsh cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
+BREW_PACKAGES=(age agg asciinema atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jj jq lua make mkcert neovim nmap node pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree uv websocat wget wrk yarn zoxide zsh)
+CF_BREW_PACKAGES=(cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
 CASKS=(ghostty raycast)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 
@@ -162,6 +163,22 @@ for pkg in "${BREW_PACKAGES[@]}"; do
         print_success "${pkg} already installed"
     fi
 done
+
+if [ "${CF:-false}" = "true" ]; then
+    print_info "Installing Cloudflare Homebrew packages"
+    for pkg in "${CF_BREW_PACKAGES[@]}"; do
+        # Check if $pkg is already installed
+        print_info "Checking package ${pkg}"
+        if ! brew list "${pkg}" &>/dev/null; then
+            print_info "Installing ${pkg}"
+            brew install --quiet "${pkg}"
+        else
+            print_success "${pkg} already installed"
+        fi
+    done
+else
+    print_info "Skipping Cloudflare Homebrew packages (set CF=true to enable)"
+fi
 
 # Bun (Homebrew per https://bun.com/docs/installation)
 print_info "Checking package bun"
