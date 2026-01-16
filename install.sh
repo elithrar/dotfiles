@@ -154,60 +154,100 @@ fi
 print_info "Installing Homebrew packages"
 # Install taps first
 brew tap thoughtbot/formulae
+
+print_info "Checking installed Homebrew packages"
+installed_formulae=$'\n'"$(brew list --formula)"$'\n'
+installed_casks=""
+if [ "${OS}" = "Darwin" ]; then
+    installed_casks=$'\n'"$(brew list --cask)"$'\n'
+fi
+
+brew_formula_installed() {
+    [[ "${installed_formulae}" == *$'\n'"$1"$'\n'* ]]
+}
+
+brew_cask_installed() {
+    [[ "${installed_casks}" == *$'\n'"$1"$'\n'* ]]
+}
+
+missing_packages=()
 for pkg in "${BREW_PACKAGES[@]}"; do
     # Check if $pkg is already installed
     print_info "Checking package ${pkg}"
-    if ! brew list "${pkg}" &>/dev/null; then
-        print_info "Installing ${pkg}"
-        brew install --quiet "${pkg}"
+    if ! brew_formula_installed "${pkg}"; then
+        missing_packages+=("${pkg}")
     else
         print_success "${pkg} already installed"
     fi
 done
 
+if [ ${#missing_packages[@]} -gt 0 ]; then
+    print_info "Installing Homebrew packages: ${missing_packages[*]}"
+    brew install --quiet "${missing_packages[@]}"
+else
+    print_success "All Homebrew packages already installed"
+fi
+
 if [ "${CF:-false}" = "true" ]; then
     print_info "Installing Cloudflare Homebrew packages"
+    missing_cf_packages=()
     for pkg in "${CF_BREW_PACKAGES[@]}"; do
+        pkg_name="${pkg##*/}"
         # Check if $pkg is already installed
-        print_info "Checking package ${pkg}"
-        if ! brew list "${pkg}" &>/dev/null; then
-            print_info "Installing ${pkg}"
-            brew install --quiet "${pkg}"
+        print_info "Checking package ${pkg_name}"
+        if ! brew_formula_installed "${pkg_name}"; then
+            missing_cf_packages+=("${pkg}")
         else
-            print_success "${pkg} already installed"
+            print_success "${pkg_name} already installed"
         fi
     done
+
+    if [ ${#missing_cf_packages[@]} -gt 0 ]; then
+        print_info "Installing Cloudflare Homebrew packages: ${missing_cf_packages[*]}"
+        brew install --quiet "${missing_cf_packages[@]}"
+    else
+        print_success "All Cloudflare Homebrew packages already installed"
+    fi
 else
     print_info "Skipping Cloudflare Homebrew packages (set CF=true to enable)"
 fi
 
 # Bun (Homebrew per https://bun.com/docs/installation)
 print_info "Checking package bun"
-if ! brew list bun &>/dev/null; then
+if ! brew_formula_installed "bun"; then
     print_info "Installing bun"
-    brew install --quiet bun
+    brew install --quiet oven-sh/bun/bun
 else
     print_success "bun already installed"
 fi
 
 # reattach-to-user-namespace
 if [ "${OS}" = "Darwin" ]; then
-    brew install --quiet reattach-to-user-namespace
+    if ! brew_formula_installed "reattach-to-user-namespace"; then
+        brew install --quiet reattach-to-user-namespace
+    fi
 fi
 
 # Casks
 if [ "${OS}" = "Darwin" ]; then
     print_info "Installing Homebrew Casks"
+    missing_casks=()
     for pkg in "${CASKS[@]}"; do
         # Check if $pkg is already installed
         print_info "Checking package ${pkg}"
-        if ! brew list --cask "${pkg}" &>/dev/null; then
-            print_info "Installing ${pkg}"
-            brew install --cask "${pkg}"
+        if ! brew_cask_installed "${pkg}"; then
+            missing_casks+=("${pkg}")
         else
             print_success "${pkg} already installed"
         fi
     done
+
+    if [ ${#missing_casks[@]} -gt 0 ]; then
+        print_info "Installing Homebrew Casks: ${missing_casks[*]}"
+        brew install --cask "${missing_casks[@]}"
+    else
+        print_success "All Homebrew casks already installed"
+    fi
 else
     print_info "Skipping Cask installation: not on macOS"
 fi
