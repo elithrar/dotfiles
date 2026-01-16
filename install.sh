@@ -66,9 +66,9 @@ EOF
 
 # Check environments
 OS=$(uname -s 2> /dev/null)
-INTERACTIVE=true
-if [[ $- != *i* ]]; then
-    INTERACTIVE=false
+INTERACTIVE=false
+if [ -t 0 ] && [ -t 1 ]; then
+    INTERACTIVE=true
 fi
 
 print_info "Detected OS: ${OS}"
