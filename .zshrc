@@ -33,6 +33,13 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
+# Ensure autosuggestions are active even if the plugin fails to load
+if ! typeset -f _zsh_autosuggest_start >/dev/null 2>&1; then
+  if [[ -f "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+    source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  fi
+fi
+
 # keybinding mode
 bindkey -e
 
