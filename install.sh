@@ -286,6 +286,25 @@ else
     print_success "oh-my-zsh already installed"
 fi
 
+zsh_custom_dir="${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}"
+
+install_omz_plugin() {
+    local name="$1"
+    local repo="$2"
+    local target_dir="${zsh_custom_dir}/plugins/${name}"
+
+    if [ -d "${target_dir}" ]; then
+        print_success "oh-my-zsh plugin ${name} already installed"
+        return
+    fi
+
+    print_info "Installing oh-my-zsh plugin ${name}"
+    git clone "${repo}" "${target_dir}"
+}
+
+install_omz_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions"
+install_omz_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting"
+
 # --- Install Atuin
 if [ ! -d "${HOME}/.atuin" ]; then
     print_info "Installing Atuin"
