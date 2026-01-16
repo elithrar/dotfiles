@@ -6,7 +6,7 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age agg asciinema atuin bat bun cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jj jq lua make mkcert neovim nmap node pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree uv websocat wget wrk yarn zoxide zsh cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
+BREW_PACKAGES=(age agg asciinema atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jj jq lua make mkcert neovim nmap node pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree uv websocat wget wrk yarn zoxide zsh cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
 CASKS=(ghostty raycast)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 
@@ -162,6 +162,15 @@ for pkg in "${BREW_PACKAGES[@]}"; do
         print_success "${pkg} already installed"
     fi
 done
+
+# Bun (Homebrew per https://bun.com/docs/installation)
+print_info "Checking package bun"
+if ! brew list bun &>/dev/null; then
+    print_info "Installing bun"
+    brew install --quiet bun
+else
+    print_success "bun already installed"
+fi
 
 # reattach-to-user-namespace
 if [ "${OS}" = "Darwin" ]; then
