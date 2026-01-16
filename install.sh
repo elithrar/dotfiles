@@ -6,7 +6,8 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age agg asciinema atuin bat bun cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jj jq lua make mkcert neovim nmap node pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree uv websocat wget wrk yarn zoxide zsh cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
+BREW_PACKAGES=(age agg asciinema atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jj jq lua make mkcert neovim nmap node pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree uv websocat wget wrk yarn zoxide zsh)
+CF_BREW_PACKAGES=(cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
 CASKS=(ghostty raycast)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 
@@ -26,6 +27,7 @@ else
 fi
 
 # Error handling
+ret=0
 trap 'ret=$?; [[ $ret -ne 0 ]] && printf "%s\n" "${red}Setup failed${reset}" >&2; exit $ret' EXIT
 set -euo pipefail
 
@@ -66,9 +68,9 @@ EOF
 
 # Check environments
 OS=$(uname -s 2> /dev/null)
-INTERACTIVE=true
-if [[ $- != *i* ]]; then
-    INTERACTIVE=false
+INTERACTIVE=false
+if [ -t 0 ] && [ -t 1 ]; then
+    INTERACTIVE=true
 fi
 
 print_info "Detected OS: ${OS}"
@@ -162,6 +164,31 @@ for pkg in "${BREW_PACKAGES[@]}"; do
         print_success "${pkg} already installed"
     fi
 done
+
+if [ "${CF:-false}" = "true" ]; then
+    print_info "Installing Cloudflare Homebrew packages"
+    for pkg in "${CF_BREW_PACKAGES[@]}"; do
+        # Check if $pkg is already installed
+        print_info "Checking package ${pkg}"
+        if ! brew list "${pkg}" &>/dev/null; then
+            print_info "Installing ${pkg}"
+            brew install --quiet "${pkg}"
+        else
+            print_success "${pkg} already installed"
+        fi
+    done
+else
+    print_info "Skipping Cloudflare Homebrew packages (set CF=true to enable)"
+fi
+
+# Bun (Homebrew per https://bun.com/docs/installation)
+print_info "Checking package bun"
+if ! brew list bun &>/dev/null; then
+    print_info "Installing bun"
+    brew install --quiet bun
+else
+    print_success "bun already installed"
+fi
 
 # reattach-to-user-namespace
 if [ "${OS}" = "Darwin" ]; then
