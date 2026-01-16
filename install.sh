@@ -27,6 +27,7 @@ else
 fi
 
 # Error handling
+ret=0
 trap 'ret=$?; [[ $ret -ne 0 ]] && printf "%s\n" "${red}Setup failed${reset}" >&2; exit $ret' EXIT
 set -euo pipefail
 
