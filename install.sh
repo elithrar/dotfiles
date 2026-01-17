@@ -8,7 +8,7 @@
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
 BREW_PACKAGES=(age agg asciinema atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jj jq lua make mkcert neovim nmap node pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree try uv websocat wget wrk yarn zoxide zsh)
 CF_BREW_PACKAGES=(cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
-CASKS=(ghostty raycast)
+CASKS=(ghostty raycast zed@preview)
 SSH_EMAIL="matt@eatsleeprepeat.net"
 
 # Colors - use fallbacks if tput unavailable
@@ -67,9 +67,9 @@ ${reset}
 EOF
 
 # Check environments
-OS=$(uname -s 2> /dev/null)
+OS=$(uname -s 2>/dev/null)
 INTERACTIVE=false
-if [ -t 0 ] && [ -t 1 ]; then
+if [[ -t 0 ]] && [[ -t 1 ]]; then
     INTERACTIVE=true
 fi
 
@@ -78,8 +78,8 @@ print_info "Interactive shell session: ${INTERACTIVE}"
 
 # On Linux, we may need to install some packages.
 DISTRO=""
-if [ "${OS}" = "Linux" ]; then
-    if [ -f /etc/os-release ] && grep -iq "Debian" /etc/os-release; then
+if [[ "${OS}" == "Linux" ]]; then
+    if [[ -f /etc/os-release ]] && grep -iq "Debian" /etc/os-release; then
         DISTRO="Debian"
         print_info "Detected Linux distro: ${DISTRO}"
     fi
@@ -87,7 +87,7 @@ fi
 
 # Check for connectivity
 ping_timeout_flag="-w1"
-if [ "${OS}" = "Darwin" ]; then
+if [[ "${OS}" == "Darwin" ]]; then
     ping_timeout_flag="-t1"
 fi
 
@@ -99,10 +99,10 @@ else
 fi
 
 # Ask for sudo
-sudo -v &> /dev/null
+sudo -v &>/dev/null
 
 # Update the system & install core dependencies
-if [ "${OS}" = "Linux" ] && [ "${DISTRO}" = "Debian" ]; then
+if [[ "${OS}" == "Linux" ]] && [[ "${DISTRO}" == "Debian" ]]; then
     print_info "Updating system packages"
     sudo apt update
     sudo apt -y upgrade
@@ -112,37 +112,37 @@ else
 fi
 
 # Generate an SSH key (if none) if we're in an interactive shell
-if [ "${INTERACTIVE}" = true ] && ! [[ -f "${HOME}/.ssh/id_ed25519" ]]; then
+if [[ "${INTERACTIVE}" == true ]] && [[ ! -f "${HOME}/.ssh/id_ed25519" ]]; then
     printf "🔑 Generating new SSH key\n"
     # Ensure .ssh directory exists with correct permissions
     mkdir -p "${HOME}/.ssh"
     chmod 700 "${HOME}/.ssh"
     ssh-keygen -t ed25519 -f "${HOME}/.ssh/id_ed25519" -C "${SSH_EMAIL}"
     print_info "Key generated!"
-    if [ "${OS}" = "Darwin" ]; then
+    if [[ "${OS}" == "Darwin" ]]; then
         print_info "Adding key to Keychain"
         ssh-add --apple-use-keychain "${HOME}/.ssh/id_ed25519"
     fi
 fi
 
 # Set up repos directory
-if [ ! -d "${HOME}/repos" ]; then
+if [[ ! -d "${HOME}/repos" ]]; then
     mkdir -p "${HOME}/repos"
 fi
 
 # Install Homebrew
-if ! [ -x "$(command -v brew)" ]; then
+if ! command -v brew &>/dev/null; then
     print_info "Installing Homebrew..."
     # Use NONINTERACTIVE=1 to run without prompts, matching the script's style.
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
     # Add Homebrew to the PATH for the rest of this script's execution.
     # The location is architecture-dependent.
-    if [ -x "/opt/homebrew/bin/brew" ]; then # Apple Silicon macOS
+    if [[ -x "/opt/homebrew/bin/brew" ]]; then # Apple Silicon macOS
         eval "$(/opt/homebrew/bin/brew shellenv)"
-    elif [ -x "/usr/local/bin/brew" ]; then # Intel macOS
+    elif [[ -x "/usr/local/bin/brew" ]]; then # Intel macOS
         eval "$(/usr/local/bin/brew shellenv)"
-    elif [ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]; then # Linux
+    elif [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then # Linux
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
     print_success "Homebrew installed"
@@ -159,7 +159,7 @@ brew tap tobi/try https://github.com/tobi/try
 print_info "Checking installed Homebrew packages"
 installed_formulae=$'\n'"$(brew list --formula)"$'\n'
 installed_casks=""
-if [ "${OS}" = "Darwin" ]; then
+if [[ "${OS}" == "Darwin" ]]; then
     installed_casks=$'\n'"$(brew list --cask)"$'\n'
 fi
 
@@ -182,14 +182,14 @@ for pkg in "${BREW_PACKAGES[@]}"; do
     fi
 done
 
-if [ ${#missing_packages[@]} -gt 0 ]; then
+if (( ${#missing_packages[@]} > 0 )); then
     print_info "Installing Homebrew packages: ${missing_packages[*]}"
     brew install --quiet "${missing_packages[@]}"
 else
     print_success "All Homebrew packages already installed"
 fi
 
-if [ "${CF:-false}" = "true" ]; then
+if [[ "${CF:-false}" == "true" ]]; then
     print_info "Installing Cloudflare Homebrew packages"
     missing_cf_packages=()
     for pkg in "${CF_BREW_PACKAGES[@]}"; do
@@ -203,7 +203,7 @@ if [ "${CF:-false}" = "true" ]; then
         fi
     done
 
-    if [ ${#missing_cf_packages[@]} -gt 0 ]; then
+    if (( ${#missing_cf_packages[@]} > 0 )); then
         print_info "Installing Cloudflare Homebrew packages: ${missing_cf_packages[*]}"
         brew install --quiet "${missing_cf_packages[@]}"
     else
@@ -223,14 +223,14 @@ else
 fi
 
 # reattach-to-user-namespace
-if [ "${OS}" = "Darwin" ]; then
+if [[ "${OS}" == "Darwin" ]]; then
     if ! brew_formula_installed "reattach-to-user-namespace"; then
         brew install --quiet reattach-to-user-namespace
     fi
 fi
 
 # Casks
-if [ "${OS}" = "Darwin" ]; then
+if [[ "${OS}" == "Darwin" ]]; then
     print_info "Installing Homebrew Casks"
     missing_casks=()
     for pkg in "${CASKS[@]}"; do
@@ -243,7 +243,7 @@ if [ "${OS}" = "Darwin" ]; then
         fi
     done
 
-    if [ ${#missing_casks[@]} -gt 0 ]; then
+    if (( ${#missing_casks[@]} > 0 )); then
         print_info "Installing Homebrew Casks: ${missing_casks[*]}"
         brew install --cask "${missing_casks[@]}"
     else
@@ -257,13 +257,13 @@ print_success "Homebrew packages"
 # --- dotfiles
 # Clone & install dotfiles
 print_info "Configuring dotfiles"
-if ! [ -x "$(command -v stow)" ]; then
+if ! command -v stow &>/dev/null; then
     # Install GNU stow
     # https://linux.die.net/man/8/stow
     brew install stow
 fi
 
-if [ ! -d "${HOME}/repos/dotfiles" ]; then
+if [[ ! -d "${HOME}/repos/dotfiles" ]]; then
     print_info "Cloning dotfiles"
     git clone "${DOTFILES_REPO}" "${HOME}/repos/dotfiles"
 else
@@ -275,7 +275,7 @@ stow --dir="${HOME}/repos/dotfiles" --target="${HOME}" .
 print_success "dotfiles installed"
 
 # --- Configure zsh
-if [ ! -d "${HOME}/.oh-my-zsh" ]; then
+if [[ ! -d "${HOME}/.oh-my-zsh" ]]; then
     print_info "Installing oh-my-zsh"
     # Use --unattended to prevent oh-my-zsh from changing the shell or starting zsh
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
@@ -288,7 +288,7 @@ else
 fi
 
 # --- Install Atuin
-if [ ! -d "${HOME}/.atuin" ]; then
+if [[ ! -d "${HOME}/.atuin" ]]; then
     print_info "Installing Atuin"
     curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
 else
@@ -296,7 +296,7 @@ else
 fi
 
 # --- Install nvm
-if [ ! -d "${HOME}/.nvm" ]; then
+if [[ ! -d "${HOME}/.nvm" ]]; then
     print_info "Installing nvm"
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | PROFILE=/dev/null bash
 else
@@ -304,7 +304,7 @@ else
 fi
 
 # Install uv - skip if already installed via brew
-if ! [ -x "$(command -v uv)" ]; then
+if ! command -v uv &>/dev/null; then
     print_info "Installing uv"
     curl -LsSf https://astral.sh/uv/install.sh | sh
 else
@@ -312,7 +312,7 @@ else
 fi
 
 # Install Rust via rustup
-if ! [ -x "$(command -v rustc)" ]; then
+if ! command -v rustc &>/dev/null; then
     print_info "Installing Rust via rustup"
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 else
