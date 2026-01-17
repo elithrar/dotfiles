@@ -47,7 +47,7 @@ alias iso8601="date -u +'%Y-%m-%dT%H:%M:%SZ'"
 alias less="less -X"
 alias sl="ls"
 alias oc="opencode --continue"
-unalias gb
+unalias gb 2>/dev/null
 
 # Go
 export GOPATH=$HOME/repos/go
@@ -117,7 +117,7 @@ time-at() {
 
 # tmux
 alias tmux="tmux -2 -u"
-if command -v tmux >/dev/null 2>&1; then
+if command -v tmux &>/dev/null; then
     test -z "$TMUX" && (tmux attach || tmux new-session)
 fi
 
@@ -130,7 +130,8 @@ trim_path() {
   export PATH
 }
 
-env-update() { export PATH=$PATH; }
+# Reload PATH from shell config (useful after installing new tools)
+env-update() { source ~/.zshrc; }
 
 # prompt
 # Git prompt colors and symbols
@@ -229,7 +230,7 @@ fi
 
 # rbenv (https://github.com/rbenv/rbenv)
 export RBENV_SHELL=zsh
-command rbenv rehash 2>/dev/null
+command -v rbenv &>/dev/null && rbenv rehash 2>/dev/null
 rbenv() {
   local command
   command="${1:-}"
@@ -283,6 +284,6 @@ trim_path
 # jj (Jujutsu) dynamic completions
 # https://docs.jj-vcs.dev/latest/install-and-setup/#dynamic-completions
 # Dynamic completions include bookmarks, aliases, revisions, operations, and files
-if command -v jj &> /dev/null; then
+if command -v jj &>/dev/null; then
   source <(COMPLETE=zsh jj)
 fi

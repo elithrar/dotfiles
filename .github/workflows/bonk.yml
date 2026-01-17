@@ -26,7 +26,7 @@ jobs:
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
         with:
-          model: opencode/claude-opus-4-5
+          model: opencode/gpt-5.2-codex
           mentions: "/bonk,@ask-bonk"
           permissions: write
-          opencode_dev: true
+          opencode_dev: false
