@@ -6,7 +6,7 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age agg asciinema atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jj jq lua make mkcert neovim nmap node pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree uv websocat wget wrk yarn zoxide zsh)
+BREW_PACKAGES=(age agg asciinema atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jj jq lua make mkcert neovim nmap node pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree try uv websocat wget wrk yarn zoxide zsh)
 CF_BREW_PACKAGES=(cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
 CASKS=(ghostty raycast)
 SSH_EMAIL="matt@eatsleeprepeat.net"
@@ -154,6 +154,7 @@ fi
 print_info "Installing Homebrew packages"
 # Install taps first
 brew tap thoughtbot/formulae
+brew tap tobi/try https://github.com/tobi/try
 
 print_info "Checking installed Homebrew packages"
 installed_formulae=$'\n'"$(brew list --formula)"$'\n'
