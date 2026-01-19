@@ -293,6 +293,9 @@ export PATH="/usr/local/opt/curl/bin:$PATH"
 # Remove duplicate PATH entries
 trim_path
 
+# try custom dir
+eval "$(try init ~/repos/tries)"
+
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
