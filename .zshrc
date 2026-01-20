@@ -33,8 +33,24 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
-# keybinding mode
-bindkey -e
+# keybinding mode - vim
+bindkey -v
+export KEYTIMEOUT=1
+
+# Vim mode indicator for prompt
+# "in" for insert mode (bold yellow), "no" for normal mode (light grey)
+function zle-line-init zle-keymap-select {
+  case ${KEYMAP} in
+    vicmd)      VI_MODE="%{$fg[grey]%}no%{$reset_color%}" ;;
+    viins|main) VI_MODE="%{$fg_bold[yellow]%}in%{$reset_color%}" ;;
+  esac
+  zle reset-prompt
+}
+zle -N zle-line-init
+zle -N zle-keymap-select
+
+# Initialize VI_MODE for first prompt
+VI_MODE="%{$fg_bold[yellow]%}in%{$reset_color%}"
 
 # Follow symbolic links
 alias cd="cd -P"
@@ -180,7 +196,7 @@ _vcs_prompt_info() {
 }
 
 NEWLINE=$'\n'
-export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~$(_vcs_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%}➜ '
+export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~$(_vcs_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%}${VI_MODE} ➜ '
 export TERM="xterm-256color"
 
 # editor
