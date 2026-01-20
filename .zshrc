@@ -38,11 +38,11 @@ bindkey -v
 export KEYTIMEOUT=1
 
 # Vim mode indicator for prompt
-# "in" for insert mode (bold yellow), "no" for normal mode (light grey)
+# "ins" for insert mode (bold yellow), "nrm" for normal mode (light grey)
 function zle-line-init zle-keymap-select {
   case ${KEYMAP} in
-    vicmd)      VI_MODE="%{$fg[grey]%}no%{$reset_color%}" ;;
-    viins|main) VI_MODE="%{$fg_bold[yellow]%}in%{$reset_color%}" ;;
+    vicmd)      VI_MODE="%{$fg[grey]%}nrm%{$reset_color%}" ;;
+    viins|main) VI_MODE="%{$fg_bold[yellow]%}ins%{$reset_color%}" ;;
   esac
   zle reset-prompt
 }
@@ -50,7 +50,7 @@ zle -N zle-line-init
 zle -N zle-keymap-select
 
 # Initialize VI_MODE for first prompt
-VI_MODE="%{$fg_bold[yellow]%}in%{$reset_color%}"
+VI_MODE="%{$fg_bold[yellow]%}ins%{$reset_color%}"
 
 # Follow symbolic links
 alias cd="cd -P"
