@@ -41,7 +41,7 @@ export KEYTIMEOUT=1
 # "ins" for insert mode (bold yellow), "nrm" for normal mode (light grey)
 function zle-line-init zle-keymap-select {
   case ${KEYMAP} in
-    vicmd)      VI_MODE="%{$fg[grey]%}nrm%{$reset_color%}" ;;
+    vicmd)      VI_MODE="%{$fg_bold[white]%}nrm%{$reset_color%}" ;;
     viins|main) VI_MODE="%{$fg_bold[yellow]%}ins%{$reset_color%}" ;;
   esac
   zle reset-prompt
