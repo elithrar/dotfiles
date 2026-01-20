@@ -28,3 +28,7 @@ Temporary Items
 .opencode/node_modules/
 .opencode/bun.lock
 .opencode/worktrees/
+
+# Database tools config
+.config/pgcli/*
+.config/planetscale/*
