@@ -9,6 +9,11 @@ zstyle ':omz:alpha:lib:git' async-prompt force
 CASE_SENSITIVE="false"
 HYPHEN_INSENSITIVE="true"
 
+# Skip oh-my-zsh's compinit and compaudit - we handle it ourselves for faster startup
+# DISABLE_COMPFIX skips compaudit, skip_global_compinit skips compinit entirely
+DISABLE_COMPFIX=true
+export skip_global_compinit=1
+
 umask 027
 
 autoload -Uz bracketed-paste-magic
@@ -21,12 +26,9 @@ plugins=(
 	gem
 	git
 	github
-	golang
 	jj
-	pip
-	python
 	tmux
-	yarn
+	uv
 	zsh-autosuggestions
 	zsh-syntax-highlighting
 	)
@@ -246,7 +248,6 @@ fi
 
 # rbenv (https://github.com/rbenv/rbenv)
 export RBENV_SHELL=zsh
-command -v rbenv &>/dev/null && rbenv rehash 2>/dev/null
 rbenv() {
   local command
   command="${1:-}"
@@ -300,9 +301,20 @@ eval "$(try init ~/repos/tries)"
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# jj (Jujutsu) dynamic completions
-# https://docs.jj-vcs.dev/latest/install-and-setup/#dynamic-completions
-# Dynamic completions include bookmarks, aliases, revisions, operations, and files
-if command -v jj &>/dev/null; then
-  source <(COMPLETE=zsh jj)
-fi
+# Lazy-load CLI completions (jj, pscale)
+# Completions are cached to ~/.cache/zsh and regenerated daily
+_lazy_completion_cache="$HOME/.cache/zsh"
+[[ -d "$_lazy_completion_cache" ]] || mkdir -p "$_lazy_completion_cache"
+
+_load_cached_completion() {
+  local cmd=$1 cache="$_lazy_completion_cache/_$cmd" generator=$2
+  # Regenerate if cache missing or older than 24h
+  if [[ ! -f "$cache" || -n "$cache"(#qN.mh+24) ]]; then
+    command -v "$cmd" &>/dev/null && eval "$generator" > "$cache" 2>/dev/null
+  fi
+  [[ -f "$cache" ]] && source "$cache"
+}
+
+_load_cached_completion jj "COMPLETE=zsh jj"
+_load_cached_completion pscale "pscale completion zsh"
+unset _lazy_completion_cache
