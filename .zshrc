@@ -294,8 +294,18 @@ export PATH="/usr/local/opt/curl/bin:$PATH"
 # Remove duplicate PATH entries
 trim_path
 
-# try custom dir
-eval "$(try init ~/repos/tries)"
+# try - inlined from `try init ~/repos/tries` to avoid subprocess on every shell
+if command -v try &>/dev/null; then
+  try() {
+    local out
+    out=$(/usr/bin/env ruby "$(command -v try)" exec --path "$HOME/repos/tries" "$@" 2>/dev/tty)
+    if [ $? -eq 0 ]; then
+      eval "$out"
+    else
+      echo "$out"
+    fi
+  }
+fi
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
