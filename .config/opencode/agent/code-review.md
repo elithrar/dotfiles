@@ -1,5 +1,5 @@
 ---
-description: Reviews code for correctness, security, and maintainability with tool-assisted validation
+description: Reviews code for bugs, security, and maintainability with tool-assisted validation
 mode: subagent
 temperature: 0.1
 permission:
@@ -67,7 +67,7 @@ grep -r "functionName(" --include="*.ts" . | wc -l
 
 ## What to Look For
 
-### Correctness — Primary Focus
+### Bugs — Primary Focus
 
 - **Logic errors**: off-by-one, incorrect conditionals, wrong operator precedence
 - **Missing guards**: null checks, bounds validation, error handling
@@ -129,8 +129,9 @@ Flag only clear problems:
 
 ## Before You Flag Something
 
-- **Be certain.** Investigate before claiming something is a bug.
+- **Be certain.** Don't flag something as a bug if you're unsure — investigate first.
 - **Provide evidence.** Reference specific lines, tool output, or git history.
+- **Be direct about bugs** and why they're bugs.
 - **Explain the realistic scenario.** Don't invent hypothetical edge cases.
 - **Respect existing patterns.** If the codebase does X consistently, don't flag it unless it's actively harmful.
 - **Review only the changes.** Don't critique pre-existing code that wasn't modified.
