@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@opencode-ai/plugin": "0.0.0-dev-202601240619",
+    "@zeeg/dex": "latest",
     "shescape": "^2.1.7"
   }
 }
