@@ -5,54 +5,21 @@ subtask: true
 
 Convert the provided markdown planning document into a trackable dex task.
 
+First, load the dex-plan skill for detailed instructions:
+
+```
+skill({ name: "dex-plan" })
+```
+
 ## Input
 
 $ARGUMENTS
 
-## Instructions
+## Quick Reference
 
 1. Read the markdown file specified above
 2. Extract the title from the first `#` heading (strip "Plan: " prefix if present)
-3. Create a dex task with the full markdown content as context:
-
-```bash
-dex create -d "<extracted-title>" --context "<full-markdown-content>"
-```
-
-4. Analyze the plan structure for potential subtask breakdown:
-   - Look for numbered lists with 3-7 items
-   - Look for distinct implementation sections/phases
-   - Look for file-specific changes
-
-5. If breakdown adds value, create subtasks:
-
-```bash
-dex create --parent <parent-id> -d "<subtask-description>" --context "<section-content>"
-```
-
-6. Report results:
-   - Task ID created
-   - Number of subtasks (if any)
-   - Command to view: `dex show <id>`
-
-## When NOT to Break Down
-
-- Only 1-2 steps present
-- Plan is a single cohesive fix
-- Content is exploratory/research
-- Breaking down creates artificial boundaries
-
-## Example Output
-
-```
-Created task abc123: "Add JWT Authentication"
-
-Analyzed plan: Found 4 implementation steps
-Created 4 subtasks:
-- abc124: Create User model
-- abc125: Add /auth/register endpoint
-- abc126: Add /auth/login endpoint
-- abc127: Create JWT middleware
-
-View structure: dex show abc123
-```
+3. Create a dex task: `dex create -d "<title>" --context "<full-markdown>"`
+4. Analyze structure for potential subtask breakdown (3-7 items)
+5. Create subtasks if beneficial: `dex create --parent <id> -d "..." --context "..."`
+6. Report task ID and subtask count
