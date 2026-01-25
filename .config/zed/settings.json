@@ -33,6 +33,7 @@
   "relative_line_numbers": "enabled",
   "current_line_highlight": "gutter",
   "inlay_hints": {
+    "show_type_hints": false,
     "enabled": true
   },
   "vim": {

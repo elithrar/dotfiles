@@ -295,10 +295,12 @@ export PATH="/usr/local/opt/curl/bin:$PATH"
 trim_path
 
 # try - inlined from `try init ~/repos/tries` to avoid subprocess on every shell
-if command -v try &>/dev/null; then
+# Hardcode path - command -v fails on re-source since the function shadows the binary
+_try_bin="/opt/homebrew/bin/try"
+if [[ -x "$_try_bin" ]]; then
   try() {
     local out
-    out=$(/usr/bin/env ruby "$(command -v try)" exec --path "$HOME/repos/tries" "$@" 2>/dev/tty)
+    out=$(/usr/bin/env ruby "$_try_bin" exec --path "$HOME/repos/tries" "$@" 2>/dev/tty)
     if [ $? -eq 0 ]; then
       eval "$out"
     else
