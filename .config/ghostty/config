@@ -26,4 +26,8 @@ auto-update-channel = tip
 
 keybind = shift+enter=text:\n
 
+# Jump between shell prompts (requires shell integration)
+keybind = shift+up=jump_to_prompt:-1
+keybind = shift+down=jump_to_prompt:1
+
 command-palette-entry = title:vim mode,action:activate_key_table:vim
