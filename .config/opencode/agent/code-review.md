@@ -67,7 +67,7 @@ grep -r "functionName(" --include="*.ts" . | wc -l
 
 ## What to Look For
 
-### Bugs — Primary Focus
+**Bugs** - verifiable issues with control flow, conditionals, error checking and input validation
 
 - **Logic errors**: off-by-one, incorrect conditionals, wrong operator precedence
 - **Missing guards**: null checks, bounds validation, error handling
