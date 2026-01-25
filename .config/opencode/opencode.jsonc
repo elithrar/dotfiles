@@ -31,6 +31,10 @@
       "oauth": {},
       "enabled": false,
     },
+    "dex": {
+      "type": "local",
+      "command": ["npx", "-y", "@zeeg/dex", "mcp"],
+    },
   },
   "agent": {
     "write": {
