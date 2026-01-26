@@ -3,6 +3,20 @@
   "theme": "orng",
   "autoupdate": true,
   "instructions": ["{env:HOME}/.config/opencode/INSTRUCTIONS.md"],
+  "permission": {
+    "bash": "allow",
+    "edit": "ask",
+    "webfetch": "allow",
+    "external_directory": "ask",
+    "doom_loop": "ask",
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.dev.vars": "deny",
+      "*.env.example": "allow",
+    },
+  },
   "mcp": {
     "chrome-devtools": {
       "type": "local",
