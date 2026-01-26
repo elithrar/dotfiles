@@ -71,23 +71,21 @@ Changes:
 <Optional: Challenges section if significant iteration occurred>
 ```
 
-**For branch summaries:**
+**For branch summaries (PR descriptions):**
 
 ```
-## Summary
+<type>(<scope>): <short description>
 
 <2-3 sentences describing the overall goal and outcome>
 
-## Changes
-
+Changes:
 - <Grouped by feature/component>
+- <Major change 2>
 
-## Challenges
-
+Challenges:
 <Optional: Document any significant debugging or iteration>
 
-## Review Fixes
-
+Review fixes:
 <Optional: Changes made from code review feedback>
 ```
 
