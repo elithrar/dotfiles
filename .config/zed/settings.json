@@ -39,7 +39,7 @@
   "vim": {
     "use_system_clipboard": "always"
   },
-  "theme": "orng Dark",
+  "theme": "orng Light",
   "languages": {
     "Markdown-Inline": {
       "enable_language_server": true

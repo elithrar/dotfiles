@@ -330,3 +330,6 @@ _load_cached_completion() {
 _load_cached_completion jj "COMPLETE=zsh jj"
 _load_cached_completion pscale "pscale completion zsh"
 unset _lazy_completion_cache
+
+# zerobrew
+export PATH="$HOME/.local/bin:/opt/zerobrew/prefix/bin:$PATH"
