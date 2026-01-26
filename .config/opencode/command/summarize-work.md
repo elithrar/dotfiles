@@ -34,4 +34,4 @@ For commit messages, output:
 <commit body text ready to paste>
 ```
 
-For PR descriptions, output the full PR body structure with Summary, Changes, and optional Notes sections.
+For PR descriptions, output a list of 4-8 items (based on volume of changes), focused on the largest, riskiest or most notable changes. Keep formatting, headers and filename references to an absolute minimum.
