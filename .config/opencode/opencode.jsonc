@@ -71,6 +71,7 @@
     },
     "bash": {
       "*": "ask",
+      // Git
       "git status *": "allow",
       "git diff *": "allow",
       "git log *": "allow",
@@ -84,6 +85,10 @@
       "git checkout *": "allow",
       "git switch *": "allow",
       "git merge *": "allow",
+      "git clone *": "allow",
+      "git pull *": "allow",
+      "git init *": "allow",
+      "git worktree *": "allow",
       "git rebase *": "ask",
       "git push *": "ask",
       "git reset --soft *": "allow",
@@ -152,7 +157,20 @@
       "cmake *": "allow",
       "shellcheck *": "allow",
       "jj *": "allow",
-      "glab *": "allow",
+      // glab (GitLab CLI) - mirror gh patterns
+      "glab mr list *": "allow",
+      "glab mr view *": "allow",
+      "glab mr diff *": "allow",
+      "glab mr checkout *": "allow",
+      "glab issue list *": "allow",
+      "glab issue view *": "allow",
+      "glab repo view *": "allow",
+      "glab auth *": "allow",
+      "glab mr create *": "ask",
+      "glab mr merge *": "ask",
+      "glab mr close *": "ask",
+      "glab issue create *": "ask",
+      "glab issue close *": "ask",
       "mkcert *": "allow",
       "age *": "allow",
       "stow *": "allow",
@@ -170,7 +188,22 @@
       "pscale *": "allow",
       "yarn *": "allow",
       "wrk *": "allow",
-      "try *": "allow"
+      "try *": "allow",
+      // Docker
+      "docker *": "allow",
+      "docker-compose *": "allow",
+      // macOS utilities
+      "brew *": "allow",
+      "open *": "allow",
+      "pbcopy": "allow",
+      "pbpaste": "allow",
+      "source *": "allow",
+      // Ruby toolchain
+      "rbenv *": "allow",
+      "gem *": "allow",
+      "bundle *": "allow",
+      // Shell
+      "omz *": "allow"
     }
   }
 }
