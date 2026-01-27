@@ -59,7 +59,9 @@
     },
     "external_directory": {
       "*": "ask",
-      "~/repos/**": "allow"
+      "~/repos/**": "allow",
+      "/tmp/**": "allow",
+      "/private/tmp/**": "allow"
     },
     "bash": {
       "*": "ask",
