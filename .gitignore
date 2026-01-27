@@ -32,3 +32,9 @@ Temporary Items
 # Database tools config
 .config/pgcli/*
 .config/planetscale/*
+
+# Atuin receipts
+.config/atuin/atuin-receipt.json
+
+# Zed prompt library database
+.config/zed/prompts/prompts-library-db.0.mdb/lock.mdb
