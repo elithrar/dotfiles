@@ -125,6 +125,17 @@ if [[ "${INTERACTIVE}" == true ]] && [[ ! -f "${HOME}/.ssh/id_ed25519" ]]; then
     fi
 fi
 
+# Set up allowed_signers file for SSH commit signing
+if [[ -f "${HOME}/.ssh/id_ed25519.pub" ]]; then
+    if [[ ! -f "${HOME}/.ssh/allowed_signers" ]] || ! grep -q "${SSH_EMAIL}" "${HOME}/.ssh/allowed_signers" 2>/dev/null; then
+        print_info "Adding SSH key to allowed_signers for git commit verification"
+        echo "${SSH_EMAIL} $(cat "${HOME}/.ssh/id_ed25519.pub")" >> "${HOME}/.ssh/allowed_signers"
+        print_success "SSH signing configured"
+    else
+        print_success "SSH key already in allowed_signers"
+    fi
+fi
+
 # Set up repos directory
 if [[ ! -d "${HOME}/repos" ]]; then
     mkdir -p "${HOME}/repos"
