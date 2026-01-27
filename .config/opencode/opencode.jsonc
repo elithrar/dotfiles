@@ -3,20 +3,6 @@
   "theme": "orng",
   "autoupdate": true,
   "instructions": ["{env:HOME}/.config/opencode/INSTRUCTIONS.md"],
-  "permission": {
-    "bash": "allow",
-    "edit": "ask",
-    "webfetch": "allow",
-    "external_directory": "ask",
-    "doom_loop": "ask",
-    "read": {
-      "*": "allow",
-      "*.env": "deny",
-      "*.env.*": "deny",
-      "*.dev.vars": "deny",
-      "*.env.example": "allow",
-    },
-  },
   "mcp": {
     "chrome-devtools": {
       "type": "local",
@@ -59,8 +45,14 @@
     }
   },
   "permission": {
+    "webfetch": "allow",
+    "doom_loop": "ask",
     "read": {
-      "*": "allow"
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.dev.vars": "deny",
+      "*.env.example": "allow"
     },
     "edit": {
       "*": "allow"
@@ -127,7 +119,7 @@
       "gh pr create *": "allow",
       "gh pr merge *": "ask",
       "gh pr close *": "ask",
-      "gh issue create *": "ask",
+      "gh issue create *": "allow",
       "gh issue close *": "ask",
       "lsof *": "allow",
       "kill *": "ask",
@@ -169,7 +161,7 @@
       "glab mr create *": "allow",
       "glab mr merge *": "ask",
       "glab mr close *": "ask",
-      "glab issue create *": "ask",
+      "glab issue create *": "allow",
       "glab issue close *": "ask",
       "mkcert *": "allow",
       "age *": "allow",
