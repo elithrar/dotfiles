@@ -60,7 +60,7 @@ Produce a summary following this structure:
 **For commit messages (extended body):**
 
 ```
-<type>(<scope>): <short description>
+<short description>
 
 <One-sentence context — the problem or motivation>
 
@@ -74,18 +74,15 @@ Changes:
 **For branch summaries (PR descriptions):**
 
 ```
-<type>(<scope>): <short description>
+<short description>
 
 <2-3 sentences describing the overall goal and outcome>
 
-Changes:
 - <Grouped by feature/component>
 - <Major change 2>
 
-Challenges:
 <Optional: Document any significant debugging or iteration>
 
-Review fixes:
 <Optional: Changes made from code review feedback>
 ```
 
