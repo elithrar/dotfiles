@@ -1,6 +1,6 @@
 ---
 name: planetscale
-description: Manages PlanetScale databases via pscale CLI. Load before running pscale commands, debugging PlanetScale connection errors, or analyzing slow queries with Query Insights.
+description: Manages PlanetScale databases via MCP server or pscale CLI. Load before running pscale commands, using PlanetScale MCP tools, debugging connection errors, or analyzing slow queries.
 ---
 
 # PlanetScale
@@ -25,7 +25,23 @@ Fetch from https://planetscale.com/docs first.
 | Connections (Vitess) | /docs/vitess/connecting/connection-strings | MySQL connection strings, passwords |
 | Connections (Postgres) | /docs/postgres/connecting | Postgres roles, PgBouncer, connection pooling |
 
-## FIRST: Verify Installation
+## FIRST: Check for MCP Server
+
+If the PlanetScale MCP server is available, prefer it over CLI for querying databases and insights:
+
+| Tool | Use for |
+|------|---------|
+| `planetscale_execute_read_query` | SELECT, SHOW, DESCRIBE, EXPLAIN queries |
+| `planetscale_execute_write_query` | INSERT, UPDATE, DELETE (prompts for DDL) |
+| `planetscale_get_insights` | Query performance data for a branch |
+| `planetscale_get_branch_schema` | Schema for a branch |
+| `planetscale_list_databases` | List databases in an org |
+| `planetscale_list_branches` | List branches in a database |
+| `planetscale_search_documentation` | Search PlanetScale docs |
+
+MCP setup: https://planetscale.com/docs/connect/mcp
+
+## Verify CLI Installation
 
 ```bash
 pscale version  # Requires pscale CLI
