@@ -30,6 +30,11 @@
       "url": "https://observability.mcp.cloudflare.com/mcp",
       "oauth": {},
       "enabled": false
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp@latest"],
+      "enabled": false
     }
   },
   "agent": {
