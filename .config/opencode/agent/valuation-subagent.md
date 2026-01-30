@@ -237,10 +237,69 @@ If all retrieval methods fail, clearly state this limitation and provide analysi
 - Leakdown >15% warrants concern
 - Note test conditions (cold vs. warm engine)
 
-For specific models:
-- **Air-cooled Porsche**: Chain tensioner updates, valve adjustment records
-- **BMW M engines**: VANOS service, rod bearing history (S50/S52/S54)
-- **Alfa Twin Cam**: Timing belt intervals (critical), head gasket history
+### Known Issues by Model (Cross-Reference Against Records)
+
+Check whether service records or listing explicitly address these **critical known issues**. Missing documentation on these items should be flagged.
+
+**Porsche 911 (Air-Cooled)**:
+- **911 SC (1978-1983)**: Head stud failure (thermal cycling), chain tensioner update (Carrera-style), heat exchanger corrosion
+- **911 3.2 Carrera (1984-1989)**: Chain tensioner update, clutch guide tube, oil cooler thermostat
+- **964 (1989-1994)**: Dual-mass flywheel, oil leaks (chain housing, cam towers), catalytic converter heat damage
+- **993 (1995-1998)**: Hydraulic valve lifters (tick), rear main seal, intermediate shaft bearing (early cars)
+- **All air-cooled**: Valve adjustment records, timing chain condition, cylinder head stud torque checks
+
+**Porsche 944/968**:
+- **944 (all)**: Timing belt (critical - interference engine), balance shaft belt, water pump
+- **944 Turbo**: Turbo oil/coolant lines, wastegate diaphragm, head gasket
+- **968**: Same timing concerns, plus VarioCam issues on late cars
+
+**Porsche 928**:
+- Timing belt (critical - V8 interference), water pump, cam tower gaskets, rear torque tube bearing
+
+**BMW 2002**:
+- Rust (shock towers, floors, fenders), timing chain tensioner, cooling system
+
+**BMW E30 (1982-1994)**:
+- **All**: Subframe mounts, trailing arm bushings, window regulator, A/C evaporator (dash-out job)
+- **M3 (S14)**: Valve adjustment (shim-under-bucket), timing chain, oil pump nut, head gasket (track use)
+
+**BMW E28/E34**:
+- Timing belt (M20/M30), cooling system (water pump, thermostat, expansion tank), subframe mounts
+- **M5 (S38)**: Timing chain, valve adjustment, oil pump drive
+
+**BMW E36**:
+- Cooling system (water pump, thermostat, radiator, expansion tank - all should be done together)
+- **M3 (S50/S52)**: VANOS seals, rod bearings (track use), subframe reinforcement (coupe/convertible)
+- Rear shock mounts, window regulators, RTAB bushings
+
+**Mercedes W107 SL**:
+- Subframe rust, floor rust (under carpet), vacuum system (door locks, climate), fuel injection (CIS - 450SL/380SL)
+- Timing chain (M116/M117), head gasket (especially 450SL)
+
+**Mercedes W123/W126**:
+- Rust (fenders, rocker panels, trunk floor), climate control vacuum, biodiesel damage to injection pump (diesels)
+- Timing chain, transmission (722.3/722.4 governor issues)
+
+**Alfa Romeo GTV/Spider**:
+- **All Twin Cam**: Timing belt (interference - 30k miles max), valve adjustment, water pump
+- Rust (floors, rockers, shock towers, spare tire well), Spica injection (Spider), clutch slave cylinder
+
+**Datsun 240Z-280Z**:
+- Frame rail rust, floor pan rust, battery tray, rear hatch area
+- Timing chain (L-series - stretch at high mileage), SU carb rebuild (240Z), fuel injection (280Z)
+- Round-top carbs (240Z early) vs. flat-top
+
+**Toyota Supra (A70/A80)**:
+- **A70 Turbo**: Head gasket (7M-GTE), turbo oil lines, ECU capacitors
+- **A80 TT**: Turbo actuators, sequential system operation, fuel pump
+
+**Mazda RX-7**:
+- **FC**: Turbo seals, coolant seals (rotary), eccentric shaft bearing
+- **FD**: Twin turbo system, coolant seals, apex seals (compression test critical)
+
+**Toyota MR2**:
+- **AW11**: Engine mount (snap oversteer cause), timing belt, rust in rear quarters
+- **SW20 Turbo**: Turbo, timing belt, snap oversteer reputation (suspension setup critical)
 
 ### Output Format
 ```
@@ -277,6 +336,12 @@ For specific models:
 - Leakdown: [Readings if available]
 - Analysis: [Healthy | Concerns | Red flag]
 
+### Known Issues Status
+| Issue | Status | Evidence |
+|-------|--------|----------|
+| [Model-specific issue 1] | Addressed / Not mentioned | [Service record date, listing mention, seller comment] |
+| [Model-specific issue 2] | Addressed / Not mentioned | [Evidence source] |
+
 ### Condition Score: X/10
 [Brief justification]
 ```
@@ -285,7 +350,20 @@ For specific models:
 
 ## Scope: market
 
-Research comparable sales and market trends.
+Research comparable sales and market trends. If the listing is an **active auction**, analyze the current bid against market data.
+
+### Active Auction Analysis
+
+If provided with a current bid amount:
+1. Compare current bid to comparable sales
+2. Assess whether bidding is tracking below, within, or above expected final price
+3. Consider time remaining and typical bid acceleration patterns
+4. Note reserve status (reserve not met = potential gap between bid and seller expectations)
+
+**Bid trajectory patterns**:
+- BaT/C&B: Most action in final hours, significant jumps in last 5 minutes
+- Low early bids don't indicate final price
+- "No Reserve" typically drives more aggressive bidding
 
 ### Comparable Sales Research
 
@@ -340,6 +418,13 @@ Check model-specific forums for:
 ### Value Drivers for This Model
 - [Driver 1]: [Premium/discount impact]
 - [Driver 2]: [Premium/discount impact]
+
+### Current Bid Assessment (if active auction)
+- **Current bid:** $XX,XXX
+- **Time remaining:** [X days/hours]
+- **Reserve status:** [Met | Not met | No reserve]
+- **Assessment:** [Below expected final | Tracking to expected | Above typical market]
+- **Rationale:** [Comparison to similar completed auctions at same stage]
 
 ### Comparable Sales Confidence: High | Medium | Low
 [Based on data availability and recency]
