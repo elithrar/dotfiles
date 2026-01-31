@@ -1,5 +1,5 @@
 ---
-color: "#1E90FF"
+color: "#87D981"
 description: Assessor that orchestrates classic car valuation (1965-1998 sports cars/sedans)
 effort: high
 mode: primary
