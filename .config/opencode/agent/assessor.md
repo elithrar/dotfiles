@@ -1,6 +1,6 @@
 ---
 color: "#1E90FF"
-description: Valuation Agent that orchestrates classic car valuation (1965-1998 sports cars/sedans)
+description: Assessor that orchestrates classic car valuation (1965-1998 sports cars/sedans)
 effort: high
 mode: primary
 model: anthropic/claude-opus-4-5

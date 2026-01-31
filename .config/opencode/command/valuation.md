@@ -1,6 +1,6 @@
 ---
 description: Evaluate a classic car listing (1965-1998 sports cars/sedans)
-agent: valuation-agent
+agent: assessor
 ---
 
 Evaluate the following classic car listing and provide a valuation report with price range, condition assessment, and confidence level.
