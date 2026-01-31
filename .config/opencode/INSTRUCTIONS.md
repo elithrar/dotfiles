@@ -4,7 +4,7 @@
 
 * leave codebases better than you found them. write maintainable code. being clever doesn't win points.
 * don't abstract until necessary. prefer inlining over unnecessary helper functions.
-* keep commit messages short: e.g. docs: adds usage example to README
+* keep commit messages short and imperative: "add usage example to README" not "feat(docs): add usage example"
 * **DO NOT** use markdown headers in PR/issue descriptions unless asked. use short sentences and bullet points.
 * **DO NOT** list out the files changed in a PR. the PR diff tells us what those are.
 * prefer `gh` CLI for PRs and issues. if WebFetch fails on a GitHub URL, use `gh` instead (likely a private repo).
