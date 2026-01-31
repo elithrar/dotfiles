@@ -48,30 +48,31 @@ git push -u origin HEAD
 
 Use `gh pr create` with a HEREDOC body. The PR must follow this structure:
 
-**Title:** Short imperative phrase (50 chars max). Examples:
+**Title:** Short imperative phrase (50 chars max). Write it like you're completing "This PR will..."
+
+Good:
 - "Add dark mode toggle to settings"
 - "Fix race condition in WebSocket handler"
 - "Refactor auth middleware for clarity"
 
+Avoid:
+- "feat: add dark mode toggle" — conventional commit prefixes read as robotic
+- "feat(settings): add dark mode" — the scope is redundant; the diff shows what changed
+
 **Body structure:**
 
 ```
-## Summary
-
 <One sentence describing what this PR does and why>
 
 <Brief explanation of the problem or context — what was broken, missing, or needed>
 
-## Changes
-
 - <Major functional change 1>
 - <Major functional change 2>
-- <etc>
 
-## Notes
-
-<Optional: testing notes, migration steps, or other context>
+<Optional: testing notes, migration steps, or deployment considerations>
 ```
+
+The body should read as prose with bullet points for changes — not as a form with headers.
 
 **Rules for the body:**
 - Lead with the problem or context, then the solution
@@ -83,13 +84,9 @@ Example `gh pr create` invocation:
 
 ```bash
 gh pr create --title "Fix race condition in WebSocket handler" --body "$(cat <<'EOF'
-## Summary
-
 Fixes a race condition where concurrent WebSocket connections could corrupt shared state.
 
 The handler was using a shared map without synchronization, causing intermittent panics under load.
-
-## Changes
 
 - Add mutex protection around connection map access
 - Extract connection handling into a dedicated goroutine
