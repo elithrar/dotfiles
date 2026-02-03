@@ -40,4 +40,4 @@ Temporary Items
 .config/atuin/atuin-receipt.json
 
 # Zed prompt library database
-.config/zed/prompts/prompts-library-db.0.mdb/lock.mdb
+.config/zed/prompts/*
