@@ -263,9 +263,6 @@ rbenv() {
   esac
 }
 
-# atuin shell plugin
-eval "$(atuin init zsh)"
-
 # fzf - fuzzy finder
 # Uses fd for speed and .gitignore respect, bat for previews
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
@@ -274,11 +271,13 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 export FZF_ALT_C_OPTS='--preview "ls -la {}"'
 # Source fzf keybindings (Ctrl+T, Alt+C) and completion
-# Skip Ctrl+R since atuin handles history
 source <(fzf --zsh 2>/dev/null) || {
   # Fallback for older fzf versions
   [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 }
+
+# atuin - shell history (MUST be after fzf to ensure atuin owns Ctrl+R)
+eval "$(atuin init zsh)"
 
 # zoxide - smart cd with z and zi (interactive)
 eval "$(zoxide init zsh)"

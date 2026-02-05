@@ -11,20 +11,39 @@ window-width = 350
 window-height = 472
 font-thicken = true
 
+# Extend cell bg colors into the padding area for a cleaner look
+window-padding-color = extend
+
+# Save and restore window state (position, tabs, splits, cwd) across restarts
+window-save-state = always
+
 macos-option-as-alt = true
 macos-titlebar-style = hidden
 clipboard-paste-protection = true
 copy-on-select = true
+clipboard-trim-trailing-spaces = true
 mouse-hide-while-typing = true
+cursor-style-blink = false
 
-shell-integration-features = true
+# Enable all shell integration features including SSH env/terminfo (1.2.0)
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 
 link-url = true
+link-previews = osc8
 
 auto-update = download
 auto-update-channel = tip
 
+# Quick terminal (global hotkey dropdown)
+quick-terminal-position = top
+quick-terminal-screen = mouse
+quick-terminal-animation-duration = 0.15
+
 keybind = shift+enter=text:\n
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
+
+# Smart copy: only intercept cmd+c when there's a selection
+keybind = performable:cmd+c=copy_to_clipboard
 
 # Jump between shell prompts (requires shell integration)
 keybind = shift+up=jump_to_prompt:-1
