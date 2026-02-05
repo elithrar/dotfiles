@@ -25,9 +25,8 @@ Running...
 - Sets up a Linux or macOS based development machine.
 - Can be run in WSL on Windows!
 - Safe to run repeatedly (checks for existing installs)
-- Repository at https://github.com/elithrar/dotfiles
-- Fork as needed
-- Deeply inspired by https://github.com/minamarkham/formation
+- Repository at https://github.com/superhighfives/dotfiles
+- Forked from https://github.com/elithrar/dotfiles
 -----
 ```
 
