@@ -10,6 +10,9 @@ jobs:
   bonk:
     if: github.event.sender.type != 'Bot'
     runs-on: ubuntu-latest
+    concurrency:
+      group: pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
     permissions:
       id-token: write
       contents: write
@@ -29,8 +32,8 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
         with:
-          model: cloudflare-ai-gateway/cf/moonshotai/kimi-k2.5
-          # model: cloudflare-ai-gateway/anthropic/claude-opus-4-6
+          # continue-on-error: model: cloudflare-ai-gateway/cf/moonshotai/kimi-k2.5
+          model: cloudflare-ai-gateway/anthropic/claude-opus-4-6
           # model: opencode/claude-opus-4-6
           mentions: "/bonk,@ask-bonk"
           permissions: write
