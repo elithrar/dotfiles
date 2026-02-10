@@ -65,6 +65,7 @@ alias iso8601="date -u +'%Y-%m-%dT%H:%M:%SZ'"
 alias less="less -X"
 alias sl="ls"
 alias oc="opencode --continue"
+alias ocr="opencode run"
 unalias gb 2>/dev/null
 
 # Go
