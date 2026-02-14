@@ -17,8 +17,11 @@ window-padding-color = extend
 # Save and restore window state (position, tabs, splits, cwd) across restarts
 window-save-state = always
 
+window-colorspace = display-p3
+scrollback-limit = 20000000
 macos-option-as-alt = true
 macos-titlebar-style = hidden
+macos-icon = chalkboard
 clipboard-paste-protection = true
 copy-on-select = true
 clipboard-trim-trailing-spaces = true
