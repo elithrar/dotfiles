@@ -8,6 +8,7 @@
 * **DO NOT** use markdown headers in PR/issue descriptions unless asked. use short sentences and bullet points.
 * **DO NOT** list out the files changed in a PR. the PR diff tells us what those are.
 * prefer `gh` CLI for PRs and issues. if WebFetch fails on a GitHub URL, use `gh` instead (likely a private repo).
+* when you need to read source for a dependency or tool, check `~/repos/<repo_name>` first before cloning or fetching from the web.
 * **ALWAYS** branch off the default branch for new work. never commit directly to main/master.
 * **STOP and confirm** before committing, pushing, or creating/updating PRs. Do not assume prior approval continues to apply.
 * minimize new dependencies unless necessary or agreed upon.
