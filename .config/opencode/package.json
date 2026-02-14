@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@opencode-ai/plugin": "0.0.0-dev-202602140655",
+    "@opencode-ai/plugin": "0.0.0-dev-202602142043",
     "shescape": "^2.1.7"
   }
 }
