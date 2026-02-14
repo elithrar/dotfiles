@@ -12,11 +12,15 @@ export const CaffeinatePlugin: Plugin = async ({ client }) => {
   let starting = false
 
   const log = (message: string) =>
-    client.app.log({
-      service: "caffeinate",
-      level: "info",
-      message,
-    })
+    client.app
+      .log({
+        body: {
+          service: "caffeinate",
+          level: "info",
+          message,
+        },
+      })
+      .catch(() => {})
 
   const startCaffeinate = async () => {
     if (caffeinateProc || starting) return
