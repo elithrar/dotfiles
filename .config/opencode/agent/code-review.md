@@ -51,6 +51,7 @@ Focus deeper analysis on HIGH risk. For critical paths, estimate blast radius: h
 
 - **Logic errors**: off-by-one, incorrect conditionals, wrong operator precedence
 - **Missing guards**: null checks, bounds validation, error handling
+- **Missing early returns**: guard clauses that call an error/failure function (e.g., `setFailed`, `throw`, `res.status(4xx)`) but don't `return` — execution falls through into code that assumes the guard passed. This often forces `!` non-null assertions or causes null dereferences.
 - **Edge cases**: empty inputs, zero values, boundary conditions
 - **Race conditions**: shared state without synchronization
 - **Regressions**: removed code that previously fixed a bug
@@ -61,7 +62,9 @@ Check for removed validation: `git diff <range> | grep "^-" | grep -E "if.*==|th
 
 Flag type system circumvention: `as unknown as T` double-casts, unjustified `any`, `@ts-ignore` without explanation, unsafe assertions, missing null checks after narrowing.
 
-The type system is a feature. If a cast is needed, the underlying design may need fixing.
+When you see `!` non-null assertions, check whether a missing early return is the root cause — adding `return` after a guard clause lets the type system narrow automatically, eliminating the need for the assertion.
+
+The type system is a feature. If a cast or assertion is needed, the underlying design may need fixing.
 
 ### Complexity
 
