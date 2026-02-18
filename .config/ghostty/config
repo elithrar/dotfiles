@@ -1,6 +1,6 @@
 # github.com/elithrar/dotfiles
 
-theme = "orng-dark"
+theme = orng-dark
 font-size = 15
 font-family = "TX-02"
 
