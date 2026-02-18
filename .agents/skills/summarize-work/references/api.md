@@ -130,6 +130,14 @@ curl -sf "$OPENCODE_URL/project/current"
 
 Returns `{ id, name, worktree }` -- use `worktree` to scope session queries by directory.
 
+## Fallback: Direct SQLite
+
+If the API server is unreachable, query `~/.local/share/opencode/opencode.db` directly. Tables mirror the API: `session`, `message`, `todo`. JSON columns use SQLite `json_extract()`.
+
+```bash
+sqlite3 ~/.local/share/opencode/opencode.db "SELECT id, title FROM session ORDER BY updated_at DESC LIMIT 10"
+```
+
 ## Cost and Usage
 
 Token usage is embedded in assistant message metadata:

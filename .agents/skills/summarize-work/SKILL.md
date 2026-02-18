@@ -53,6 +53,10 @@ curl -sf "$OPENCODE_URL/session/<SESSION_ID>/message" | jq '[.[] | {role: .info.
 curl -sf "$OPENCODE_URL/session/<SESSION_ID>/todo" | jq '.[] | {content, status, priority}'
 ```
 
+### Fallback: SQLite
+
+If the server is unreachable (e.g. OpenCode not running), query the database directly at `~/.local/share/opencode/opencode.db`. Tables: `session`, `message`, `todo`. Columns mirror the API response shapes. Use `json_extract()` for JSON fields.
+
 ### Key conventions
 
 - **Timestamps** are Unix epoch **milliseconds**. Use `?start=<ms>` to filter by time.
