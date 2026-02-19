@@ -16,6 +16,9 @@ export skip_global_compinit=1
 
 umask 027
 
+# Cache uname to avoid repeated subprocess calls
+_uname_s="$(uname -s)"
+
 autoload -Uz bracketed-paste-magic
 zle -N bracketed-paste bracketed-paste-magic
 
@@ -77,13 +80,7 @@ alias godoc-this="godoc -http=:6060; open http://localhost:6060/pkg"
 alias coverhtml="go test -coverprofile=coverage.out; go tool cover -html=coverage.out -o coverage.html"
 
 # macOS specific
-if [ "$(uname -s 2> /dev/null)" = "Darwin" ]; then
-	# Keychain + SSH (macOS only)
-	ssh-add --apple-use-keychain ~/.ssh/id_ed25519 2>/dev/null
-
-	# macOS screenshots -> clipboard
-	defaults write com.apple.screencapture target clipboard 2>/dev/null
-
+if [ "$_uname_s" = "Darwin" ]; then
 	flush-dns() {
 	    sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo "DNS cache flushed"
 	}
@@ -101,7 +98,7 @@ if [ "$(uname -s 2> /dev/null)" = "Darwin" ]; then
 fi
 
 # Linux specific
-if [ "$(uname -s 2> /dev/null)" = "Linux" ]; then
+if [ "$_uname_s" = "Linux" ]; then
 	# WSL specific
 	if [[ -n "$USERPROFILE" ]]; then
 		cdpath+=(
