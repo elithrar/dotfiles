@@ -28,7 +28,6 @@ plugins=(
 	gem
 	git
 	github
-	tmux
 	uv
 	zsh-autosuggestions
 	zsh-syntax-highlighting
