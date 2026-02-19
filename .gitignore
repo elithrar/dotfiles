@@ -41,3 +41,6 @@ Temporary Items
 
 # Zed prompt library database
 .config/zed/prompts/*
+
+# Zsh completion dump
+.zcompdump*
