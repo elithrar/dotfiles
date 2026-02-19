@@ -5,11 +5,8 @@
     "findSkillsPrompt": true
   },
   "lastSelectedAgents": [
-    "amp",
-    "codex",
-    "gemini-cli",
-    "github-copilot",
-    "kimi-cli",
-    "opencode"
+    "claude-code",
+    "opencode",
+    "codex"
   ]
 }
