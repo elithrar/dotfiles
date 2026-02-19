@@ -1,9 +1,8 @@
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 
-# Force async git prompt since we wrap git_prompt_info in _vcs_prompt_info
-# and oh-my-zsh's auto-detection doesn't find it in PROMPT directly
-zstyle ':omz:alpha:lib:git' async-prompt force
+# async git prompt — auto-detection finds $(git_prompt_info) in PROMPT
+zstyle ':omz:alpha:lib:git' async-prompt yes
 
 # Completion options
 CASE_SENSITIVE="false"
@@ -29,7 +28,6 @@ plugins=(
 	gem
 	git
 	github
-	jj
 	tmux
 	uv
 	zsh-autosuggestions
@@ -156,47 +154,8 @@ ZSH_THEME_GIT_PROMPT_SUFFIX=")%f"
 ZSH_THEME_GIT_PROMPT_DIRTY=" ✗"
 ZSH_THEME_GIT_PROMPT_CLEAN=" ✓"
 
-# jj (Jujutsu) prompt integration
-# Detects whether current directory is a jj repo, git repo, or neither.
-# In colocated repos (both .jj and .git), jj takes precedence since git
-# would show an unhelpful "detached HEAD" state.
-_detect_vcs_type() {
-  local dir="$PWD"
-  while [[ -n "$dir" ]]; do
-    [[ -e "$dir/.jj" ]] && { echo "jj"; return; }
-    [[ -e "$dir/.git" ]] && { echo "git"; return; }
-    dir="${dir%/*}"
-  done
-}
-
-# jj prompt: shows change ID, commit ID, bookmarks, and status indicators
-# Uses --ignore-working-copy for performance (avoids snapshotting on every prompt)
-_jj_prompt_info() {
-  command -v jj &> /dev/null || return
-  local jj_info
-  jj_info=$(jj log --ignore-working-copy --no-pager --no-graph -r @ -T '
-    separate(" ",
-      change_id.shortest(4),
-      commit_id.shortest(4),
-      bookmarks,
-      if(conflict, "conflict"),
-      if(empty, "(empty)"),
-      if(description.first_line() == "", "(no desc)")
-    )
-  ' 2>/dev/null) || return
-  [[ -n "$jj_info" ]] && echo " %F{141}jj:($jj_info)%f"
-}
-
-# VCS prompt: shows jj info in jj repos, git info in git-only repos
-_vcs_prompt_info() {
-  case "$(_detect_vcs_type)" in
-    jj)  _jj_prompt_info ;;
-    git) git_prompt_info ;;
-  esac
-}
-
 NEWLINE=$'\n'
-export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~$(_vcs_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%}${VI_MODE} ➜ '
+export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~$(git_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%}${VI_MODE} ➜ '
 export TERM="xterm-256color"
 
 # editor
@@ -327,7 +286,7 @@ fi
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# Lazy-load CLI completions (jj, pscale)
+# Lazy-load CLI completions (pscale)
 # Completions are cached to ~/.cache/zsh and regenerated daily
 _lazy_completion_cache="$HOME/.cache/zsh"
 [[ -d "$_lazy_completion_cache" ]] || mkdir -p "$_lazy_completion_cache"
@@ -341,7 +300,6 @@ _load_cached_completion() {
   [[ -f "$cache" ]] && source "$cache"
 }
 
-_load_cached_completion jj "COMPLETE=zsh jj"
 _load_cached_completion pscale "pscale completion zsh"
 unset _lazy_completion_cache
 
