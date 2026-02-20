@@ -66,6 +66,7 @@ alias less="less -X"
 alias sl="ls"
 alias oc="opencode --continue"
 alias ocr="opencode run"
+alias ocs="opencode ~/repos/scratch"
 unalias gb 2>/dev/null
 
 # Go
