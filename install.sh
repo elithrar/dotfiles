@@ -1,333 +1,266 @@
 #!/usr/bin/env bash
 
-# Via https://github.com/elithrar <matt@eatsleeprepeat.net>
-# Sets up a macOS and/or Linux based dev-environment.
-# Inspired by https://github.com/minamarkham/formation (great!)
+# Dotfiles installer for Charlie Gleason (superhighfives)
+# Sets up a macOS development machine from scratch.
+# Safe to run repeatedly (idempotent - checks before installing).
+#
+# Usage:
+#   sh install.sh 2>&1 | tee ~/install.log
 
-# Configuration
-DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age agg asciinema atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jj jq lua make mkcert neovim nmap node pscale pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree try uv websocat wget wrk yarn zoxide zsh)
-CF_BREW_PACKAGES=(cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
-CASKS=(claude ghostty raycast zed@preview)
-SSH_EMAIL="matt@eatsleeprepeat.net"
-
-# Colors - use fallbacks if tput unavailable
-if command -v tput &>/dev/null && tput sgr0 &>/dev/null; then
-    reset="$(tput sgr0)"
-    red="$(tput setaf 1)"
-    blue="$(tput setaf 4)"
-    green="$(tput setaf 2)"
-    yellow="$(tput setaf 3)"
-else
-    reset=""
-    red=""
-    blue=""
-    green=""
-    yellow=""
-fi
-
-# Error handling
-ret=0
-trap 'ret=$?; [[ $ret -ne 0 ]] && printf "%s\n" "${red}Setup failed${reset}" >&2; exit $ret' EXIT
 set -euo pipefail
 
-# --- Helpers
-print_success() {
-    printf "%s %b\n" "${green}✔ success:${reset}" "$1"
-}
+# --- Configuration ---
+DOTFILES_REPO="https://github.com/superhighfives/dotfiles"
+DOTFILES_DIR="${HOME}/Development/dotfiles"
+SSH_EMAIL="hi@charliegleason.com"
 
-print_error() {
-    printf "%s %b\n" "${red}✖ error:${reset}" "$1"
-}
+VSCODE_EXTENSIONS=(
+  anthropic.claude-code
+  astro-build.astro-vscode
+  biomejs.biome
+  bradlc.vscode-tailwindcss
+  sst-dev.opencode
+  teabyii.ayu
+  unifiedjs.vscode-mdx
+)
 
-print_info() {
-    printf "%s %b\n" "${blue}ⓘ info:${reset}" "$1"
-}
+# --- Colors ---
+if command -v tput &>/dev/null && tput sgr0 &>/dev/null; then
+  reset="$(tput sgr0)"
+  red="$(tput setaf 1)"
+  blue="$(tput setaf 4)"
+  green="$(tput setaf 2)"
+  yellow="$(tput setaf 3)"
+else
+  reset="" red="" blue="" green="" yellow=""
+fi
 
-# ------
-# Setup
-# ------
+# --- Error handling ---
+ret=0
+trap 'ret=$?; [[ $ret -ne 0 ]] && printf "%s\n" "${red}Setup failed${reset}" >&2; exit $ret' EXIT
+
+# --- Helpers ---
+print_success() { printf "%s %b\n" "${green}✔${reset}" "$1"; }
+print_error()   { printf "%s %b\n" "${red}✖${reset}" "$1"; }
+print_info()    { printf "%s %b\n" "${blue}ⓘ${reset}" "$1"; }
+print_step()    { printf "\n%s %b\n" "${yellow}→${reset}" "$1"; }
+
+# --- Banner ---
 cat <<EOF
 ${yellow}
-Running...
  _           _        _ _       _
 (_)_ __  ___| |_ __ _| | |  ___| |__
-| | '_ \/ __| __/ _  | | | / __| '_ \\
-| | | | \__ \\ || (_| | | |_\__ \\ | | |
+| | '_ \\/ __| __/ _  | | | / __| '_ \\
+| | | | \\__ \\ || (_| | | |_\\__ \\ | | |
 |_|_| |_|___/\\__\\__,_|_|_(_)___/_| |_|
-
------
-- Sets up a macOS or Linux based development machine.
-- Safe to run repeatedly (checks for existing installs)
-- Repository at https://github.com/elithrar/dotfiles
-- Fork as needed
-- Deeply inspired by https://github.com/minamarkham/formation
------
 ${reset}
+Sets up a macOS development machine.
+Safe to run repeatedly (idempotent).
+Repository: ${DOTFILES_REPO}
 EOF
 
-# Check environments
+# --- Environment detection ---
 OS=$(uname -s 2>/dev/null)
 INTERACTIVE=false
 if [[ -t 0 ]] && [[ -t 1 ]]; then
-    INTERACTIVE=true
+  INTERACTIVE=true
 fi
 
-print_info "Detected OS: ${OS}"
-print_info "Interactive shell session: ${INTERACTIVE}"
+print_info "OS: ${OS} | Interactive: ${INTERACTIVE}"
 
-# On Linux, we may need to install some packages.
-DISTRO=""
-if [[ "${OS}" == "Linux" ]]; then
-    if [[ -f /etc/os-release ]] && grep -iq "Debian" /etc/os-release; then
-        DISTRO="Debian"
-        print_info "Detected Linux distro: ${DISTRO}"
-    fi
+if [[ "${OS}" != "Darwin" ]]; then
+  print_error "This script is designed for macOS. Exiting."
+  exit 1
 fi
 
-# Check for connectivity
-ping_timeout_flag="-w1"
-if [[ "${OS}" == "Darwin" ]]; then
-    ping_timeout_flag="-t1"
+# --- Check connectivity ---
+print_step "Checking internet connectivity"
+if ! ping -q -t1 -c1 google.com &>/dev/null; then
+  print_error "Cannot connect to the Internet"
+  exit 1
 fi
+print_success "Internet reachable"
 
-if ! ping -q "${ping_timeout_flag}" -c1 google.com &>/dev/null; then
-    print_error "Cannot connect to the Internet"
-    exit 1
-else
-    print_success "Internet reachable"
-fi
-
-# Ask for sudo
-sudo -v &>/dev/null
-
-# Update the system & install core dependencies
-if [[ "${OS}" == "Linux" ]] && [[ "${DISTRO}" == "Debian" ]]; then
-    print_info "Updating system packages"
-    sudo apt update
-    sudo apt -y upgrade
-    sudo apt -y install build-essential curl file git
-else
-    print_info "Skipping system package updates"
-fi
-
-# Generate an SSH key (if none) if we're in an interactive shell
-if [[ "${INTERACTIVE}" == true ]] && [[ ! -f "${HOME}/.ssh/id_ed25519" ]]; then
-    printf "🔑 Generating new SSH key\n"
-    # Ensure .ssh directory exists with correct permissions
-    mkdir -p "${HOME}/.ssh"
-    chmod 700 "${HOME}/.ssh"
-    ssh-keygen -t ed25519 -f "${HOME}/.ssh/id_ed25519" -C "${SSH_EMAIL}"
-    print_info "Key generated!"
-    if [[ "${OS}" == "Darwin" ]]; then
-        print_info "Adding key to Keychain"
-        ssh-add --apple-use-keychain "${HOME}/.ssh/id_ed25519"
-    fi
-fi
-
-# Set up allowed_signers file for SSH commit signing
-if [[ -f "${HOME}/.ssh/id_ed25519.pub" ]]; then
-    if [[ ! -f "${HOME}/.ssh/allowed_signers" ]] || ! grep -q "${SSH_EMAIL}" "${HOME}/.ssh/allowed_signers" 2>/dev/null; then
-        print_info "Adding SSH key to allowed_signers for git commit verification"
-        echo "${SSH_EMAIL} $(cat "${HOME}/.ssh/id_ed25519.pub")" >> "${HOME}/.ssh/allowed_signers"
-        print_success "SSH signing configured"
-    else
-        print_success "SSH key already in allowed_signers"
-    fi
-fi
-
-# Set up repos directory
-if [[ ! -d "${HOME}/repos" ]]; then
-    mkdir -p "${HOME}/repos"
-fi
-
-# Install Homebrew
+# --- Homebrew ---
+print_step "Setting up Homebrew"
 if ! command -v brew &>/dev/null; then
-    print_info "Installing Homebrew..."
-    # Use NONINTERACTIVE=1 to run without prompts, matching the script's style.
-    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  print_info "Installing Homebrew..."
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-    # Add Homebrew to the PATH for the rest of this script's execution.
-    # The location is architecture-dependent.
-    if [[ -x "/opt/homebrew/bin/brew" ]]; then # Apple Silicon macOS
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-    elif [[ -x "/usr/local/bin/brew" ]]; then # Intel macOS
-        eval "$(/usr/local/bin/brew shellenv)"
-    elif [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then # Linux
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    fi
-    print_success "Homebrew installed"
+  if [[ -x "/opt/homebrew/bin/brew" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -x "/usr/local/bin/brew" ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+  print_success "Homebrew installed"
 else
-    print_success "Homebrew/Linuxbrew already installed."
+  print_success "Homebrew already installed"
 fi
 
-# --- Homebrew
-print_info "Installing Homebrew packages"
-# Install taps first
-brew tap thoughtbot/formulae
-brew tap tobi/try https://github.com/tobi/try
-
-print_info "Checking installed Homebrew packages"
-installed_formulae=$'\n'"$(brew list --formula)"$'\n'
-installed_casks=""
-if [[ "${OS}" == "Darwin" ]]; then
-    installed_casks=$'\n'"$(brew list --cask)"$'\n'
+# --- Clone dotfiles (needed for Brewfile) ---
+print_step "Setting up dotfiles repository"
+if [[ ! -d "${DOTFILES_DIR}" ]]; then
+  print_info "Cloning dotfiles..."
+  mkdir -p "$(dirname "${DOTFILES_DIR}")"
+  git clone "${DOTFILES_REPO}" "${DOTFILES_DIR}"
+  print_success "Dotfiles cloned"
+else
+  print_success "Dotfiles already cloned"
 fi
 
-brew_formula_installed() {
-    [[ "${installed_formulae}" == *$'\n'"$1"$'\n'* ]]
-}
+# --- Install packages from Brewfile ---
+print_step "Installing Homebrew packages"
+if [[ -f "${DOTFILES_DIR}/Brewfile" ]]; then
+  brew bundle --file="${DOTFILES_DIR}/Brewfile" --no-lock
+  print_success "Homebrew packages installed"
+else
+  print_error "Brewfile not found at ${DOTFILES_DIR}/Brewfile"
+fi
 
-brew_cask_installed() {
-    [[ "${installed_casks}" == *$'\n'"$1"$'\n'* ]]
-}
+# --- mise (runtime version manager) ---
+print_step "Setting up mise"
+if ! command -v mise &>/dev/null && [[ ! -x "$HOME/.local/bin/mise" ]]; then
+  print_info "Installing mise..."
+  curl https://mise.run | sh
+  export PATH="$HOME/.local/bin:$PATH"
+  print_success "mise installed"
+else
+  print_success "mise already installed"
+fi
 
-missing_packages=()
-for pkg in "${BREW_PACKAGES[@]}"; do
-    # Check if $pkg is already installed
-    print_info "Checking package ${pkg}"
-    if ! brew_formula_installed "${pkg}"; then
-        missing_packages+=("${pkg}")
-    else
-        print_success "${pkg} already installed"
-    fi
+if [[ -f "${DOTFILES_DIR}/.tool-versions" ]]; then
+  print_info "Installing runtimes from .tool-versions..."
+  "$HOME/.local/bin/mise" install --yes 2>/dev/null || mise install --yes 2>/dev/null || true
+  print_success "Runtimes installed"
+fi
+
+# --- oh-my-zsh ---
+print_step "Setting up oh-my-zsh"
+if [[ ! -d "${HOME}/.oh-my-zsh" ]]; then
+  print_info "Installing oh-my-zsh..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  if ! grep -q "$(command -v zsh)" /etc/shells; then
+    command -v zsh | sudo tee -a /etc/shells
+  fi
+  chsh -s "$(command -v zsh)"
+  print_success "oh-my-zsh installed"
+else
+  print_success "oh-my-zsh already installed"
+fi
+
+# --- Powerlevel10k theme ---
+print_step "Setting up Powerlevel10k"
+P10K_DIR="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+if [[ ! -d "${P10K_DIR}" ]]; then
+  print_info "Installing Powerlevel10k..."
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${P10K_DIR}"
+  print_success "Powerlevel10k installed"
+else
+  print_success "Powerlevel10k already installed"
+fi
+
+# --- zsh plugins ---
+print_step "Setting up zsh plugins"
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+if [[ ! -d "${ZSH_CUSTOM}/plugins/zsh-autosuggestions" ]]; then
+  print_info "Installing zsh-autosuggestions..."
+  git clone https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM}/plugins/zsh-autosuggestions"
+  print_success "zsh-autosuggestions installed"
+else
+  print_success "zsh-autosuggestions already installed"
+fi
+
+if [[ ! -d "${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting" ]]; then
+  print_info "Installing zsh-syntax-highlighting..."
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting "${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting"
+  print_success "zsh-syntax-highlighting installed"
+else
+  print_success "zsh-syntax-highlighting already installed"
+fi
+
+# --- SSH key ---
+print_step "Setting up SSH"
+mkdir -p "${HOME}/.ssh"
+chmod 700 "${HOME}/.ssh"
+
+if [[ ! -f "${HOME}/.ssh/id_ed25519" ]]; then
+  if [[ "${INTERACTIVE}" == true ]]; then
+    print_info "Generating SSH key..."
+    ssh-keygen -t ed25519 -f "${HOME}/.ssh/id_ed25519" -C "${SSH_EMAIL}"
+    ssh-add --apple-use-keychain "${HOME}/.ssh/id_ed25519"
+    print_success "SSH key generated and added to Keychain"
+    echo ""
+    print_info "Add your public key to GitHub: https://github.com/settings/keys"
+    cat "${HOME}/.ssh/id_ed25519.pub"
+    echo ""
+  else
+    print_info "Skipping SSH key generation (non-interactive mode)"
+  fi
+else
+  print_success "SSH key already exists"
+fi
+
+# Set up allowed_signers for git commit signing
+if [[ -f "${HOME}/.ssh/id_ed25519.pub" ]]; then
+  if [[ ! -f "${HOME}/.ssh/allowed_signers" ]] || ! grep -q "${SSH_EMAIL}" "${HOME}/.ssh/allowed_signers" 2>/dev/null; then
+    print_info "Configuring SSH commit signing..."
+    echo "${SSH_EMAIL} $(cat "${HOME}/.ssh/id_ed25519.pub")" >> "${HOME}/.ssh/allowed_signers"
+    print_success "SSH signing configured"
+  else
+    print_success "SSH signing already configured"
+  fi
+fi
+
+# --- Link dotfiles with stow ---
+print_step "Linking dotfiles"
+if ! command -v stow &>/dev/null; then
+  brew install stow
+fi
+
+print_info "Linking dotfiles with stow..."
+stow --dir="${DOTFILES_DIR}" --target="${HOME}" .
+print_success "Dotfiles linked"
+
+# --- VS Code / Cursor extensions ---
+print_step "Installing editor extensions"
+for ext_cmd in "code" "cursor"; do
+  if command -v "${ext_cmd}" &>/dev/null; then
+    print_info "Installing ${ext_cmd} extensions..."
+    for ext in "${VSCODE_EXTENSIONS[@]}"; do
+      "${ext_cmd}" --install-extension "${ext}" --force 2>/dev/null || true
+    done
+    print_success "${ext_cmd} extensions installed"
+  fi
 done
 
-if (( ${#missing_packages[@]} > 0 )); then
-    print_info "Installing Homebrew packages: ${missing_packages[*]}"
-    brew install --quiet "${missing_packages[@]}"
-else
-    print_success "All Homebrew packages already installed"
-fi
+# --- Done ---
+cat <<EOF
 
-if [[ "${CF:-false}" == "true" ]]; then
-    print_info "Installing Cloudflare Homebrew packages"
-    missing_cf_packages=()
-    for pkg in "${CF_BREW_PACKAGES[@]}"; do
-        pkg_name="${pkg##*/}"
-        # Check if $pkg is already installed
-        print_info "Checking package ${pkg_name}"
-        if ! brew_formula_installed "${pkg_name}"; then
-            missing_cf_packages+=("${pkg}")
-        else
-            print_success "${pkg_name} already installed"
-        fi
-    done
+${green}✔ All done!${reset}
 
-    if (( ${#missing_cf_packages[@]} > 0 )); then
-        print_info "Installing Cloudflare Homebrew packages: ${missing_cf_packages[*]}"
-        brew install --quiet "${missing_cf_packages[@]}"
-    else
-        print_success "All Cloudflare Homebrew packages already installed"
-    fi
-else
-    print_info "Skipping Cloudflare Homebrew packages (set CF=true to enable)"
-fi
+${yellow}Manual steps remaining:${reset}
 
-# Bun (Homebrew per https://bun.com/docs/installation)
-print_info "Checking package bun"
-if ! brew_formula_installed "bun"; then
-    print_info "Installing bun"
-    brew install --quiet oven-sh/bun/bun
-else
-    print_success "bun already installed"
-fi
+  1. ${blue}Secrets:${reset}
+     cp ${DOTFILES_DIR}/.secrets.example ~/.secrets
+     # Edit ~/.secrets and fill in your tokens
+     cp ${DOTFILES_DIR}/.npmrc.example ~/.npmrc
+     # Edit ~/.npmrc or set NPM_TOKEN in ~/.secrets
 
-# reattach-to-user-namespace
-if [[ "${OS}" == "Darwin" ]]; then
-    if ! brew_formula_installed "reattach-to-user-namespace"; then
-        brew install --quiet reattach-to-user-namespace
-    fi
-fi
+  2. ${blue}GitHub CLI:${reset}
+     gh auth login
 
-# Casks
-if [[ "${OS}" == "Darwin" ]]; then
-    print_info "Installing Homebrew Casks"
-    missing_casks=()
-    for pkg in "${CASKS[@]}"; do
-        # Check if $pkg is already installed
-        print_info "Checking package ${pkg}"
-        if ! brew_cask_installed "${pkg}"; then
-            missing_casks+=("${pkg}")
-        else
-            print_success "${pkg} already installed"
-        fi
-    done
+  3. ${blue}Font:${reset}
+     Install Berkeley Mono (TX-02) from https://usgraphics.com/products/berkeley-mono
 
-    if (( ${#missing_casks[@]} > 0 )); then
-        print_info "Installing Homebrew Casks: ${missing_casks[*]}"
-        brew install --cask "${missing_casks[@]}"
-    else
-        print_success "All Homebrew casks already installed"
-    fi
-else
-    print_info "Skipping Cask installation: not on macOS"
-fi
+  4. ${blue}Sparkle / Pika (optional):${reset}
+     git clone <sparkle-repo> ~/Development/sparkle
+     # Set up SSH deploy keys as needed
 
-print_success "Homebrew packages"
-# --- dotfiles
-# Clone & install dotfiles
-print_info "Configuring dotfiles"
-if ! command -v stow &>/dev/null; then
-    # Install GNU stow
-    # https://linux.die.net/man/8/stow
-    brew install stow
-fi
+  5. ${blue}rclone (optional):${reset}
+     # Configure rclone remotes for encrypted storage
+     rclone config
 
-if [[ ! -d "${HOME}/repos/dotfiles" ]]; then
-    print_info "Cloning dotfiles"
-    git clone "${DOTFILES_REPO}" "${HOME}/repos/dotfiles"
-else
-    print_info "dotfiles already cloned"
-fi
+  6. ${blue}Restart your terminal${reset} to apply all changes.
 
-print_info "Linking dotfiles"
-stow --dir="${HOME}/repos/dotfiles" --target="${HOME}" .
-print_success "dotfiles installed"
-
-# --- Configure zsh
-if [[ ! -d "${HOME}/.oh-my-zsh" ]]; then
-    print_info "Installing oh-my-zsh"
-    # Use --unattended to prevent oh-my-zsh from changing the shell or starting zsh
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    if ! grep -q "$(command -v zsh)" /etc/shells; then
-        command -v zsh | sudo tee -a /etc/shells
-    fi
-    chsh -s "$(command -v zsh)"
-else
-    print_success "oh-my-zsh already installed"
-fi
-
-# --- Install Atuin
-if [[ ! -d "${HOME}/.atuin" ]]; then
-    print_info "Installing Atuin"
-    curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
-else
-    print_success "Atuin already installed"
-fi
-
-# --- Install nvm
-if [[ ! -d "${HOME}/.nvm" ]]; then
-    print_info "Installing nvm"
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | PROFILE=/dev/null bash
-else
-    print_success "nvm already installed"
-fi
-
-# Install uv - skip if already installed via brew
-if ! command -v uv &>/dev/null; then
-    print_info "Installing uv"
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-else
-    print_success "uv already installed."
-fi
-
-# Install Rust via rustup
-if ! command -v rustc &>/dev/null; then
-    print_info "Installing Rust via rustup"
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-else
-    print_success "Rust already installed."
-fi
-
-print_success "All done! Visit https://github.com/elithrar/dotfiles for the full source & related configs."
+EOF

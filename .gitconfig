@@ -1,56 +1,67 @@
 [user]
-    name = Matt Silverlock
-    email = "matt@eatsleeprepeat.net"
-    signingkey = ~/.ssh/id_ed25519.pub
-[gpg]
-    format = ssh
-[gpg "ssh"]
-    allowedSignersFile = ~/.ssh/allowed_signers
-[commit]
-    gpgsign = true
-[tag]
-    gpgsign = true
+	name = Charlie Gleason
+	email = hi@charliegleason.com
+	signingkey = ~/.ssh/id_ed25519.pub
+[github]
+	user = superhighfives
 [core]
-    editor = "/usr/local/bin/zed --wait"
-    excludesfile = ~/.gitignore
-    fileMode = false
-    # https://notes.takashiidobe.com/tools/git/delta
-    pager = "pre=$(which delta); ${pre:-cat} | less --tabs=4 -RFX"
+	excludesfile = ~/.gitignore_global
+	editor = code --wait
+	pager = delta --dark 2>/dev/null || cat
+	fileMode = false
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = ~/.ssh/allowed_signers
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
 [push]
-    default = simple
-    autoSetupRemote = true
-[fetch]
-    prune = true
-[merge]
-    conflictStyle = zdiff3
-[diff]
-    algorithm = histogram
-    colorMoved = default
-    tool = zed
-[difftool "zed"]
-	cmd = \"/usr/local/bin/zed\" --wait $LOCAL $REMOTE
-[rerere]
-    enabled = true
-[branch]
-    sort = -committerdate
-[column]
-    ui = auto
-[rebase]
-    autosquash = true
-[log]
-    decorate = true
-    pretty = oneline
-[credential]
-    helper = osxkeychain
-[alias]
-    pf = push --force-with-lease
-    pr = "!f() { git fetch origin pull/$1/head:$2; }; f"
-    rebase-main = "!f() { git fetch origin main && git rebase origin/main; }; f"
+	default = current
+	autoSetupRemote = true
 [pull]
-    rebase = true
+	rebase = false
+[fetch]
+	prune = true
 [init]
-    defaultBranch = main
-[include]
-	path = /Users/matt/.local/share/cloudflare-warp-certs/gitconfig
-[includeIf "hasconfig:remote.*.url:*gitlab.cfdata.org*"]
-    path = ~/.gitconfig-cloudflare
+	defaultBranch = main
+[merge]
+	conflictStyle = zdiff3
+[diff]
+	algorithm = histogram
+	colorMoved = default
+[rebase]
+	autosquash = true
+[rerere]
+	enabled = true
+[branch]
+	sort = -committerdate
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[color]
+	ui = auto
+	status = auto
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+[credential]
+	helper = osxkeychain
+[ghi]
+	token = !security find-internet-password -a superhighfives -s github.com -l 'ghi token' -w
+[alias]
+	pf = push --force-with-lease
+	co = checkout

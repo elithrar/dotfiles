@@ -1,43 +1,23 @@
+# macOS
 .DS_Store
 .AppleDouble
 .LSOverride
-.vscode
+._*
 
 # Icon must end with two \r
 Icon
 
-# Thumbnails
-._*
 
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
+# IDE
+.vscode
 
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-# OpenCode plugin dependencies and runtime data
-.opencode/node_modules/
-.opencode/bun.lock
-.opencode/worktrees/
+# Secrets - NEVER commit these
+.secrets
+.npmrc
 
 # Claude Code local settings
 .claude/settings.local.json
+.claude/plans/
 
-# Database tools config
-.config/pgcli/*
-.config/planetscale/*
-
-# Atuin receipts
-.config/atuin/atuin-receipt.json
-
-# Zed prompt library database
-.config/zed/prompts/*
+# GitHub CLI auth tokens (managed by `gh auth login`)
+.config/gh/hosts.yml

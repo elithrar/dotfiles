@@ -1,0 +1,11 @@
+\.git
+\.gitignore
+\.stow-local-ignore
+LICENSE
+README\.md
+install\.sh
+Brewfile
+\.secrets\.example
+\.npmrc\.example
+SETUP\.md
+\.claude

@@ -1,9 +1,0 @@
-\set PROMPT1 '%M:%> %n@%/%R%#%x '
-\set PROMPT2 '[more] %R > '
-\pset null '[null]'
-\pset pager off
-\x auto
-\set VERBOSITY verbose
-\set HISTCONTROL ignoredups
-\set COMP_KEYWORD_CASE upper
-\set ON_ERROR_ROLLBACK interactive
