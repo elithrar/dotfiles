@@ -118,11 +118,15 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
   ): Promise<Response> {
     const url = new URL(path, serverUrl);
     url.searchParams.set("directory", directory);
+    const headers: Record<string, string> = {};
+    if (options.body) {
+      headers["Content-Type"] = "application/json";
+    }
     return fetch(url.toString(), {
       ...options,
       headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
+        ...headers,
+        ...(options.headers as Record<string, string>),
       },
     });
   }
@@ -679,7 +683,7 @@ async function getStatus(
   return {
     success: true,
     message,
-    sessions: sessions ?? undefined,
+    sessions,
   };
 }
 
@@ -877,6 +881,28 @@ async function mergeWorktree(
     };
   }
 
+  // Guard: if targetBranch is checked out in the main worktree, update-ref
+  // would desync the working tree (index/working dir won't match HEAD).
+  // Check this BEFORE doing the merge to avoid leaving the worktree in
+  // a partially-merged state we can't propagate.
+  const mainBranchResult = await $`git symbolic-ref --short HEAD`
+    .quiet()
+    .nothrow()
+    .cwd(repoRoot);
+
+  if (
+    mainBranchResult.exitCode === 0 &&
+    getStdout(mainBranchResult) === targetBranch
+  ) {
+    return {
+      success: false,
+      message: `Target branch '${targetBranch}' is currently checked out in the main worktree. ` +
+        `Updating its ref would desync the working directory. ` +
+        `Check out a different branch in the main worktree first, or use a different target branch.`,
+      branch,
+    };
+  }
+
   await log(client, "info", "Merging worktree", {
     sessionID,
     name,
@@ -992,8 +1018,8 @@ async function mergeWorktree(
     }
   }
 
-  // Now update the target branch to point at the merge commit
-  // This is safe: we update the ref without checking it out anywhere
+  // Update the target branch ref to point at the merge commit.
+  // Safety: we already verified targetBranch is NOT checked out in the main worktree above.
   const mergeHead = await $`git rev-parse HEAD`
     .quiet()
     .nothrow()
