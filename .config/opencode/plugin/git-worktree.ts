@@ -1,12 +1,22 @@
 /**
  * Git Worktree Plugin for OpenCode
  *
- * Provides git worktree management for concurrent branch development.
- * Worktrees are stored in {repoRoot}/.opencode/worktrees/{name}
- * using direct git commands via Bun's shell.
+ * Manages git worktrees for concurrent branch development by delegating
+ * lifecycle operations (create/remove/reset) to OpenCode's native Worktree API
+ * and providing merge, list, prune, and status operations locally.
  *
  * IMPORTANT: Agents should ALWAYS use this tool for any git worktree operations.
  * Direct `git worktree` commands are blocked and will error.
+ *
+ * ## Architecture
+ *
+ * - **create/remove/reset**: Delegated to OpenCode's upstream API
+ *   (`POST/DELETE /experimental/worktree`, `POST /experimental/worktree/reset`)
+ *   which handles branch management, bootstrap, sandbox registration, and
+ *   bus event emission (worktree.ready / worktree.failed).
+ * - **merge/list/prune/status**: Handled locally via git commands.
+ * - **status**: Queries session status (`GET /session/status`) and worktree
+ *   list to show which sessions are active and which worktrees exist.
  *
  * ## When to Use
  *
@@ -23,12 +33,6 @@
  * 2. Each subagent works in its isolated worktree directory
  * 3. Merge results back to the target branch when complete
  *
- * ## Workflow Example
- *
- * 1. Create: `use-git-worktree` with action "create"
- * 2. Work in the returned worktree directory
- * 3. Merge changes back: `use-git-worktree` with action "merge"
- *
  * ## Merge Strategies
  *
  * - "ours": Keep changes from the target branch on conflict
@@ -39,7 +43,6 @@
 import { type Plugin, tool } from "@opencode-ai/plugin";
 
 const PLUGIN_NAME = "git-worktree";
-const MAX_NAME_RETRIES = 5;
 
 interface WorktreeResult {
   success: boolean;
@@ -49,6 +52,7 @@ interface WorktreeResult {
   conflicts?: string[];
   diff?: string;
   worktrees?: string[];
+  sessions?: Record<string, { type: string }>;
 }
 
 /**
@@ -100,53 +104,262 @@ async function log(
     });
 }
 
-// Name generation helpers
-const ADJECTIVES = [
-  "brave", "calm", "clever", "cosmic", "crisp", "curious", "eager", "gentle",
-  "glowing", "happy", "hidden", "jolly", "kind", "lucky", "mighty", "misty",
-  "neon", "nimble", "playful", "proud", "quick", "quiet", "shiny", "silent",
-  "stellar", "sunny", "swift", "tidy", "witty",
-] as const;
-
-const NOUNS = [
-  "cabin", "cactus", "canyon", "circuit", "comet", "eagle", "engine", "falcon",
-  "forest", "garden", "harbor", "island", "knight", "lagoon", "meadow", "moon",
-  "mountain", "nebula", "orchid", "otter", "panda", "pixel", "planet", "river",
-  "rocket", "sailor", "squid", "star", "tiger", "wizard", "wolf",
-] as const;
-
-function pick<T>(list: readonly T[]): T {
-  return list[Math.floor(Math.random() * list.length)];
-}
-
-function randomName(): string {
-  return `${pick(ADJECTIVES)}-${pick(NOUNS)}`;
-}
-
-/**
- * Slugifies input string for use in branch names.
- * Returns a random name if input produces empty string.
- */
-function slug(input: string): string {
-  const result = input
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+/, "")
-    .replace(/-+$/, "");
-  return result || randomName();
-}
-
 export const GitWorktreePlugin: Plugin = async (ctx) => {
-  const { client, directory, worktree, $ } = ctx;
+  const { client, directory, worktree, serverUrl, $ } = ctx;
   const repoRoot = worktree || directory;
 
   /**
-   * Finds a worktree directory by name using git commands.
+   * Calls the OpenCode server API.
+   * Uses the plugin's serverUrl to hit the local OpenCode server directly.
    */
-  const findWorktreeByName = async (
+  async function serverFetch(
+    path: string,
+    options: RequestInit = {},
+  ): Promise<Response> {
+    const url = new URL(path, serverUrl);
+    url.searchParams.set("directory", directory);
+    const headers: Record<string, string> = {};
+    if (options.body) {
+      headers["Content-Type"] = "application/json";
+    }
+    return fetch(url.toString(), {
+      ...options,
+      headers: {
+        ...headers,
+        ...(options.headers as Record<string, string>),
+      },
+    });
+  }
+
+  /**
+   * Creates a worktree via the OpenCode upstream API.
+   * POST /experimental/worktree
+   */
+  async function createWorktreeViaAPI(
+    sessionID: string,
+    name?: string,
+    startCommand?: string,
+  ): Promise<WorktreeResult> {
+    await log(client, "info", "Creating worktree via upstream API", {
+      sessionID,
+      name,
+      startCommand: startCommand ?? "none",
+    });
+
+    try {
+      const body: Record<string, string> = {};
+      if (name) body.name = name;
+      if (startCommand) body.startCommand = startCommand;
+
+      const response = await serverFetch("/experimental/worktree", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        await log(client, "error", "Upstream worktree create failed", {
+          sessionID,
+          status: response.status,
+          error: errorBody,
+        });
+        return {
+          success: false,
+          message: `Failed to create worktree: ${errorBody}`,
+        };
+      }
+
+      const info = (await response.json()) as {
+        name: string;
+        branch: string;
+        directory: string;
+      };
+
+      await log(client, "info", "Worktree created via upstream API", {
+        sessionID,
+        name: info.name,
+        branch: info.branch,
+        directory: info.directory,
+      });
+
+      return {
+        success: true,
+        message: `Created worktree '${info.name}' with branch '${info.branch}'`,
+        path: info.directory,
+        branch: info.branch,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : String(error);
+      await log(client, "error", "Worktree create error", {
+        sessionID,
+        error: message,
+      });
+      return {
+        success: false,
+        message: `Failed to create worktree: ${message}`,
+      };
+    }
+  }
+
+  /**
+   * Removes a worktree via the OpenCode upstream API.
+   * DELETE /experimental/worktree
+   */
+  async function removeWorktreeViaAPI(
+    sessionID: string,
+    name?: string,
+  ): Promise<WorktreeResult> {
+    if (!name) {
+      return {
+        success: false,
+        message: "Worktree name is required for remove action",
+      };
+    }
+
+    // Find the worktree directory by name from git
+    const worktreeDir = await findWorktreeDirectory(name);
+    if (!worktreeDir) {
+      return {
+        success: false,
+        message: `No worktree found with name '${name}'. Use 'list' action to see available worktrees.`,
+      };
+    }
+
+    // Don't allow removing the main worktree
+    if (worktreeDir === repoRoot) {
+      return {
+        success: false,
+        message: "Cannot remove the main worktree",
+      };
+    }
+
+    await log(client, "info", "Removing worktree via upstream API", {
+      sessionID,
+      name,
+      directory: worktreeDir,
+    });
+
+    try {
+      const response = await serverFetch("/experimental/worktree", {
+        method: "DELETE",
+        body: JSON.stringify({ directory: worktreeDir }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        await log(client, "error", "Upstream worktree remove failed", {
+          sessionID,
+          status: response.status,
+          error: errorBody,
+        });
+        return {
+          success: false,
+          message: `Failed to remove worktree: ${errorBody}`,
+        };
+      }
+
+      await log(client, "info", "Worktree removed via upstream API", {
+        sessionID,
+        name,
+      });
+
+      return {
+        success: true,
+        message: `Removed worktree '${name}' and cleaned up branch`,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : String(error);
+      await log(client, "error", "Worktree remove error", {
+        sessionID,
+        error: message,
+      });
+      return {
+        success: false,
+        message: `Failed to remove worktree: ${message}`,
+      };
+    }
+  }
+
+  /**
+   * Resets a worktree to the default branch via the OpenCode upstream API.
+   * POST /experimental/worktree/reset
+   */
+  async function resetWorktreeViaAPI(
+    sessionID: string,
+    name?: string,
+  ): Promise<WorktreeResult> {
+    if (!name) {
+      return {
+        success: false,
+        message: "Worktree name is required for reset action",
+      };
+    }
+
+    const worktreeDir = await findWorktreeDirectory(name);
+    if (!worktreeDir) {
+      return {
+        success: false,
+        message: `No worktree found with name '${name}'. Use 'list' action to see available worktrees.`,
+      };
+    }
+
+    await log(client, "info", "Resetting worktree via upstream API", {
+      sessionID,
+      name,
+      directory: worktreeDir,
+    });
+
+    try {
+      const response = await serverFetch("/experimental/worktree/reset", {
+        method: "POST",
+        body: JSON.stringify({ directory: worktreeDir }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        await log(client, "error", "Upstream worktree reset failed", {
+          sessionID,
+          status: response.status,
+          error: errorBody,
+        });
+        return {
+          success: false,
+          message: `Failed to reset worktree: ${errorBody}`,
+        };
+      }
+
+      await log(client, "info", "Worktree reset via upstream API", {
+        sessionID,
+        name,
+      });
+
+      return {
+        success: true,
+        message: `Reset worktree '${name}' to default branch`,
+        path: worktreeDir,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : String(error);
+      await log(client, "error", "Worktree reset error", {
+        sessionID,
+        error: message,
+      });
+      return {
+        success: false,
+        message: `Failed to reset worktree: ${message}`,
+      };
+    }
+  }
+
+  /**
+   * Finds a worktree directory by name using git worktree list.
+   */
+  async function findWorktreeDirectory(
     name: string,
-  ): Promise<string | undefined> => {
+  ): Promise<string | undefined> {
     const result = await $`git worktree list --porcelain`
       .quiet()
       .nothrow()
@@ -165,7 +378,66 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
       }
     }
     return undefined;
-  };
+  }
+
+  /**
+   * Finds the branch name for a worktree directory from git worktree list --porcelain.
+   */
+  async function findWorktreeBranch(
+    worktreeDir: string,
+  ): Promise<string | undefined> {
+    const result = await $`git worktree list --porcelain`
+      .quiet()
+      .nothrow()
+      .cwd(repoRoot);
+
+    if (result.exitCode !== 0) return undefined;
+
+    const stdout = getStdout(result);
+    const lines = stdout.split("\n");
+    let currentPath: string | undefined;
+
+    for (const line of lines) {
+      if (line.startsWith("worktree ")) {
+        currentPath = line.slice(9);
+      } else if (line.startsWith("branch ") && currentPath === worktreeDir) {
+        return line.slice(7).replace(/^refs\/heads\//, "");
+      } else if (line === "") {
+        currentPath = undefined;
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Queries session status from the OpenCode server.
+   * GET /session/status
+   */
+  async function getSessionStatus(): Promise<
+    Record<string, { type: string }> | undefined
+  > {
+    try {
+      const response = await serverFetch("/session/status");
+      if (!response.ok) return undefined;
+      return (await response.json()) as Record<string, { type: string }>;
+    } catch {
+      return undefined;
+    }
+  }
+
+  /**
+   * Lists worktree sandboxes from the OpenCode server.
+   * GET /experimental/worktree
+   */
+  async function getWorktreeSandboxes(): Promise<string[] | undefined> {
+    try {
+      const response = await serverFetch("/experimental/worktree");
+      if (!response.ok) return undefined;
+      return (await response.json()) as string[];
+    } catch {
+      return undefined;
+    }
+  }
 
   return {
     "tool.execute.before": async (input, output) => {
@@ -176,7 +448,7 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
           throw new Error(
             `Direct 'git worktree' commands are not allowed. ` +
               `Use the 'use-git-worktree' tool instead for managed worktree operations. ` +
-              `Available actions: create, list, merge, remove, prune.`,
+              `Available actions: create, list, merge, remove, reset, prune, status.`,
           );
         }
       }
@@ -195,42 +467,44 @@ export const GitWorktreePlugin: Plugin = async (ctx) => {
 - Running subagents that make concurrent changes to the same repository (each subagent should use its own worktree to avoid conflicts)
 - Performing parallel tasks that modify files (e.g., multiple refactors, concurrent feature work)
 - Testing or reviewing code from another branch while preserving current uncommitted changes
+- You want to check if other sessions are active before starting parallel work
 
 **Concurrent/parallel work pattern:** When spawning multiple subagents to work on the same repo simultaneously, create a worktree for each subagent. This prevents git conflicts and allows each agent to work independently. Merge results back when complete.
 
 ## Actions
 
-- **create**: Create a new git worktree with a project-scoped branch
-- **list**: List all project worktrees
-- **merge**: Merge git worktree changes back to a target branch
-- **remove**: Remove a worktree and optionally delete its branch
+- **create**: Create a new git worktree via the OpenCode API (handles branch, bootstrap, and sandbox registration)
+- **list**: List all project worktrees with branch and session info
+- **merge**: Merge worktree changes back to a target branch (done inside the worktree to avoid disrupting the main working directory)
+- **remove**: Remove a worktree via the OpenCode API (handles branch cleanup and sandbox deregistration)
+- **reset**: Reset a worktree branch to the default branch (e.g., main/master) via the OpenCode API
 - **prune**: Remove stale worktree entries (where the directory no longer exists)
+- **status**: Show active sessions and registered worktrees to understand concurrent activity
 
 ## Merge Strategies
 
 When merging, use the \`mergeStrategy\` parameter:
 - **ours**: On conflict, keep changes from the target branch
-- **theirs**: On conflict, keep changes from the git worktree branch
+- **theirs**: On conflict, keep changes from the worktree branch
 - **manual**: Stop on conflict and return diff for user to decide (merge is aborted to keep repo clean)
 
 ## Example Workflow
 
-1. Create: action "create", name "feature-work"
-2. Work in the returned worktree directory
-3. Merge: action "merge", name "feature-work", targetBranch "main", mergeStrategy "theirs"
-4. Prune: action "prune" to clean up stale entries
-
-Worktrees are stored in \`{repoRoot}/.opencode/worktrees/{name}\` with branches named \`opencode/{name}\`.`,
+1. Status: action "status" to check for active sessions
+2. Create: action "create", name "feature-work"
+3. Work in the returned worktree directory
+4. Merge: action "merge", name "feature-work", targetBranch "main", mergeStrategy "theirs"
+5. Remove: action "remove", name "feature-work"`,
 
         args: {
           action: tool.schema
-            .enum(["create", "list", "merge", "remove", "prune"])
+            .enum(["create", "list", "merge", "remove", "reset", "prune", "status"])
             .describe("The git worktree action to perform"),
           name: tool.schema
             .string()
             .optional()
             .describe(
-              "Worktree name for create/merge actions (auto-generated if not provided for create)",
+              "Worktree name for create/merge/remove/reset actions (auto-generated if not provided for create)",
             ),
           targetBranch: tool.schema
             .string()
@@ -246,7 +520,7 @@ Worktrees are stored in \`{repoRoot}/.opencode/worktrees/{name}\` with branches 
             .string()
             .optional()
             .describe(
-              "Optional shell command to run after creating the worktree (e.g., 'npm install'). WARNING: Runs arbitrary shell commands.",
+              "Optional shell command to run after creating the worktree (e.g., 'npm install')",
             ),
           commitMessage: tool.schema
             .string()
@@ -261,10 +535,7 @@ Worktrees are stored in \`{repoRoot}/.opencode/worktrees/{name}\` with branches 
           try {
             switch (args.action) {
               case "create":
-                result = await createWorktree(
-                  client,
-                  $,
-                  repoRoot,
+                result = await createWorktreeViaAPI(
                   sessionID,
                   args.name,
                   args.startCommand,
@@ -272,14 +543,15 @@ Worktrees are stored in \`{repoRoot}/.opencode/worktrees/{name}\` with branches 
                 break;
 
               case "list":
-                result = await listWorktrees($, repoRoot);
+                result = await listWorktrees($, repoRoot, getSessionStatus);
                 break;
 
               case "merge":
                 result = await mergeWorktree(
                   client,
                   $,
-                  findWorktreeByName,
+                  findWorktreeDirectory,
+                  findWorktreeBranch,
                   repoRoot,
                   sessionID,
                   args.name,
@@ -290,22 +562,27 @@ Worktrees are stored in \`{repoRoot}/.opencode/worktrees/{name}\` with branches 
                 break;
 
               case "remove":
-                result = await removeWorktree(
-                  client,
-                  $,
-                  findWorktreeByName,
-                  repoRoot,
-                  sessionID,
-                  args.name,
-                );
+                result = await removeWorktreeViaAPI(sessionID, args.name);
+                break;
+
+              case "reset":
+                result = await resetWorktreeViaAPI(sessionID, args.name);
                 break;
 
               case "prune":
                 result = await pruneWorktrees(client, $, repoRoot, sessionID);
                 break;
 
+              case "status":
+                result = await getStatus(
+                  getSessionStatus,
+                  getWorktreeSandboxes,
+                  $,
+                  repoRoot,
+                );
+                break;
+
               default: {
-                // Exhaustiveness check
                 const _exhaustive: never = args.action;
                 result = {
                   success: false,
@@ -334,180 +611,79 @@ Worktrees are stored in \`{repoRoot}/.opencode/worktrees/{name}\` with branches 
 };
 
 /**
- * Creates a git worktree with retry logic for name collisions.
+ * Gets combined status of sessions and worktrees.
  */
-async function createWorktree(
-  client: any,
+async function getStatus(
+  getSessionStatus: () => Promise<Record<string, { type: string }> | undefined>,
+  getWorktreeSandboxes: () => Promise<string[] | undefined>,
   $: any,
   repoRoot: string,
-  sessionID: string,
-  name?: string,
-  startCommand?: string,
 ): Promise<WorktreeResult> {
-  await log(client, "info", "Creating worktree", {
-    sessionID,
-    name,
-    startCommand: startCommand ?? "none",
-  });
-
-  const baseName = name ? slug(name) : "";
-
-  // Retry loop to handle race conditions
-  for (let attempt = 0; attempt < MAX_NAME_RETRIES; attempt++) {
-    const worktreeName =
-      attempt === 0 && baseName
-        ? baseName
-        : baseName
-          ? `${baseName}-${randomName()}`
-          : randomName();
-    const branch = `opencode/${worktreeName}`;
-    const worktreeDir = `${repoRoot}/.opencode/worktrees/${worktreeName}`;
-
-    // Attempt to create the worktree directly - let git handle the collision
-    const result = await $`git worktree add -b ${branch} ${worktreeDir}`
-      .quiet()
-      .nothrow()
-      .cwd(repoRoot);
-
-    if (result.exitCode === 0) {
-      // Success - run start command if provided
-      if (startCommand) {
-        // WARNING: This runs arbitrary shell commands - intentional for user flexibility
-        const cmdResult = await $`bash -lc ${startCommand}`
-          .quiet()
-          .nothrow()
-          .cwd(worktreeDir);
-
-        if (cmdResult.exitCode !== 0) {
-          const stderr = getStderr(cmdResult);
-          await log(client, "warn", "Start command failed", {
-            sessionID,
-            error: stderr,
-          });
-          // Continue despite startCommand failure - worktree is created
+  const [sessions, sandboxes, gitWorktrees] = await Promise.all([
+    getSessionStatus(),
+    getWorktreeSandboxes(),
+    (async () => {
+      const result = await $`git worktree list --porcelain`
+        .quiet()
+        .nothrow()
+        .cwd(repoRoot);
+      if (result.exitCode !== 0) return [];
+      const stdout = getStdout(result);
+      const entries: { path: string; branch?: string }[] = [];
+      let current: { path: string; branch?: string } | undefined;
+      for (const line of stdout.split("\n")) {
+        if (line.startsWith("worktree ")) {
+          current = { path: line.slice(9) };
+          entries.push(current);
+        } else if (line.startsWith("branch ") && current) {
+          current.branch = line.slice(7).replace(/^refs\/heads\//, "");
+        } else if (line === "") {
+          current = undefined;
         }
       }
+      return entries;
+    })(),
+  ]);
 
-      await log(client, "info", "Worktree created", {
-        sessionID,
-        name: worktreeName,
-        branch,
-        directory: worktreeDir,
-      });
+  let message = "## Session Status\n\n";
 
-      return {
-        success: true,
-        message: `Created worktree '${worktreeName}' with branch '${branch}'`,
-        path: worktreeDir,
-        branch,
-      };
+  if (sessions && Object.keys(sessions).length > 0) {
+    const busySessions = Object.entries(sessions).filter(
+      ([, s]) => s.type === "busy",
+    );
+    message += `Active sessions: ${Object.keys(sessions).length} (${busySessions.length} busy)\n`;
+    for (const [id, status] of Object.entries(sessions)) {
+      message += `  - ${id}: ${status.type}\n`;
     }
+  } else {
+    message += "No active sessions\n";
+  }
 
-    // Check if failure was due to name collision
-    const stderr = getStderr(result);
-    if (stderr.includes("already exists")) {
-      // Name collision - retry with different name
-      continue;
+  message += "\n## Git Worktrees\n\n";
+
+  if (gitWorktrees.length > 0) {
+    message += `Worktrees: ${gitWorktrees.length}\n`;
+    for (const wt of gitWorktrees) {
+      const dirName = wt.path.split("/").pop();
+      message += `  - ${dirName}: ${wt.path}`;
+      if (wt.branch) message += ` (branch: ${wt.branch})`;
+      message += "\n";
     }
-
-    // Other error - don't retry
-    await log(client, "error", "Failed to create worktree", {
-      sessionID,
-      error: stderr,
-      attempt,
-    });
-    return {
-      success: false,
-      message: `Failed to create worktree: ${stderr}`,
-    };
+  } else {
+    message += "No worktrees\n";
   }
 
-  return {
-    success: false,
-    message: `Failed to create worktree after ${MAX_NAME_RETRIES} attempts due to name collisions`,
-  };
-}
-
-/**
- * Removes a worktree and deletes its branch.
- */
-async function removeWorktree(
-  client: any,
-  $: any,
-  findWorktreeByName: (name: string) => Promise<string | undefined>,
-  repoRoot: string,
-  sessionID: string,
-  name?: string,
-): Promise<WorktreeResult> {
-  if (!name) {
-    return {
-      success: false,
-      message: "Worktree name is required for remove action",
-    };
+  if (sandboxes && sandboxes.length > 0) {
+    message += "\n## Registered Sandboxes\n\n";
+    for (const sb of sandboxes) {
+      message += `  - ${sb}\n`;
+    }
   }
-
-  const directory = await findWorktreeByName(name);
-  if (!directory) {
-    return {
-      success: false,
-      message: `No worktree found with name '${name}'. Use 'list' action to see available worktrees.`,
-    };
-  }
-
-  // Don't allow removing the main worktree
-  if (directory === repoRoot) {
-    return {
-      success: false,
-      message: "Cannot remove the main worktree",
-    };
-  }
-
-  const branch = `opencode/${name}`;
-
-  await log(client, "info", "Removing worktree", {
-    sessionID,
-    name,
-    directory,
-    branch,
-  });
-
-  // Remove the worktree (--force handles uncommitted changes)
-  const result = await $`git worktree remove --force ${directory}`
-    .quiet()
-    .nothrow()
-    .cwd(repoRoot);
-
-  if (result.exitCode !== 0) {
-    const stderr = getStderr(result);
-    await log(client, "error", "Failed to remove worktree", {
-      sessionID,
-      error: stderr,
-    });
-    return {
-      success: false,
-      message: `Failed to remove worktree: ${stderr}`,
-    };
-  }
-
-  // Delete the branch if it exists
-  const branchResult = await $`git branch -D ${branch}`
-    .quiet()
-    .nothrow()
-    .cwd(repoRoot);
-
-  const branchDeleted = branchResult.exitCode === 0;
-
-  await log(client, "info", "Worktree removed", {
-    sessionID,
-    name,
-    branchDeleted,
-  });
 
   return {
     success: true,
-    message: branchDeleted
-      ? `Removed worktree '${name}' and deleted branch '${branch}'`
-      : `Removed worktree '${name}' (branch '${branch}' was not found or already deleted)`,
+    message,
+    sessions,
   };
 }
 
@@ -522,7 +698,6 @@ async function pruneWorktrees(
 ): Promise<WorktreeResult> {
   await log(client, "info", "Pruning stale worktrees", { sessionID });
 
-  // Run with verbose flag to capture what was pruned
   const result = await $`git worktree prune -v`.quiet().nothrow().cwd(repoRoot);
 
   if (result.exitCode !== 0) {
@@ -562,38 +737,57 @@ async function pruneWorktrees(
 }
 
 /**
- * Lists all git worktrees in the repository.
+ * Lists all git worktrees in the repository, augmented with session status.
  */
-async function listWorktrees($: any, repoRoot: string): Promise<WorktreeResult> {
-  const result = await $`git worktree list --porcelain`
-    .quiet()
-    .nothrow()
-    .cwd(repoRoot);
+async function listWorktrees(
+  $: any,
+  repoRoot: string,
+  getSessionStatus: () => Promise<Record<string, { type: string }> | undefined>,
+): Promise<WorktreeResult> {
+  const [gitResult, sessions] = await Promise.all([
+    $`git worktree list --porcelain`.quiet().nothrow().cwd(repoRoot),
+    getSessionStatus(),
+  ]);
 
-  if (result.exitCode !== 0) {
+  if (gitResult.exitCode !== 0) {
     return {
       success: false,
-      message: `Failed to list worktrees: ${getStderr(result)}`,
+      message: `Failed to list worktrees: ${getStderr(gitResult)}`,
     };
   }
 
-  const stdout = getStdout(result);
-  const worktreePaths: string[] = [];
+  const stdout = getStdout(gitResult);
+  const entries: { path: string; branch?: string }[] = [];
+  let current: { path: string; branch?: string } | undefined;
 
   for (const line of stdout.split("\n")) {
     if (line.startsWith("worktree ")) {
-      worktreePaths.push(line.slice(9));
+      current = { path: line.slice(9) };
+      entries.push(current);
+    } else if (line.startsWith("branch ") && current) {
+      current.branch = line.slice(7).replace(/^refs\/heads\//, "");
+    } else if (line === "") {
+      current = undefined;
     }
   }
 
-  let message = `Repository worktrees: ${worktreePaths.length}\n`;
+  let message = `Repository worktrees: ${entries.length}\n`;
 
-  if (worktreePaths.length > 0) {
+  if (entries.length > 0) {
     message += "\nWorktrees:\n";
-    for (const dir of worktreePaths) {
-      const dirName = dir.split("/").pop();
-      message += `  - ${dirName}: ${dir}\n`;
+    for (const entry of entries) {
+      const dirName = entry.path.split("/").pop();
+      message += `  - ${dirName}: ${entry.path}`;
+      if (entry.branch) message += ` (branch: ${entry.branch})`;
+      message += "\n";
     }
+  }
+
+  if (sessions && Object.keys(sessions).length > 0) {
+    const busySessions = Object.entries(sessions).filter(
+      ([, s]) => s.type === "busy",
+    );
+    message += `\nActive sessions: ${Object.keys(sessions).length} (${busySessions.length} busy)`;
   }
 
   message += `\nRaw output:\n${stdout}`;
@@ -601,18 +795,25 @@ async function listWorktrees($: any, repoRoot: string): Promise<WorktreeResult> 
   return {
     success: true,
     message,
-    worktrees: worktreePaths,
+    worktrees: entries.map((e) => e.path),
   };
 }
 
 /**
  * Merges a worktree branch into a target branch.
- * Aborts merge on conflicts when strategy is "manual" to keep repo clean.
+ *
+ * IMPORTANT: This performs the merge INSIDE the worktree directory to avoid
+ * disrupting the main working directory. The worktree fetches the target branch
+ * and merges locally, then the result is available on the worktree's branch.
+ *
+ * If the caller wants the merge result on the target branch in the main worktree,
+ * they should fast-forward the target branch after this operation.
  */
 async function mergeWorktree(
   client: any,
   $: any,
-  findWorktreeByName: (name: string) => Promise<string | undefined>,
+  findWorktreeDirectory: (name: string) => Promise<string | undefined>,
+  findWorktreeBranch: (worktreeDir: string) => Promise<string | undefined>,
   repoRoot: string,
   sessionID: string,
   name?: string,
@@ -636,15 +837,21 @@ async function mergeWorktree(
   }
 
   // Find the worktree
-  const directory = await findWorktreeByName(name);
-  if (!directory) {
+  const worktreeDir = await findWorktreeDirectory(name);
+  if (!worktreeDir) {
     return {
       success: false,
       message: `No worktree found with name '${name}'. Use 'list' action to see available worktrees.`,
     };
   }
 
-  const branch = `opencode/${name}`;
+  const branch = await findWorktreeBranch(worktreeDir);
+  if (!branch) {
+    return {
+      success: false,
+      message: `Could not determine branch for worktree '${name}'.`,
+    };
+  }
 
   try {
     validateBranchName(branch);
@@ -674,38 +881,78 @@ async function mergeWorktree(
     };
   }
 
-  // Checkout target branch
-  const checkoutResult = await $`git checkout ${targetBranch}`
+  // Guard: if targetBranch is checked out in the main worktree, update-ref
+  // would desync the working tree (index/working dir won't match HEAD).
+  // Check this BEFORE doing the merge to avoid leaving the worktree in
+  // a partially-merged state we can't propagate.
+  const mainBranchResult = await $`git symbolic-ref --short HEAD`
     .quiet()
     .nothrow()
     .cwd(repoRoot);
 
-  if (checkoutResult.exitCode !== 0) {
+  if (
+    mainBranchResult.exitCode === 0 &&
+    getStdout(mainBranchResult) === targetBranch
+  ) {
     return {
       success: false,
-      message: `Failed to checkout target branch '${targetBranch}': ${getStderr(checkoutResult)}`,
+      message: `Target branch '${targetBranch}' is currently checked out in the main worktree. ` +
+        `Updating its ref would desync the working directory. ` +
+        `Check out a different branch in the main worktree first, or use a different target branch.`,
+      branch,
     };
   }
 
-  // Execute merge based on strategy
+  await log(client, "info", "Merging worktree", {
+    sessionID,
+    name,
+    branch,
+    targetBranch,
+    strategy,
+  });
+
+  // ---- Merge inside the worktree to avoid disrupting the main working directory ----
+  //
+  // Strategy: merge the target branch INTO the worktree branch (inside the worktree),
+  // then update the target branch ref to point at the merge result.
+  // This avoids checking out any branch in the main worktree.
+
+  // First, ensure all changes in the worktree are committed
+  const statusCheck = await $`git status --porcelain`
+    .quiet()
+    .nothrow()
+    .cwd(worktreeDir);
+
+  if (statusCheck.exitCode === 0 && getStdout(statusCheck)) {
+    return {
+      success: false,
+      message: `Worktree '${name}' has uncommitted changes. Commit or stash them before merging.\n\nUncommitted files:\n${getStdout(statusCheck)}`,
+    };
+  }
+
+  // Merge the target branch into the worktree branch (inside the worktree)
   let mergeResult: { exitCode: number; stdout: Uint8Array; stderr: Uint8Array };
 
   if (strategy === "ours") {
-    mergeResult = await $`git merge -X ours -m ${message} ${branch}`
+    // "ours" means keep the target branch's changes on conflict
+    // Since we're merging target INTO worktree, "theirs" in git terms = target's changes
+    mergeResult = await $`git merge -X theirs -m ${message} ${targetBranch}`
       .quiet()
       .nothrow()
-      .cwd(repoRoot);
+      .cwd(worktreeDir);
   } else if (strategy === "theirs") {
-    mergeResult = await $`git merge -X theirs -m ${message} ${branch}`
+    // "theirs" means keep the worktree branch's changes on conflict
+    // Since we're merging target INTO worktree, "ours" in git terms = worktree's changes
+    mergeResult = await $`git merge -X ours -m ${message} ${targetBranch}`
       .quiet()
       .nothrow()
-      .cwd(repoRoot);
+      .cwd(worktreeDir);
   } else {
     // Manual - try merge without auto-commit
-    mergeResult = await $`git merge --no-commit --no-ff ${branch}`
+    mergeResult = await $`git merge --no-commit --no-ff ${targetBranch}`
       .quiet()
       .nothrow()
-      .cwd(repoRoot);
+      .cwd(worktreeDir);
   }
 
   const mergeStdout = getStdout(mergeResult);
@@ -714,27 +961,27 @@ async function mergeWorktree(
   // Check for conflicts
   if (mergeResult.exitCode !== 0) {
     if (mergeStderr.includes("CONFLICT") || mergeStdout.includes("CONFLICT")) {
-      // Get diff and status for context
-      const diffResult = await $`git diff`.quiet().nothrow().cwd(repoRoot);
+      // Get diff and status for context (inside the worktree)
+      const diffResult = await $`git diff`.quiet().nothrow().cwd(worktreeDir);
 
       const statusResult = await $`git status --porcelain`
         .quiet()
         .nothrow()
-        .cwd(repoRoot);
+        .cwd(worktreeDir);
 
-      // Extract conflicted files - include all conflict types
+      // Extract conflicted files
       const conflicts = getStdout(statusResult)
         .split("\n")
         .filter((line) => /^(UU|AA|AU|UA|DU|UD|DD)/.test(line))
         .map((line) => line.slice(3));
 
-      // Abort merge to keep repo clean
-      await $`git merge --abort`.quiet().nothrow().cwd(repoRoot);
+      // Abort merge to keep worktree clean
+      await $`git merge --abort`.quiet().nothrow().cwd(worktreeDir);
 
       if (strategy === "manual") {
         return {
           success: false,
-          message: `Merge has conflicts that require manual resolution. The merge was aborted to keep the repository clean.\n\nConflicted files:\n${conflicts.join("\n")}\n\nUse mergeStrategy 'ours' or 'theirs' to auto-resolve.`,
+          message: `Merge has conflicts that require resolution. The merge was aborted to keep the worktree clean.\n\nConflicted files:\n${conflicts.join("\n")}\n\nUse mergeStrategy 'ours' or 'theirs' to auto-resolve, or resolve conflicts manually in the worktree.`,
           conflicts,
           diff: getStdout(diffResult),
         };
@@ -749,7 +996,7 @@ async function mergeWorktree(
 
     return {
       success: false,
-      message: `Merge failed: ${mergeStderr}`,
+      message: `Merge failed: ${mergeStderr || mergeStdout}`,
     };
   }
 
@@ -758,7 +1005,7 @@ async function mergeWorktree(
     const commitResult = await $`git commit -m ${message}`
       .quiet()
       .nothrow()
-      .cwd(repoRoot);
+      .cwd(worktreeDir);
 
     if (
       commitResult.exitCode !== 0 &&
@@ -771,17 +1018,47 @@ async function mergeWorktree(
     }
   }
 
+  // Update the target branch ref to point at the merge commit.
+  // Safety: we already verified targetBranch is NOT checked out in the main worktree above.
+  const mergeHead = await $`git rev-parse HEAD`
+    .quiet()
+    .nothrow()
+    .cwd(worktreeDir);
+
+  if (mergeHead.exitCode !== 0) {
+    return {
+      success: false,
+      message: `Merge succeeded but failed to read HEAD: ${getStderr(mergeHead)}`,
+    };
+  }
+
+  const mergeCommit = getStdout(mergeHead);
+
+  const updateRef = await $`git update-ref refs/heads/${targetBranch} ${mergeCommit}`
+    .quiet()
+    .nothrow()
+    .cwd(repoRoot);
+
+  if (updateRef.exitCode !== 0) {
+    return {
+      success: false,
+      message: `Merge succeeded in worktree but failed to update '${targetBranch}' ref: ${getStderr(updateRef)}. The merge commit is at ${mergeCommit} on branch '${branch}'.`,
+      branch,
+    };
+  }
+
   await log(client, "info", "Worktree merged", {
     sessionID,
     name,
     branch,
     targetBranch,
     strategy,
+    mergeCommit,
   });
 
   return {
     success: true,
-    message: `Successfully merged '${branch}' into '${targetBranch}'`,
+    message: `Successfully merged '${targetBranch}' into worktree branch '${branch}' and updated '${targetBranch}' to ${mergeCommit.slice(0, 8)}`,
     branch,
   };
 }
