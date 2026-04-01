@@ -10,51 +10,51 @@
     "anthropic": {
       "models": {
         "claude-opus-4-6": {
-          "limit": { "context": 200000 }
-        }
-      }
+          "limit": { "context": 200000, "output": 128000 },
+        },
+      },
     },
     "openai": {
       "models": {
         "gpt-5.4": {
-          "limit": { "context": 200000 }
-        }
-      }
-    }
+          "limit": { "context": 200000, "output": 128000 },
+        },
+      },
+    },
   },
   "mcp": {
     "chrome-devtools": {
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
-      "enabled": false
+      "enabled": false,
     },
     "cloudflare-docs": {
       "type": "remote",
-      "url": "https://docs.mcp.cloudflare.com/mcp"
+      "url": "https://docs.mcp.cloudflare.com/mcp",
     },
     "google-workspace": {
       "type": "remote",
       "url": "https://google-workspace-mcp.cto.cfdata.org/mcp",
       "oauth": {},
-      "enabled": false
+      "enabled": false,
     },
     "cloudflare-builds": {
       "type": "remote",
       "url": "https://builds.mcp.cloudflare.com/mcp",
       "oauth": {},
-      "enabled": false
+      "enabled": false,
     },
     "cloudflare-observability": {
       "type": "remote",
       "url": "https://observability.mcp.cloudflare.com/mcp",
       "oauth": {},
-      "enabled": false
+      "enabled": false,
     },
     "playwright": {
       "type": "local",
       "command": ["npx", "@playwright/mcp@latest"],
-      "enabled": false
-    }
+      "enabled": false,
+    },
   },
   "agent": {
     "write": {
@@ -63,10 +63,10 @@
       "mode": "primary",
       "color": "#F5B638",
       "permission": {
-        "bash": "deny"
+        "bash": "deny",
       },
-      "prompt": "You review, edit, and draft longer-form prose. Use the imperative mood. Prefer AP style and American English. Avoid marketing speak - no 'perfect for', 'empowers you to', or 'modernization'. Em-dashes are OK; semi-colons less so. Be concise and avoid walls of text. Lead with the problem or context before the solution. Use 'we' for collaboration; 'you' to address the reader. Keep paragraphs short - 2-4 sentences max. Explain why, not just what. Link liberally to sources, docs, and references. Use bullet points over numbered lists unless order matters. Be direct and opinionated; acknowledge tradeoffs honestly. Use bold for key phrases that anchor an argument. Reframe complex points to aid readers in comprehension. Use rhetorical questions sparingly to drive a point home."
-    }
+      "prompt": "You review, edit, and draft longer-form prose. Use the imperative mood. Prefer AP style and American English. Avoid marketing speak - no 'perfect for', 'empowers you to', or 'modernization'. Em-dashes are OK; semi-colons less so. Be concise and avoid walls of text. Lead with the problem or context before the solution. Use 'we' for collaboration; 'you' to address the reader. Keep paragraphs short - 2-4 sentences max. Explain why, not just what. Link liberally to sources, docs, and references. Use bullet points over numbered lists unless order matters. Be direct and opinionated; acknowledge tradeoffs honestly. Use bold for key phrases that anchor an argument. Reframe complex points to aid readers in comprehension. Use rhetorical questions sparingly to drive a point home.",
+    },
   },
   "permission": {
     "webfetch": "allow",
@@ -76,16 +76,16 @@
       "*.env": "deny",
       "*.env.*": "deny",
       "*.dev.vars": "deny",
-      "*.env.example": "allow"
+      "*.env.example": "allow",
     },
     "edit": {
-      "*": "allow"
+      "*": "allow",
     },
     "external_directory": {
       "*": "ask",
       "~/repos/**": "allow",
       "/tmp/**": "allow",
-      "/private/tmp/**": "allow"
+      "/private/tmp/**": "allow",
     },
     "bash": {
       "*": "ask",
@@ -273,7 +273,7 @@
       "gem *": "allow",
       "bundle *": "allow",
       // Shell
-      "omz *": "allow"
-    }
-  }
+      "omz *": "allow",
+    },
+  },
 }
