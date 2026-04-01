@@ -5,6 +5,23 @@
   "autoupdate": true,
   "plugin": ["opencode-cross-repo"],
   "instructions": ["{env:HOME}/.config/opencode/INSTRUCTIONS.md"],
+  // Override context limits to trigger built-in compaction at 200k tokens
+  "provider": {
+    "anthropic": {
+      "models": {
+        "claude-opus-4-6": {
+          "limit": { "context": 200000 }
+        }
+      }
+    },
+    "openai": {
+      "models": {
+        "gpt-5.4": {
+          "limit": { "context": 200000 }
+        }
+      }
+    }
+  },
   "mcp": {
     "chrome-devtools": {
       "type": "local",
