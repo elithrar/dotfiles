@@ -16,7 +16,7 @@
     },
     "openai": {
       "models": {
-        "gpt-5.4": {
+        "gpt-5.5": {
           "limit": { "context": 200000, "output": 128000 },
         },
       },
@@ -27,6 +27,10 @@
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
       "enabled": false,
+    },
+    "cloudflare-api": {
+      "type": "remote",
+      "url": "https://mcp.cloudflare.com/mcp",
     },
     "cloudflare-docs": {
       "type": "remote",
