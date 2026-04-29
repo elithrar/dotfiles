@@ -12,15 +12,13 @@
   "agent_buffer_font_size": 15.0,
   "icon_theme": "Zed (Default)",
   "edit_predictions": {
+    "provider": "zed",
     "mode": "eager",
     "disabled_globs": [
       "**/.env*",
       "**/*.pem",
       "**/*.key"
     ]
-  },
-  "features": {
-    "edit_prediction_provider": "zed"
   },
   "show_whitespaces": "boundary",
   "vim_mode": true,
@@ -71,6 +69,9 @@
     "diagnostics": "all"
   },
   "agent": {
+    "tool_permissions": {
+      "default": "allow"
+    },
     "inline_assistant_model": {
       "provider": "anthropic",
       "model": "claude-sonnet-4-5-latest"
@@ -102,7 +103,6 @@
         "context_servers": {}
       }
     },
-    "always_allow_tool_actions": true,
     "dock": "right",
     "enabled": true,
     "default_model": {
