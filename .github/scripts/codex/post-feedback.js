@@ -1,10 +1,15 @@
 module.exports = async ({ github, context }) => {
   const applyResult = process.env.APPLY_RESULT;
   const patchChanged = process.env.PATCH_CHANGED === "true";
+  const codexOutcome = process.env.CODEX_OUTCOME;
   const changed = process.env.CODEX_CHANGED === "true";
   let body = process.env.CODEX_FINAL_MESSAGE;
 
-  if (patchChanged && applyResult !== "success") {
+  if (codexOutcome && codexOutcome !== "success") {
+    body = `Codex failed before producing a response.
+
+Check the workflow logs for details: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+  } else if (patchChanged && applyResult !== "success") {
     body = `${body}\n\n---\nCodex generated changes, but the workflow could not push them to this PR branch. Check the apply-changes job logs.`;
   } else if (changed) {
     body = `${body}\n\n---\nCodex pushed changes to this PR branch.`;
