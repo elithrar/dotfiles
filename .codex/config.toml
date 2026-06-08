@@ -3,6 +3,11 @@ model_provider = "cloudflare-ai-gateway"
 model_catalog_json = "/Users/matt/.codex/model-catalogs/cloudflare-ai-gateway.json"
 model_context_window = 200000
 
+# Default permissions translated from .config/opencode/opencode.jsonc.
+approval_policy = "on-request"
+default_permissions = "opencode-default"
+web_search = "live"
+
 [features]
 enable_request_compression = false
 terminal_resize_reflow = true
@@ -26,6 +31,63 @@ trust_level = "trusted"
 
 [projects."/Users/matt/repos/artifact-fs"]
 trust_level = "trusted"
+
+[projects."/Users/matt/repos/dotfiles"]
+trust_level = "trusted"
+
+
+# OpenCode-style filesystem and network defaults.
+# Command prefix allow/prompt/forbid rules live in .codex/rules/default.rules.
+[permissions.opencode-default]
+description = "Workspace editing with OpenCode-style secret denies and repo/temp roots."
+extends = ":workspace"
+
+[permissions.opencode-default.workspace_roots]
+"/Users/matt/repos" = true
+"/tmp" = true
+"/private/tmp" = true
+
+[permissions.opencode-default.filesystem]
+glob_scan_max_depth = 8
+
+[permissions.opencode-default.filesystem.":workspace_roots"]
+"." = "write"
+"**/.env" = "deny"
+"**/*.env" = "deny"
+# Keep examples readable. Codex deny rules win over allow/read rules, so avoid
+# broad `.env.*` denies that would also catch `.env.example`.
+"**/.env.local" = "deny"
+"**/*.env.local" = "deny"
+"**/.env.development" = "deny"
+"**/*.env.development" = "deny"
+"**/.env.development.local" = "deny"
+"**/*.env.development.local" = "deny"
+"**/.env.test" = "deny"
+"**/*.env.test" = "deny"
+"**/.env.test.local" = "deny"
+"**/*.env.test.local" = "deny"
+"**/.env.production" = "deny"
+"**/*.env.production" = "deny"
+"**/.env.production.local" = "deny"
+"**/*.env.production.local" = "deny"
+"**/.env.staging" = "deny"
+"**/*.env.staging" = "deny"
+"**/.env.staging.local" = "deny"
+"**/*.env.staging.local" = "deny"
+"**/.env.preview" = "deny"
+"**/*.env.preview" = "deny"
+"**/.env.preview.local" = "deny"
+"**/*.env.preview.local" = "deny"
+"**/.dev.vars" = "deny"
+"**/*.dev.vars" = "deny"
+
+[permissions.opencode-default.network]
+enabled = true
+mode = "full"
+allow_local_binding = false
+
+[permissions.opencode-default.network.domains]
+"*" = "allow"
 
 [tui]
 theme = "orng"

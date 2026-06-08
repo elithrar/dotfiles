@@ -1,0 +1,4 @@
+prefix_rule(pattern=["gh", "pr", "list"], decision="allow")
+prefix_rule(pattern=["gh", "api", "graphql"], decision="allow")
+prefix_rule(pattern=["jq", "-r", ".data.repository.pullRequests.nodes[] | select([.files.nodes[].path] | any(test(\"(^|/)kv(/|$)|workers-kv|key-value\"; \"i\"))) | {number,title,url,isDraft,updatedAt,reviewDecision,mergeStateStatus,labels:[.labels.nodes[].name],files:[.files.nodes[].path | select(test(\"(^|/)kv(/|$)|workers-kv|key-value\"; \"i\"))]} | @json"], decision="allow")
+prefix_rule(pattern=["rm", "-rf", "/tmp/afs-pr10-test"], decision="allow")
