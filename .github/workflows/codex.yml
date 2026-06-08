@@ -73,6 +73,7 @@ jobs:
       pull-requests: read
     outputs:
       final_message: ${{ steps.run-codex.outputs.final-message }}
+      codex_outcome: ${{ steps.run-codex.outcome }}
       is_valid: ${{ steps.context.outputs.is_valid }}
       can_run: ${{ steps.context.outputs.can_run }}
       can_modify: ${{ steps.context.outputs.can_modify }}
@@ -151,6 +152,7 @@ jobs:
       - name: Run Codex
         if: steps.context.outputs.is_valid == 'true' && steps.context.outputs.can_run == 'true'
         id: run-codex
+        continue-on-error: true
         uses: openai/codex-action@v1
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
@@ -160,7 +162,7 @@ jobs:
           safety-strategy: drop-sudo
 
       - name: Capture Codex patch
-        if: steps.context.outputs.is_valid == 'true' && steps.context.outputs.can_run == 'true' && steps.context.outputs.can_modify == 'true'
+        if: steps.context.outputs.is_valid == 'true' && steps.context.outputs.can_run == 'true' && steps.context.outputs.can_modify == 'true' && steps.run-codex.outcome == 'success'
         id: patch
         run: |
           rm -f .codex-prompt.md codex.patch
@@ -182,9 +184,15 @@ jobs:
           path: codex.patch
           if-no-files-found: error
 
+      - name: Mark Codex failure
+        if: steps.run-codex.outcome == 'failure'
+        run: |
+          echo "Codex failed before producing a successful response." >&2
+          exit 1
+
   apply-changes:
     needs: codex
-    if: needs.codex.outputs.is_valid == 'true' && needs.codex.outputs.can_run == 'true'
+    if: needs.codex.outputs.is_valid == 'true' && needs.codex.outputs.can_run == 'true' && needs.codex.outputs.codex_outcome == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -225,7 +233,7 @@ jobs:
 
   post-feedback:
     needs: [codex, apply-changes]
-    if: always() && needs.codex.outputs.is_valid == 'true' && needs.codex.outputs.can_run == 'true' && needs.codex.outputs.final_message != ''
+    if: always() && needs.codex.outputs.is_valid == 'true' && needs.codex.outputs.can_run == 'true' && (needs.codex.outputs.final_message != '' || needs.codex.outputs.codex_outcome != 'success')
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -250,6 +258,7 @@ jobs:
           APPLY_RESULT: ${{ needs.apply-changes.result }}
           PATCH_CHANGED: ${{ needs.codex.outputs.patch_changed }}
           CODEX_FINAL_MESSAGE: ${{ needs.codex.outputs.final_message }}
+          CODEX_OUTCOME: ${{ needs.codex.outputs.codex_outcome }}
           CODEX_CHANGED: ${{ needs.apply-changes.outputs.changed }}
           REVIEW_COMMENT_ID: ${{ needs.codex.outputs.review_comment_id }}
           TARGET_ISSUE_NUMBER: ${{ needs.codex.outputs.target_issue_number }}
