@@ -1,5 +1,10 @@
 const fs = require("fs");
 
+const escapePromptData = (value) => JSON.stringify(value, null, 2)
+  .replace(/&/g, "\\u0026")
+  .replace(/</g, "\\u003c")
+  .replace(/>/g, "\\u003e");
+
 module.exports = async ({ github, context, core }) => {
   const owner = context.repo.owner;
   const repo = context.repo.repo;
@@ -65,11 +70,23 @@ Return actionable feedback. Prefer exact file and line references. Separate must
 
 Answer the request using the repository context. Be concise, specific, and practical. If you have write access and the request calls for code changes, make focused changes in the workspace.`;
 
-  const data = JSON.stringify({
+  const triggerComment = context.payload.comment;
+  const triggerData = triggerComment ? {
+    html_url: triggerComment.html_url || null,
+    path: triggerComment.path || null,
+    line: triggerComment.line || null,
+    side: triggerComment.side || null,
+    start_line: triggerComment.start_line || null,
+    original_line: triggerComment.original_line || null,
+    diff_hunk: triggerComment.diff_hunk || null,
+  } : null;
+
+  const data = escapePromptData({
     title: title || null,
     description: body || null,
     user_prompt: userPrompt || null,
-  }, null, 2);
+    trigger_comment: triggerData,
+  });
 
   const prompt = `<system_prompt>
 You are Codex running in GitHub Actions for ${owner}/${repo}.

@@ -119,14 +119,14 @@ jobs:
         id: patch
         run: |
           rm -f .codex-prompt.md codex.patch
-          git add -N .
+          git add -A .
 
-          if git diff --quiet --exit-code; then
+          if git diff --cached --quiet --exit-code; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          git diff --binary > codex.patch
+          git diff --cached --binary > codex.patch
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Upload Codex patch
