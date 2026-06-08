@@ -1,0 +1,31 @@
+model = "gpt-5.5"
+model_provider = "cloudflare-ai-gateway"
+model_catalog_json = "/Users/matt/.codex/model-catalogs/cloudflare-ai-gateway.json"
+model_context_window = 200000
+
+[features]
+enable_request_compression = false
+terminal_resize_reflow = true
+
+[model_providers.cloudflare-ai-gateway]
+name = "OpenAI: Cloudflare AI Gateway"
+base_url = "https://opencode.cloudflare.dev/openai"
+wire_api = "responses"
+supports_websockets = false
+http_headers = { "X-Requested-With" = "xmlhttprequest" }
+env_http_headers = { "cf-access-token" = "CODEX_CF_ACCESS_TOKEN" }
+
+[projects."/Users/matt/repos/get-ratioed"]
+trust_level = "trusted"
+
+[projects."/Users/matt/repos/cloudflare-docs"]
+trust_level = "trusted"
+
+[projects."/Users/matt/repos/scratch"]
+trust_level = "trusted"
+
+[projects."/Users/matt/repos/artifact-fs"]
+trust_level = "trusted"
+
+[tui]
+theme = "orng"
