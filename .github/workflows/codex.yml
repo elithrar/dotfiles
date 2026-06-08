@@ -13,6 +13,51 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  acknowledge:
+    if: >
+      github.event.sender.type != 'Bot' &&
+      (
+        (github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/codex') || startsWith(github.event.comment.body, '/review'))) ||
+        (github.event_name == 'pull_request_review' && (startsWith(github.event.review.body, '/codex') || startsWith(github.event.review.body, '/review'))) ||
+        (github.event_name == 'pull_request_review_comment' && (startsWith(github.event.comment.body, '/codex') || startsWith(github.event.comment.body, '/review')))
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout workflow scripts
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: .github/scripts/codex
+
+      - name: Copy workflow scripts
+        run: |
+          mkdir -p "$RUNNER_TEMP/codex-scripts"
+          cp .github/scripts/codex/*.js "$RUNNER_TEMP/codex-scripts/"
+
+      - name: Determine trigger context
+        id: context
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const run = require(`${process.env.RUNNER_TEMP}/codex-scripts/context.js`);
+            await run({ github, context, core });
+
+      - name: React to trigger
+        if: steps.context.outputs.is_valid == 'true' && steps.context.outputs.can_run == 'true'
+        uses: actions/github-script@v7
+        env:
+          REACTION_SUBJECT_ID: ${{ steps.context.outputs.reaction_subject_id }}
+        with:
+          script: |
+            const run = require(`${process.env.RUNNER_TEMP}/codex-scripts/react.js`);
+            await run({ github, core });
+
   codex:
     if: >
       github.event.sender.type != 'Bot' &&

@@ -51,6 +51,7 @@ module.exports = async ({ github, context, core }) => {
   core.setOutput("head_ref", headRef);
   core.setOutput("head_repo", headRepo);
   core.setOutput("review_comment_id", context.eventName === "pull_request_review_comment" ? payload.comment.id : "");
+  core.setOutput("reaction_subject_id", payload.comment?.node_id ?? payload.review?.node_id ?? "");
   core.setOutput("target_issue_number", targetIssueNumber);
   core.setOutput("trigger_url", payload.comment?.html_url ?? payload.review?.html_url ?? payload.issue?.html_url ?? "");
 };
