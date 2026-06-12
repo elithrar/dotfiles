@@ -1,6 +1,6 @@
 model = "gpt-5.5"
 model_provider = "cloudflare-ai-gateway"
-model_catalog_json = "/Users/matt/.codex/model-catalogs/cloudflare-ai-gateway.json"
+model_catalog_json = "./model-catalogs/cloudflare-ai-gateway.json"
 model_context_window = 200000
 
 # Default permissions translated from .config/opencode/opencode.jsonc.
