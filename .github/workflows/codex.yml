@@ -162,6 +162,10 @@ jobs:
           model: "gpt-5.5"
           # allow-users: "*"
           prompt-file: ${{ steps.prompt.outputs.prompt_file }}
+          # Ignore the repository-local Codex config in CI: this dotfiles repo
+          # contains personal machine config that references local-only paths.
+          codex-args: >-
+            ["--config", "projects.\"/home/runner/work/dotfiles/dotfiles\".trust_level=\"untrusted\""]
           sandbox: ${{ (steps.context.outputs.can_modify == 'true' || steps.context.outputs.can_create_pr == 'true') && 'workspace-write' || 'read-only' }}
           safety-strategy: drop-sudo
 
