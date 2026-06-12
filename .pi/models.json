@@ -1,0 +1,131 @@
+{
+  "providers": {
+    "cloudflare-opencode": {
+      "name": "Cloudflare AI Gateway (OpenCode)",
+      "baseUrl": "https://opencode.cloudflare.dev/openai",
+      "apiKey": "opencode",
+      "headers": {
+        "cf-access-token": "!${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/cloudflare-opencode-token",
+        "X-Requested-With": "xmlhttprequest"
+      },
+      "models": [
+        {
+          "id": "gpt-5.5",
+          "name": "GPT-5.5",
+          "api": "openai-responses",
+          "baseUrl": "https://opencode.cloudflare.dev/openai",
+          "reasoning": true,
+          "thinkingLevelMap": { "off": "none", "xhigh": "xhigh", "minimal": null },
+          "input": ["text", "image"],
+          "cost": { "input": 5, "output": 30, "cacheRead": 0.5, "cacheWrite": 0 },
+          "contextWindow": 272000,
+          "maxTokens": 128000
+        },
+        {
+          "id": "gpt-5.5-pro",
+          "name": "GPT-5.5 Pro",
+          "api": "openai-responses",
+          "baseUrl": "https://opencode.cloudflare.dev/openai",
+          "reasoning": true,
+          "thinkingLevelMap": { "off": null, "xhigh": "xhigh", "minimal": null, "low": null },
+          "input": ["text", "image"],
+          "cost": { "input": 30, "output": 180, "cacheRead": 0, "cacheWrite": 0 },
+          "contextWindow": 1050000,
+          "maxTokens": 128000
+        },
+        {
+          "id": "claude-opus-4-6",
+          "name": "Claude Opus 4.6",
+          "api": "anthropic-messages",
+          "baseUrl": "https://opencode.cloudflare.dev/anthropic",
+          "reasoning": true,
+          "thinkingLevelMap": { "xhigh": "max" },
+          "input": ["text", "image"],
+          "cost": { "input": 5, "output": 25, "cacheRead": 0.5, "cacheWrite": 6.25 },
+          "contextWindow": 1000000,
+          "maxTokens": 128000,
+          "compat": { "forceAdaptiveThinking": true }
+        },
+        {
+          "id": "claude-opus-4-7",
+          "name": "Claude Opus 4.7",
+          "api": "anthropic-messages",
+          "baseUrl": "https://opencode.cloudflare.dev/anthropic",
+          "reasoning": true,
+          "thinkingLevelMap": { "xhigh": "xhigh" },
+          "input": ["text", "image"],
+          "cost": { "input": 5, "output": 25, "cacheRead": 0.5, "cacheWrite": 6.25 },
+          "contextWindow": 1000000,
+          "maxTokens": 128000,
+          "compat": { "forceAdaptiveThinking": true }
+        },
+        {
+          "id": "claude-opus-4-8",
+          "name": "Claude Opus 4.8",
+          "api": "anthropic-messages",
+          "baseUrl": "https://opencode.cloudflare.dev/anthropic",
+          "reasoning": true,
+          "thinkingLevelMap": { "xhigh": "xhigh" },
+          "input": ["text", "image"],
+          "cost": { "input": 5, "output": 25, "cacheRead": 0.5, "cacheWrite": 6.25 },
+          "contextWindow": 1000000,
+          "maxTokens": 128000,
+          "compat": { "forceAdaptiveThinking": true }
+        },
+        {
+          "id": "claude-sonnet-4",
+          "name": "Claude Sonnet 4",
+          "api": "anthropic-messages",
+          "baseUrl": "https://opencode.cloudflare.dev/anthropic",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "cost": { "input": 3, "output": 15, "cacheRead": 0.3, "cacheWrite": 3.75 },
+          "contextWindow": 200000,
+          "maxTokens": 64000
+        },
+        {
+          "id": "claude-sonnet-4-5",
+          "name": "Claude Sonnet 4.5",
+          "api": "anthropic-messages",
+          "baseUrl": "https://opencode.cloudflare.dev/anthropic",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "cost": { "input": 3, "output": 15, "cacheRead": 0.3, "cacheWrite": 3.75 },
+          "contextWindow": 200000,
+          "maxTokens": 64000
+        },
+        {
+          "id": "claude-sonnet-4-6",
+          "name": "Claude Sonnet 4.6",
+          "api": "anthropic-messages",
+          "baseUrl": "https://opencode.cloudflare.dev/anthropic",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "cost": { "input": 3, "output": 15, "cacheRead": 0.3, "cacheWrite": 3.75 },
+          "contextWindow": 1000000,
+          "maxTokens": 64000,
+          "compat": { "forceAdaptiveThinking": true }
+        },
+        {
+          "id": "workers-ai/@cf/moonshotai/kimi-k2.6",
+          "name": "Kimi K2.6",
+          "api": "openai-completions",
+          "baseUrl": "https://opencode.cloudflare.dev/compat",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "cost": { "input": 0.95, "output": 4, "cacheRead": 0.16, "cacheWrite": 0 },
+          "contextWindow": 262144,
+          "maxTokens": 32000,
+          "compat": {
+            "supportsStore": false,
+            "supportsDeveloperRole": false,
+            "supportsReasoningEffort": false,
+            "maxTokensField": "max_tokens",
+            "supportsStrictMode": false,
+            "supportsLongCacheRetention": false
+          }
+        }
+      ]
+    }
+  }
+}

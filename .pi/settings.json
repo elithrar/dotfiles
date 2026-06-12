@@ -1,0 +1,16 @@
+{
+  "defaultProvider": "cloudflare-opencode",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "off",
+  "enabledModels": [
+    "gpt-5.5",
+    "gpt-5.5-pro",
+    "claude-opus-4-6",
+    "claude-opus-4-7",
+    "claude-opus-4-8",
+    "claude-sonnet-4",
+    "claude-sonnet-4-5",
+    "claude-sonnet-4-6",
+    "workers-ai/@cf/moonshotai/kimi-k2.6"
+  ]
+}
