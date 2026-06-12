@@ -156,6 +156,7 @@ jobs:
         uses: openai/codex-action@v1
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          model: "gpt-5.5"
           # allow-users: "*"
           prompt-file: ${{ steps.prompt.outputs.prompt_file }}
           sandbox: ${{ steps.context.outputs.can_modify == 'true' && 'workspace-write' || 'read-only' }}
