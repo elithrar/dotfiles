@@ -9,15 +9,19 @@
       "favorite_config_option_values": {}
     }
   },
-  "agent_buffer_font_size": 15.0,
+  "agent_font_size": 15,
   "icon_theme": "Zed (Default)",
   "edit_predictions": {
     "provider": "zed",
     "mode": "eager",
     "disabled_globs": [
       "**/.env*",
+      "**/.dev.vars",
       "**/*.pem",
-      "**/*.key"
+      "**/*.key",
+      "**/*.cert",
+      "**/*.crt",
+      "**/secrets.yml"
     ]
   },
   "show_whitespaces": "boundary",
