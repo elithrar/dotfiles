@@ -10,6 +10,7 @@ module.exports = async ({ github, context, core }) => {
   const repo = context.repo.repo;
   const command = process.env.COMMAND;
   const canModify = process.env.CAN_MODIFY === "true";
+  const canCreatePr = process.env.CAN_CREATE_PR === "true";
   const userPrompt = process.env.USER_PROMPT || "";
   const prNumber = process.env.PR_NUMBER;
   const triggerUrl = process.env.TRIGGER_URL || "";
@@ -56,9 +57,13 @@ Useful commands:
     ? `The commenter has write permission on this repository and this is a same-repository PR branch.
 
 You may modify files in the checked-out PR branch when the requested task calls for code changes. Do not commit, push, create branches, change workflow permissions, or update secrets; the workflow will package any file changes and a separate job will commit them back to the PR branch.`
-    : `The commenter either does not have write permission on this repository, this is not a PR, or this is not a same-repository PR branch.
+    : canCreatePr
+      ? `The commenter has write permission on this repository and invoked Codex from a standalone issue.
 
-You must not modify the PR. Provide feedback only as a GitHub comment or reply.`;
+You may modify files in the checked-out default branch when the requested task calls for code changes. Do not commit, push, create branches, open pull requests, change workflow permissions, or update secrets; the workflow will package any file changes and a separate job will create a branch and pull request.`
+      : `The commenter either does not have write permission on this repository, this is not a PR, or this is not a same-repository PR branch.
+
+You must not modify the PR or repository. Provide feedback only as a GitHub comment or reply.`;
 
   const modePrompt = command === "review"
     ? `You are doing a code review.

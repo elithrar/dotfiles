@@ -77,6 +77,8 @@ jobs:
       is_valid: ${{ steps.context.outputs.is_valid }}
       can_run: ${{ steps.context.outputs.can_run }}
       can_modify: ${{ steps.context.outputs.can_modify }}
+      can_create_pr: ${{ steps.context.outputs.can_create_pr }}
+      base_ref: ${{ steps.context.outputs.base_ref || steps.prompt.outputs.base_ref }}
       patch_changed: ${{ steps.patch.outputs.changed }}
       head_ref: ${{ steps.context.outputs.head_ref }}
       review_comment_id: ${{ steps.context.outputs.review_comment_id }}
@@ -133,6 +135,7 @@ jobs:
         env:
           COMMAND: ${{ steps.context.outputs.command }}
           CAN_MODIFY: ${{ steps.context.outputs.can_modify }}
+          CAN_CREATE_PR: ${{ steps.context.outputs.can_create_pr }}
           USER_PROMPT: ${{ steps.context.outputs.user_prompt }}
           PR_NUMBER: ${{ steps.context.outputs.pr_number }}
           TRIGGER_URL: ${{ steps.context.outputs.trigger_url }}
@@ -159,11 +162,15 @@ jobs:
           model: "gpt-5.5"
           # allow-users: "*"
           prompt-file: ${{ steps.prompt.outputs.prompt_file }}
-          sandbox: ${{ steps.context.outputs.can_modify == 'true' && 'workspace-write' || 'read-only' }}
+          # Ignore the repository-local Codex config in CI: this dotfiles repo
+          # contains personal machine config that references local-only paths.
+          codex-args: >-
+            ["--config", "projects.\"/home/runner/work/dotfiles/dotfiles\".trust_level=\"untrusted\""]
+          sandbox: ${{ (steps.context.outputs.can_modify == 'true' || steps.context.outputs.can_create_pr == 'true') && 'workspace-write' || 'read-only' }}
           safety-strategy: drop-sudo
 
       - name: Capture Codex patch
-        if: steps.context.outputs.is_valid == 'true' && steps.context.outputs.can_run == 'true' && steps.context.outputs.can_modify == 'true' && steps.run-codex.outcome == 'success'
+        if: steps.context.outputs.is_valid == 'true' && steps.context.outputs.can_run == 'true' && (steps.context.outputs.can_modify == 'true' || steps.context.outputs.can_create_pr == 'true') && steps.run-codex.outcome == 'success'
         id: patch
         run: |
           rm -f .codex-prompt.md codex.patch
@@ -197,8 +204,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     outputs:
-      changed: ${{ steps.commit.outputs.changed || 'false' }}
+      changed: ${{ steps.commit-existing.outputs.changed || steps.commit-pr.outputs.changed || 'false' }}
+      pr_url: ${{ steps.commit-pr.outputs.pr_url }}
     steps:
       - name: Checkout PR branch
         if: needs.codex.outputs.can_modify == 'true' && needs.codex.outputs.patch_changed == 'true'
@@ -207,15 +216,22 @@ jobs:
           ref: ${{ needs.codex.outputs.head_ref }}
           fetch-depth: 1
 
+      - name: Checkout base branch
+        if: needs.codex.outputs.can_create_pr == 'true' && needs.codex.outputs.patch_changed == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.codex.outputs.base_ref }}
+          fetch-depth: 1
+
       - name: Download Codex patch
-        if: needs.codex.outputs.can_modify == 'true' && needs.codex.outputs.patch_changed == 'true'
+        if: (needs.codex.outputs.can_modify == 'true' || needs.codex.outputs.can_create_pr == 'true') && needs.codex.outputs.patch_changed == 'true'
         uses: actions/download-artifact@v4
         with:
           name: codex-patch
 
       - name: Apply and push Codex changes
         if: needs.codex.outputs.can_modify == 'true' && needs.codex.outputs.patch_changed == 'true'
-        id: commit
+        id: commit-existing
         env:
           HEAD_REF: ${{ needs.codex.outputs.head_ref }}
         run: |
@@ -231,6 +247,37 @@ jobs:
           git commit -m "apply codex changes"
           git push origin "HEAD:$HEAD_REF"
           echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Apply changes and open PR
+        if: needs.codex.outputs.can_create_pr == 'true' && needs.codex.outputs.patch_changed == 'true'
+        id: commit-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ needs.codex.outputs.target_issue_number }}
+          BASE_REF: ${{ needs.codex.outputs.base_ref }}
+          BRANCH: codex/issue-${{ needs.codex.outputs.target_issue_number }}-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          git switch -c "$BRANCH"
+          git apply --index codex.patch
+
+          if git diff --cached --quiet --exit-code; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "apply codex changes"
+          git push origin "HEAD:$BRANCH"
+
+          pr_url=$(gh pr create \
+            --base "$BASE_REF" \
+            --head "$BRANCH" \
+            --title "Codex changes for #$ISSUE_NUMBER" \
+            --body "Generated from #$ISSUE_NUMBER.")
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "pr_url=$pr_url" >> "$GITHUB_OUTPUT"
 
   post-feedback:
     needs: [codex, apply-changes]
@@ -261,6 +308,7 @@ jobs:
           CODEX_FINAL_MESSAGE: ${{ needs.codex.outputs.final_message }}
           CODEX_OUTCOME: ${{ needs.codex.outputs.codex_outcome }}
           CODEX_CHANGED: ${{ needs.apply-changes.outputs.changed }}
+          CREATED_PR_URL: ${{ needs.apply-changes.outputs.pr_url }}
           REVIEW_COMMENT_ID: ${{ needs.codex.outputs.review_comment_id }}
           TARGET_ISSUE_NUMBER: ${{ needs.codex.outputs.target_issue_number }}
         with:
