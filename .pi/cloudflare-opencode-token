@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+app="https://opencode.cloudflare.dev"
+
+token="$(cloudflared access token -app="$app" 2>/dev/null || true)"
+if [ -n "$token" ]; then
+  printf '%s\n' "$token"
+  exit 0
+fi
+
+cloudflared access login --no-verbose -app="$app"
