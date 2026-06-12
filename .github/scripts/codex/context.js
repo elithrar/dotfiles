@@ -11,8 +11,10 @@ module.exports = async ({ github, context, core }) => {
   }
 
   const isPullRequestIssueComment = context.eventName === "issue_comment" && !!payload.issue?.pull_request;
+  const isStandaloneIssueComment = context.eventName === "issue_comment" && !!payload.issue && !payload.issue.pull_request;
   const prNumber = payload.pull_request?.number ?? (isPullRequestIssueComment ? payload.issue.number : "");
   const targetIssueNumber = payload.issue?.number ?? prNumber;
+  const baseRef = payload.repository?.default_branch ?? "";
   let actorPermission = "none";
   let canRun = false;
   let canModify = false;
@@ -30,6 +32,7 @@ module.exports = async ({ github, context, core }) => {
     core.warning(`Could not determine ${payload.sender.login}'s repository permission: ${error.message}`);
   }
   canRun = ["admin", "maintain", "write"].includes(actorPermission);
+  const canCreatePr = canRun && isStandaloneIssueComment;
 
   if (prNumber) {
     const { data: pr } = await github.rest.pulls.get({
@@ -48,6 +51,8 @@ module.exports = async ({ github, context, core }) => {
   core.setOutput("actor_permission", actorPermission);
   core.setOutput("can_run", canRun ? "true" : "false");
   core.setOutput("can_modify", canModify ? "true" : "false");
+  core.setOutput("can_create_pr", canCreatePr ? "true" : "false");
+  core.setOutput("base_ref", baseRef);
   core.setOutput("head_ref", headRef);
   core.setOutput("head_repo", headRepo);
   core.setOutput("review_comment_id", context.eventName === "pull_request_review_comment" ? payload.comment.id : "");
