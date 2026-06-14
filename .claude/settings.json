@@ -1,6 +1,0 @@
-{
-  "model": "opus",
-  "enabledPlugins": {
-    "cloudflare@cloudflare": true
-  }
-}
