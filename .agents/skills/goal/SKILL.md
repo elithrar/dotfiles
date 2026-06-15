@@ -43,6 +43,23 @@ Verification plan:
 - Do not redefine success around a smaller, safer, easier-to-test, already-existing, or merely compatible subset.
 - Temporary rough edges are acceptable while the work is moving in the right direction. Completion still requires the requested end state to be true and verified.
 
+## Continuation Contract
+
+A goal turn is not a normal single-response task. If any success criterion remains unmet and no stop rule applies, the correct behavior is to keep working, not to end with a status-only response.
+
+At the start of every goal turn or automatic continuation:
+
+- Recover the active structured goal prompt, current plan, gathered evidence, remaining requirements, and latest handoff state.
+- Choose the next checkpoint: the smallest meaningful unit of work that moves the objective toward its verifiable stopping condition.
+- Execute that checkpoint with tools or edits. After each result, decide whether the completion, blocked, budget-limit, or redirection rule applies. If none applies, choose the next concrete action and continue.
+- Treat a finished checkpoint, failing test, incomplete migration, discovered TODO, missing verification, unresolved but investigable uncertainty, or known next best action as a continuation trigger.
+- Do not pause merely because several turns have run, one batch of work is done, progress was summarized, tests failed, the work is hard, or more work remains.
+- Ask the user only when ambiguity, approval, risk, or missing external state makes further meaningful progress unsafe or impossible.
+
+Compact progress reports are useful during a goal, but they are transitional. If actionable work remains and the available turn, tool, and budget limits allow more work, report briefly and continue with the next tool call instead of finalizing.
+
+If a hard execution, context, tool, or budget limit forces a response before completion, write a Handoff State and explicitly leave the goal active. Do not call the goal complete or blocked unless the corresponding audit passes.
+
 ## Objective Updates
 
 - Treat a newer user-provided objective as superseding the previous objective.
@@ -121,6 +138,8 @@ When stopping before completion, make the next turn cheap to resume:
 
 ## Response Rules
 
-- Continue work until the goal is complete, blocked by the strict audit above, or the user redirects.
+- Continue work until the goal is complete, blocked by the strict audit above, budget-limited, or the user redirects.
+- If actionable work remains and no stop rule applies, do not send a final answer. Continue with the next checkpoint or tool call.
+- If the user explicitly asks only for goal status, answer with compact status and keep the goal active unless a stop rule applies.
 - If complete, say what evidence proves completion.
 - If blocked, name the repeated blocking condition and the user or external action needed to unblock it.
