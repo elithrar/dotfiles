@@ -28,7 +28,7 @@
   "vim_mode": true,
   "ui_font_family": "Berkeley Mono",
   "buffer_font_family": "Berkeley Mono",
-  "ui_font_size": 15,
+  "ui_font_size": 16.0,
   "buffer_font_size": 14,
   "ui_font_weight": 500,
   "soft_wrap": "editor_width",
@@ -110,8 +110,10 @@
     "dock": "right",
     "enabled": true,
     "default_model": {
-      "provider": "anthropic",
-      "model": "claude-sonnet-4-5-latest"
+      "effort": "medium",
+      "enable_thinking": true,
+      "provider": "zed.dev",
+      "model": "gpt-5.5"
     }
   },
   "terminal": {
