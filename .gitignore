@@ -33,6 +33,7 @@ Temporary Items
 .claude/settings.local.json
 
 # Database tools config
+.config/configstore/
 .config/pgcli/*
 .config/planetscale/*
 
