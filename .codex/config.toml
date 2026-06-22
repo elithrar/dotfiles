@@ -12,8 +12,6 @@ notify = ["/Users/matt/.codex/computer-use/Codex Computer Use.app/Contents/Share
 
 [features]
 enable_request_compression = false
-terminal_resize_reflow = true
-js_repl = false
 
 [model_providers.cloudflare-ai-gateway]
 name = "OpenAI: Cloudflare AI Gateway"
@@ -117,6 +115,7 @@ enabled = true
 [plugins."presentations@openai-primary-runtime"]
 enabled = true
 
+# macOS Codex app Browser Use bridge. Expected to warn under Linux.
 [mcp_servers.node_repl]
 args = []
 command = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node_repl"
