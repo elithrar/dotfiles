@@ -80,8 +80,11 @@ jobs:
       can_create_pr: ${{ steps.context.outputs.can_create_pr }}
       base_ref: ${{ steps.context.outputs.base_ref || steps.prompt.outputs.base_ref }}
       patch_changed: ${{ steps.patch.outputs.changed }}
+      patch_blocked: ${{ steps.patch.outputs.blocked }}
+      patch_blocked_paths: ${{ steps.patch.outputs.blocked_paths }}
       head_ref: ${{ steps.context.outputs.head_ref }}
       review_comment_id: ${{ steps.context.outputs.review_comment_id }}
+      reaction_subject_id: ${{ steps.context.outputs.reaction_subject_id }}
       target_issue_number: ${{ steps.context.outputs.target_issue_number }}
     steps:
       - name: Checkout workflow scripts
@@ -171,6 +174,33 @@ jobs:
         run: |
           rm -f .codex-prompt.md codex.patch
           git add -A .
+
+          blocked_paths=()
+          while IFS= read -r -d '' path; do
+            lower_path=$(printf '%s' "$path" | tr '[:upper:]' '[:lower:]')
+            case "$lower_path" in
+              .github/workflows/*|.github/scripts/codex/*|.env|.env.*|*/.env|*/.env.*|*.pem|*.key|*.p12|*.pfx)
+                safe_path=${path//$'\r'/\\r}
+                safe_path=${safe_path//$'\n'/\\n}
+                blocked_paths+=("$safe_path")
+                ;;
+            esac
+          done < <(git diff --cached --name-only -z)
+
+          if ((${#blocked_paths[@]})); then
+            {
+              echo "changed=false"
+              echo "blocked=true"
+              echo "blocked_paths<<EOF"
+              printf '%s\n' "${blocked_paths[@]}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+
+            printf '::error::Codex changed blocked path: %s\n' "${blocked_paths[@]}" >&2
+            exit 0
+          fi
+
+          echo "blocked=false" >> "$GITHUB_OUTPUT"
 
           if git diff --cached --quiet --exit-code; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -276,8 +306,8 @@ jobs:
           echo "pr_url=$pr_url" >> "$GITHUB_OUTPUT"
 
   post-feedback:
-    needs: [codex, apply-changes]
-    if: always() && needs.codex.outputs.is_valid == 'true' && needs.codex.outputs.can_run == 'true' && (needs.codex.outputs.final_message != '' || needs.codex.outputs.codex_outcome != 'success')
+    needs: [acknowledge, codex, apply-changes]
+    if: always() && needs.codex.outputs.is_valid == 'true' && needs.codex.outputs.can_run == 'true' && (needs.codex.outputs.final_message != '' || needs.codex.outputs.codex_outcome != 'success' || needs.codex.outputs.patch_changed == 'true' || needs.codex.outputs.patch_blocked == 'true')
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -296,11 +326,25 @@ jobs:
           mkdir -p "$RUNNER_TEMP/codex-scripts"
           cp .github/scripts/codex/*.js "$RUNNER_TEMP/codex-scripts/"
 
+      - name: React to failure
+        if: needs.codex.outputs.codex_outcome != 'success' || needs.codex.outputs.patch_blocked == 'true' || (needs.codex.outputs.patch_changed == 'true' && needs.apply-changes.result != 'success') || (needs.codex.outputs.patch_changed == 'true' && needs.codex.outputs.can_create_pr == 'true' && needs.apply-changes.outputs.pr_url == '')
+        uses: actions/github-script@v7
+        env:
+          REACTION_SUBJECT_ID: ${{ needs.codex.outputs.reaction_subject_id }}
+          REMOVE_REACTION_CONTENT: THUMBS_UP
+          ADD_REACTION_CONTENT: THUMBS_DOWN
+        with:
+          script: |
+            const run = require(`${process.env.RUNNER_TEMP}/codex-scripts/react.js`);
+            await run({ github, core });
+
       - name: Post Codex feedback
         uses: actions/github-script@v7
         env:
           APPLY_RESULT: ${{ needs.apply-changes.result }}
           PATCH_CHANGED: ${{ needs.codex.outputs.patch_changed }}
+          PATCH_BLOCKED: ${{ needs.codex.outputs.patch_blocked }}
+          PATCH_BLOCKED_PATHS: ${{ needs.codex.outputs.patch_blocked_paths }}
           CODEX_FINAL_MESSAGE: ${{ needs.codex.outputs.final_message }}
           CODEX_OUTCOME: ${{ needs.codex.outputs.codex_outcome }}
           CODEX_CHANGED: ${{ needs.apply-changes.outputs.changed }}
