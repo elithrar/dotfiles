@@ -9,9 +9,11 @@ default_permissions = "opencode-default"
 web_search = "live"
 
 notify = ["/Users/matt/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+personality = "pragmatic"
 
 [features]
 enable_request_compression = false
+js_repl = false
 
 [model_providers.cloudflare-ai-gateway]
 name = "OpenAI: Cloudflare AI Gateway"
@@ -94,7 +96,7 @@ allow_local_binding = false
 theme = "orng"
 
 [marketplaces.openai-bundled]
-last_updated = "2026-06-12T13:12:27Z"
+last_updated = "2026-06-23T18:37:35Z"
 source_type = "local"
 source = "/Users/matt/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -103,9 +105,6 @@ last_updated = "2026-06-12T13:13:03Z"
 source_type = "local"
 source = "/Users/matt/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
-[plugins."browser@openai-bundled"]
-enabled = true
-
 [plugins."documents@openai-primary-runtime"]
 enabled = true
 
@@ -113,6 +112,9 @@ enabled = true
 enabled = true
 
 [plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
 enabled = true
 
 # macOS Codex app Browser Use bridge. Expected to warn under Linux.
@@ -127,14 +129,53 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_nod
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/matt/.codex"
 CODEX_HOME = "/Users/matt/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "a3f3ca79fe2bff56076b895f1f13a8f673168160bd79d880cc34b4500e08a71c"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "5ee3754ef68f803b9cebf40e30f94ea22aaf446de1a0a24b109180fa2ae0bd3e"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.609.30741"
+BROWSER_USE_CODEX_APP_VERSION = "26.616.71553"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 [desktop]
 conversationDetailMode = "STEPS_COMMANDS"
 ambient-suggestions-enabled = true
+appearanceLightCodeThemeId = "catppuccin"
+appearanceDarkCodeThemeId = "catppuccin"
+selected-avatar-id = "rocky"
+show-context-window-usage = true
+followUpQueueMode = "steer"
+composerEnterBehavior = "cmdIfMultiline"
+
+[desktop.appearanceLightChromeTheme]
+accent = "#8839ef"
+contrast = 40
+ink = "#4c4f69"
+opaqueWindows = true
+surface = "#eff1f5"
+
+[desktop.appearanceLightChromeTheme.fonts]
+code = '"Geist Mono", ui-monospace, "SFMono-Regular"'
+ui = "Geist, Inter"
+
+[desktop.appearanceLightChromeTheme.semanticColors]
+diffAdded = "#40a02b"
+diffRemoved = "#d20f39"
+skill = "#8839ef"
+
+[desktop.appearanceDarkChromeTheme]
+accent = "#cba6f7"
+contrast = 60
+ink = "#cdd6f4"
+opaqueWindows = false
+surface = "#1e1e2e"
+
+[desktop.appearanceDarkChromeTheme.fonts]
+
+[desktop.appearanceDarkChromeTheme.semanticColors]
+diffAdded = "#a6e3a1"
+diffRemoved = "#f38ba8"
+skill = "#cba6f7"
+
+[desktop.open-in-target-preferences]
+global = "zed"
