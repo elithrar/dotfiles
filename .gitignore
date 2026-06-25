@@ -32,6 +32,19 @@ Temporary Items
 # Claude Code local settings
 .claude/settings.local.json
 
+# Codex config and curated assets are tracked; runtime state/cache files are local-only.
+.codex/*
+!.codex/config.toml
+!.codex/model-catalogs/
+.codex/model-catalogs/*
+!.codex/model-catalogs/cloudflare-ai-gateway.json
+!.codex/rules/
+.codex/rules/*
+!.codex/rules/default.rules
+!.codex/themes/
+.codex/themes/*
+!.codex/themes/orng.tmTheme
+
 # Database tools config
 .config/configstore/
 .config/pgcli/*
