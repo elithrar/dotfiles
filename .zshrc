@@ -156,7 +156,6 @@ ZSH_THEME_GIT_PROMPT_CLEAN=" ✓"
 
 NEWLINE=$'\n'
 export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~$(git_prompt_info)% %{$reset_color%}${NEWLINE}${ret_status}%{$reset_color%}${VI_MODE} ➜ '
-export TERM="xterm-256color"
 
 # editor
 unalias zed 2>/dev/null || true
