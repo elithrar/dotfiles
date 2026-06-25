@@ -12,7 +12,7 @@ There are two major components:
 Install the dependencies: package manager, packages, tooling:
 
 ```sh
-sh install.sh 2>&1 | tee ~/install.log
+bash install.sh 2>&1 | tee ~/install.log
 
 Running...
  _           _        _ _       _
