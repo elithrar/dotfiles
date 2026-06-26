@@ -11,11 +11,13 @@ web_search = "live"
 personality = "pragmatic"
 
 notify = ["/Users/matt/repos/dotfiles/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+model_reasoning_effort = "high"
 
 [features]
 enable_request_compression = false
 js_repl = false
 memories = true
+prevent_idle_sleep = true
 
 [model_providers.cloudflare-ai-gateway]
 name = "OpenAI: Cloudflare AI Gateway"
@@ -115,6 +117,9 @@ allow_local_binding = false
 [tui]
 theme = "orng"
 
+[tui.model_availability_nux]
+"gpt-5.5" = 2
+
 [marketplaces.openai-bundled]
 last_updated = "2026-06-23T18:37:35Z"
 source_type = "local"
@@ -161,12 +166,12 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_nod
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/matt/.codex"
 CODEX_HOME = "/Users/matt/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "5504c0782b5c86b7dd08314045b9843e973a230e1be8f7e2e0ba3716fc63c55e"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "3c87a3fea3d5c0ee63ca8b37090fda9202d1017c239573d4d76b37b208a4aeb7"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.616.81150"
+BROWSER_USE_CODEX_APP_VERSION = "26.623.31443"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 [desktop]
