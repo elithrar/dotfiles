@@ -1,6 +1,8 @@
 import type { Plugin } from "@opencode-ai/plugin"
 import type { Subprocess } from "bun"
 
+const PLUGIN_NAME = "caffeinate"
+
 export const CaffeinatePlugin: Plugin = async ({ client }) => {
   // macOS only
   if (process.platform !== "darwin") {
@@ -15,7 +17,7 @@ export const CaffeinatePlugin: Plugin = async ({ client }) => {
     client.app
       .log({
         body: {
-          service: "caffeinate",
+          service: PLUGIN_NAME,
           level: "info",
           message,
         },
@@ -70,4 +72,9 @@ export const CaffeinatePlugin: Plugin = async ({ client }) => {
       }
     },
   }
+}
+
+export default {
+  id: PLUGIN_NAME,
+  server: CaffeinatePlugin,
 }

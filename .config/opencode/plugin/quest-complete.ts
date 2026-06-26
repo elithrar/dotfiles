@@ -1,6 +1,8 @@
 import type { Plugin } from "@opencode-ai/plugin"
 import { resolve } from "path"
 
+const PLUGIN_NAME = "quest-complete"
+
 export const QuestCompletePlugin: Plugin = async ({ $, client }) => {
   if (process.platform !== "darwin") return {}
 
@@ -32,4 +34,9 @@ export const QuestCompletePlugin: Plugin = async ({ $, client }) => {
       } catch {}
     },
   }
+}
+
+export default {
+  id: PLUGIN_NAME,
+  server: QuestCompletePlugin,
 }
