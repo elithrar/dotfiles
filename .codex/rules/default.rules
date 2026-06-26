@@ -1,1 +1,4 @@
 prefix_rule(pattern=["gh", "pr", "list"], decision="allow")
+prefix_rule(pattern=["git", "switch", "-c"], decision="allow")
+prefix_rule(pattern=["git", "add"], decision="allow")
+prefix_rule(pattern=["touch", ".git/codex-write-test"], decision="allow")
