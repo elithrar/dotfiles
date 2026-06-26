@@ -15,6 +15,7 @@ import type { Plugin } from "@opencode-ai/plugin"
  */
 
 const TOKEN_THRESHOLD = 200_000
+const PLUGIN_NAME = "auto-compact"
 
 export const AutoCompactPlugin: Plugin = async ({ client }) => {
   // Track per-session state to avoid duplicate triggers
@@ -26,7 +27,7 @@ export const AutoCompactPlugin: Plugin = async ({ client }) => {
     extra?: Record<string, unknown>,
   ) =>
     client.app
-      .log({ body: { service: "auto-compact", level, message, extra } })
+      .log({ body: { service: PLUGIN_NAME, level, message, extra } })
       .catch(() => {})
 
   return {
@@ -80,4 +81,9 @@ export const AutoCompactPlugin: Plugin = async ({ client }) => {
       }
     },
   }
+}
+
+export default {
+  id: PLUGIN_NAME,
+  server: AutoCompactPlugin,
 }

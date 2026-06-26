@@ -610,6 +610,11 @@ When merging, use the \`mergeStrategy\` parameter:
   };
 };
 
+export default {
+  id: PLUGIN_NAME,
+  server: GitWorktreePlugin,
+};
+
 /**
  * Gets combined status of sessions and worktrees.
  */
@@ -1085,5 +1090,3 @@ function formatResult(result: WorktreeResult): string {
 
   return output;
 }
-
-export default GitWorktreePlugin;
