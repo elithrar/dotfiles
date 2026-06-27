@@ -10,14 +10,17 @@ import type { Plugin } from "@opencode-ai/plugin"
  *
  * Works by observing `message.updated` events for assistant messages,
  * tracking the latest `tokens.input` value (which reflects the full
- * context sent to the model for that step), and firing `session.compact`
- * via the TUI command API when the threshold is crossed.
+ * context sent to the model for that step), and calling the session
+ * summarize API with `auto: true` when the threshold is crossed. The
+ * `auto` flag matters: the TUI `session.compact` command uses the manual
+ * compaction path, which summarizes and then stops instead of adding
+ * OpenCode's synthetic continue turn.
  */
 
 const TOKEN_THRESHOLD = 200_000
 const PLUGIN_NAME = "auto-compact"
 
-export const AutoCompactPlugin: Plugin = async ({ client }) => {
+export const AutoCompactPlugin: Plugin = async ({ client, directory }) => {
   // Track per-session state to avoid duplicate triggers
   const compacting = new Set<string>()
 
@@ -64,14 +67,17 @@ export const AutoCompactPlugin: Plugin = async ({ client }) => {
         })
 
         try {
-          await client.tui.publish({
+          await client.session.summarize({
+            path: { id: sessionID },
+            query: { directory },
             body: {
-              type: "tui.command.execute",
-              properties: { command: "session.compact" },
-            },
+              providerID: msg.providerID,
+              modelID: msg.modelID,
+              auto: true,
+            } as { providerID: string; modelID: string; auto: boolean },
           })
         } catch (err) {
-          // If publish fails, clear the lock so we can retry next message
+          // If the request fails, clear the lock so we can retry next message
           compacting.delete(sessionID)
           await log("error", "failed to trigger compaction", {
             sessionID,
