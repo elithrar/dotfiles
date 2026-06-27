@@ -116,9 +116,26 @@ allow_local_binding = false
 
 [tui]
 theme = "orng"
+notifications = ["agent-turn-complete", "approval-requested"]
+notification_method = "auto"
+notification_condition = "unfocused"
+animations = true
+show_tooltips = false
+alternate_screen = "auto"
+status_line = ["model-with-reasoning", "context-remaining", "git-branch", "current-dir"]
+terminal_title = ["spinner", "project", "git-branch"]
+
+[tui.keymap.global]
+open_transcript = "ctrl-t"
+
+[tui.keymap.composer]
+submit = ["enter", "ctrl-m"]
+
+[tui.keymap.chat]
+interrupt_turn = "f12"
 
 [tui.model_availability_nux]
-"gpt-5.5" = 3
+"gpt-5.5" = 4
 
 [marketplaces.openai-bundled]
 last_updated = "2026-06-23T18:37:35Z"
@@ -173,6 +190,35 @@ NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunct
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
 BROWSER_USE_CODEX_APP_VERSION = "26.623.31443"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
+
+# Mirrored from .config/opencode/opencode.jsonc.
+[mcp_servers."chrome-devtools"]
+command = "npx"
+args = ["-y", "chrome-devtools-mcp@latest"]
+enabled = false
+
+[mcp_servers."cloudflare-api"]
+url = "https://mcp.cloudflare.com/mcp"
+
+[mcp_servers."cloudflare-docs"]
+url = "https://docs.mcp.cloudflare.com/mcp"
+
+[mcp_servers."google-workspace"]
+url = "https://google-workspace-mcp.cto.cfdata.org/mcp"
+enabled = false
+
+[mcp_servers."cloudflare-builds"]
+url = "https://builds.mcp.cloudflare.com/mcp"
+enabled = false
+
+[mcp_servers."cloudflare-observability"]
+url = "https://observability.mcp.cloudflare.com/mcp"
+enabled = false
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest"]
+enabled = false
 
 [desktop]
 conversationDetailMode = "STEPS_COMMANDS"
