@@ -118,7 +118,7 @@ allow_local_binding = false
 theme = "orng"
 
 [tui.model_availability_nux]
-"gpt-5.5" = 2
+"gpt-5.5" = 3
 
 [marketplaces.openai-bundled]
 last_updated = "2026-06-23T18:37:35Z"
