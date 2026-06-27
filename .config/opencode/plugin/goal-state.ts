@@ -357,14 +357,50 @@ This mirrors Codex's update_goal terminal statuses and adds explicit stop states
           status: goal.status,
         })
 
-        const message = args.status ? terminalStatusMessage(args.status) : "Recorded goal progress."
+        const message = args.status
+          ? terminalStatusMessage(args.status)
+          : "Recorded goal progress. Goal is still active; do not stop here. Continue with the next checkpoint now unless a goal stop rule or hard runtime limit applies."
         return result({ success: true, message, goal })
       },
     }),
   }
 }
 
-export const GoalStatePlugin: Plugin = async () => ({})
+export const GoalStatePlugin: Plugin = async () => ({
+  "experimental.chat.system.transform": async (input, output) => {
+    if (!input.sessionID) return
+
+    let goal: GoalRecord | undefined
+    try {
+      goal = await readGoal(input.sessionID)
+    } catch {
+      return
+    }
+    if (goal?.status !== "active") return
+
+    const remaining = goal.remainingWork.slice(0, 8)
+    if (goal.remainingWork.length > remaining.length) {
+      remaining.push(`...and ${goal.remainingWork.length - remaining.length} more remaining items`)
+    }
+
+    output.system.push(
+      [
+        "Active durable goal guardrail:",
+        `Objective: ${goal.objective}`,
+        [
+          "The goal state is active. A final answer, status-only response, or Continuation State is allowed only when a goal stop rule applies:",
+          "complete, strictly blocked, budget-limited, usage-limited, redirected, or a hard runtime limit.",
+          "Exception: if the user explicitly asks only for goal status, answer with compact status and keep the goal active.",
+        ].join(" "),
+        "If remaining work or a next checkpoint exists, continue by executing the next checkpoint in this assistant turn instead of handing control back to the user.",
+        goal.nextCheckpoint ? `Next checkpoint: ${goal.nextCheckpoint}` : undefined,
+        remaining.length > 0 ? `Remaining work: ${remaining.join("; ")}` : undefined,
+      ]
+        .filter((line): line is string => Boolean(line))
+        .join("\n"),
+    )
+  },
+})
 
 export default {
   id: PLUGIN_NAME,
