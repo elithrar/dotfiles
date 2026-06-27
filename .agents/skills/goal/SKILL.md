@@ -23,6 +23,12 @@ Use durable goal state when the runtime provides it.
 
 Do not answer with a plain "handoff" when goal state can be created, resumed, inspected, or advanced.
 
+An active goal state is not a stopping point. If `get_goal` or `update_goal`
+shows `status: active` and there is any remaining work, evidence gap, or next
+checkpoint, immediately execute the next checkpoint in the same assistant turn.
+Do not end the turn with a summary, status report, or Continuation State unless
+a stop rule below actually applies.
+
 ## Structured Goal Prompt
 
 Before pursuing a new or updated objective, convert the raw objective into this compact state object and use it as the active input for goal work:
@@ -61,6 +67,11 @@ Repeat this loop:
 4. Record observations in the plan or ledger when they affect future steps.
 5. Apply the stop rules. If none applies, choose the next checkpoint and continue.
 
+After recording progress with `update_goal` while the goal remains active, do
+not treat the tool result as permission to stop. The next action is the stored
+`nextCheckpoint`, or the smallest meaningful item from `remainingWork` when no
+checkpoint is stored.
+
 Treat these as continuation triggers: a finished checkpoint, failing test, incomplete migration, discovered TODO, missing verification, unresolved but investigable uncertainty, or known next best action.
 
 Do not pause merely because one batch is done, several turns have run, progress was summarized, tests failed, the work is hard, or more work remains. Ask the user only when ambiguity, approval, risk, or missing external state makes further meaningful progress unsafe or impossible.
@@ -96,6 +107,10 @@ A final response is allowed only under one of these conditions:
 - **Hard execution limit**: context, tool availability, permissions, or runtime limits force a response before completion.
 
 If a hard execution limit forces a response, write a **Continuation State** and explicitly leave the goal active. This is not a completion, blocked state, or user handoff.
+
+Do not use **Continuation State** for voluntary batching, fatigue, natural
+breakpoints, completed slices, clean builds, passing tests, or because the next
+step is larger. Those are continuation triggers, not stop rules.
 
 ## Continuation State
 
@@ -145,6 +160,7 @@ If the environment provides a goal-status mechanism, update it to `blocked` only
 
 - Continue work until the goal is complete, blocked by the strict audit above, budget-limited, usage-limited, redirected, or stopped by a hard execution limit.
 - If actionable work remains and no stop rule applies, do not send a final answer. Continue with the next checkpoint or tool call.
+- If you are about to answer with `Goal status: active`, `Continuation State`, `Next checkpoint`, `Remaining work`, or similar while no stop rule applies, do not answer. Call the next tool needed to advance the checkpoint instead.
 - If the user explicitly asks only for goal status, answer with compact status and keep the goal active unless a stop rule applies.
 - If complete, say what evidence proves completion.
 - If blocked, name the repeated blocking condition and the user or external action needed to unblock it.
