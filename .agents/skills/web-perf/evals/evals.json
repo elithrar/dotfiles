@@ -1,0 +1,19 @@
+{
+  "skill_name": "web-perf",
+  "evals": [
+    {
+      "id": "lighthouse",
+      "prompt": "Audit https://example.com performance with Chrome DevTools",
+      "expected_output": "Runs trace, CWV summary, prioritized quantified recommendations",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "cls",
+      "prompt": "Find what is causing layout shift on my local app",
+      "expected_output": "Uses CLS insight/snapshot/codebase evidence",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

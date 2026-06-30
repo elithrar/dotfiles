@@ -1,0 +1,19 @@
+{
+  "skill_name": "logging-sucks",
+  "evals": [
+    {
+      "id": "add-logs",
+      "prompt": "Add useful logs around checkout failures",
+      "expected_output": "Uses structured wide events, correlation IDs, redaction",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "review-logs",
+      "prompt": "Review this logging PR for observability problems",
+      "expected_output": "Flags string interpolation, missing context, secrets/noise",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

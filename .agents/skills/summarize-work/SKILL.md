@@ -55,7 +55,7 @@ curl -sf "$OPENCODE_URL/session/<SESSION_ID>/todo" | jq '.[] | {content, status,
 
 ### Fallback: SQLite
 
-If the server is unreachable (e.g. OpenCode not running), query the database directly at `~/.local/share/opencode/opencode.db`. Tables: `session`, `message`, `todo`. Columns mirror the API response shapes. Use `json_extract()` for JSON fields.
+If the server is unreachable (e.g. OpenCode not running), first mention the API is unavailable. Then query the database directly at `~/.local/share/opencode/opencode.db` when local access is acceptable. Tables: `session`, `message`, `todo`. Columns mirror the API response shapes. Use `json_extract()` for JSON fields.
 
 ### Key conventions
 
@@ -96,7 +96,7 @@ If the user says the summary is incomplete or asks "what about X?", widen scope 
 
 **Other sessions:** Determine scope (above), then query the appropriate endpoint. For each substantive session (more than 2 messages), read messages via `/session/:id/message`. Supplement with todo data via `/session/:id/todo` if the text alone is unclear.
 
-For repo-scoped requests, also check git state:
+For repo-scoped requests, also check git state so summaries reflect actual changes rather than transcript intent:
 
 ```bash
 git diff --stat
@@ -142,6 +142,7 @@ Write like a colleague giving a verbal recap. Mix prose and bullets naturally.
 ## Guidelines
 
 - Focus on meaningful changes -- skip trivial edits, typo fixes, formatting
+- Do not include secrets, tokens, private URLs, or sensitive environment values from transcripts or diffs.
 - Capture the "why," not just the "what"
 - Highlight multi-iteration challenges -- valuable context for future maintainers
 - Be specific -- "fix auth token expiry handling" not "fix auth bug"
@@ -155,4 +156,5 @@ Write like a colleague giving a verbal recap. Mix prose and bullets naturally.
 - Vague descriptions ("various improvements", "code cleanup")
 - Omitting context for complex changes
 - Querying the API for the current session when conversation history is already in context
+- Summarizing intended work that is not supported by git state, file changes, or session evidence
 - Forcing a rigid template when the content doesn't fit

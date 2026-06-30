@@ -1,0 +1,19 @@
+{
+  "skill_name": "gitlab",
+  "evals": [
+    {
+      "id": "pipeline",
+      "prompt": "The GitLab pipeline failed; figure out why",
+      "expected_output": "Checks remote/auth, uses noninteractive CI status and trace",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "mr",
+      "prompt": "Create a draft merge request for my branch",
+      "expected_output": "Uses glab mr create --fill --yes --draft after branch checks",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

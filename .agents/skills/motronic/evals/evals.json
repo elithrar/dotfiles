@@ -1,0 +1,19 @@
+{
+  "skill_name": "motronic",
+  "evals": [
+    {
+      "id": "no-start",
+      "prompt": "My 1987 Carrera 3.2 cranks with no injector pulse; fuel pump runs when jumpered",
+      "expected_output": "Asks for high-yield measurements and diagnoses speed/reference/DME power path",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "rom",
+      "prompt": "Decode this 8KB 3.2 Motronic ROM and tell me if timing looks safe",
+      "expected_output": "Loads ROM/tuning references and flags uncertainty/safety",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

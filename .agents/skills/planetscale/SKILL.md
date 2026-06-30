@@ -27,7 +27,7 @@ Fetch from https://planetscale.com/docs first.
 
 ## FIRST: Check for MCP Server
 
-If the PlanetScale MCP server is available, prefer it over CLI for querying databases and insights:
+If the PlanetScale MCP server is available, prefer read-only MCP discovery and query tools over CLI for querying databases and insights:
 
 | Tool | Use for |
 |------|---------|
@@ -41,6 +41,13 @@ If the PlanetScale MCP server is available, prefer it over CLI for querying data
 
 MCP setup: https://planetscale.com/docs/connect/mcp
 
+## Safety Rules
+
+- Never run write queries, DDL, deploy requests, branch deletion, password/role changes, or production-impacting actions without explicit confirmation.
+- Discover org, database, branch, engine type (Vitess vs Postgres), and environment before giving connection or migration advice.
+- Prefer read-only queries (`SELECT`, `SHOW`, `DESCRIBE`, `EXPLAIN`) for diagnosis.
+- Do not print secrets or connection strings with passwords.
+
 ## Verify CLI Installation
 
 ```bash
@@ -48,6 +55,14 @@ pscale version  # Requires pscale CLI
 ```
 
 If not installed, see https://planetscale.com/docs/cli/planetscale-environment-setup
+
+## Discovery Workflow
+
+1. Check whether MCP tools are available; use them first for read-only introspection.
+2. If using CLI, verify `pscale version` and auth.
+3. List or confirm org, database, branch, and engine.
+4. Fetch current docs for the relevant Vitess/Postgres/API/CLI topic.
+5. Run read-only diagnostics before recommending mutations.
 
 ## Quick Reference: pscale CLI
 

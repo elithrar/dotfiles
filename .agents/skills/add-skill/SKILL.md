@@ -9,6 +9,17 @@ Skills extend agent capabilities with domain-specific knowledge. Use skills for 
 
 If guidance is project-specific or one-off, use INSTRUCTIONS.md or inline context instead.
 
+Skill work is prompt engineering plus evaluation. Treat every skill as a behavioral artifact: define when it should trigger, what better behavior it should cause, how to verify that behavior, and how to avoid overfitting one example.
+
+## Creation Workflow
+
+1. Capture intent: target behavior, trigger phrases, non-trigger near misses, expected output, dependencies, and safety constraints.
+2. Research current docs or similar skills when the domain is fast-moving or tool-specific.
+3. Draft the smallest SKILL.md that changes behavior; put bulky reference material in `references/` and deterministic repeated work in `scripts/`.
+4. Create representative eval prompts before claiming the skill is done.
+5. Run or simulate baseline vs. with-skill behavior where practical; revise based on observed failures, not taste.
+6. Add trigger evals for should-trigger and should-not-trigger cases when description quality matters.
+
 ## Structure
 
 ### Required Frontmatter
@@ -28,15 +39,15 @@ description: What this skill does and when to use it. Third-person.
 
 ### File Organization
 
-```
+```text
 skill-name/
-├── SKILL.md              # Required. Under 200 lines.
-└── references/           # Optional. For detailed content.
-    ├── api.md
-    └── examples.md
+├── SKILL.md      # Required. Target under 200 lines.
+├── references/   # Optional detailed content, one level deep.
+├── scripts/      # Optional deterministic helpers.
+└── evals/        # Optional behavior/trigger tests.
 ```
 
-Use `references/` when SKILL.md exceeds 200 lines. Keep references one level deep—avoid nested file references.
+Use `references/` when SKILL.md exceeds 200 lines. Add scripts when multiple evals would make the agent recreate the same helper.
 
 ## Writing Descriptions
 
@@ -51,7 +62,9 @@ The description determines when the skill activates. Include both **what it does
 | Bad | `I help you with GitLab operations.` |
 | Bad | `Useful for various tasks.` |
 
-Include key terms users might mention: tool names, file extensions, specific operations.
+Include key terms users might mention: tool names, file extensions, specific operations. Make descriptions slightly assertive when under-triggering would be costly: “Load before…” or “Use when…” is better than “Helpful for…”.
+
+Also write near-miss boundaries when skills overlap: “Use X for security PR audits; use Y for normal code review.”
 
 ## Content Guidelines
 
@@ -125,6 +138,29 @@ Copy this checklist to track progress:
 \`\`\`
 ```
 
+### Evals
+
+For each new or materially changed skill, add 2-5 realistic behavior evals when practical:
+
+```json
+{
+  "skill_name": "example-skill",
+  "evals": [
+    {
+      "id": "realistic-case",
+      "prompt": "Real user-style task prompt",
+      "expected_output": "Observable behavior that should improve with the skill",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}
+```
+
+For trigger tuning, create 16-20 realistic prompts split between `should_trigger: true` and tricky near misses with `should_trigger: false`. Prefer prompts that look like real user requests, not abstract labels.
+
+When iterating, generalize from eval failures. Do not add brittle instructions that only fix one fixture.
+
 ### Concrete Examples
 
 Show input/output pairs instead of abstract descriptions:
@@ -144,6 +180,8 @@ feat(auth): implement JWT-based authentication
 - **Vague descriptions**: "Helps with documents" won't activate correctly
 - **Deeply nested references**: SKILL.md → file.md → another.md breaks navigation
 - **Magic constants**: Document why values were chosen, or let the agent decide
+- **No evals for fragile behavior**: Without representative prompts, description and workflow changes are guesswork
+- **Overfitting examples**: Do not encode a test prompt’s incidental details as universal rules
 
 ## Checklist
 
@@ -151,11 +189,11 @@ Before finalizing a skill:
 
 - [ ] Frontmatter starts on line 1 with `---`
 - [ ] `name` is lowercase with hyphens only
-- [ ] `description` includes triggers AND capabilities (third-person)
+- [ ] `description` includes triggers and capabilities (third-person)
 - [ ] SKILL.md is under 200 lines (use `references/` if larger)
 - [ ] References are one level deep from SKILL.md
-- [ ] Imperative form throughout ("Use X" not "You should")
 - [ ] Quick reference table for any CLI/API commands
 - [ ] Prerequisite verification if skill depends on tools/config
 - [ ] No time-sensitive information
+- [ ] Evals added for fragile behavior or trigger accuracy
 - [ ] Tested with representative tasks

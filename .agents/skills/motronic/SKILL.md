@@ -19,7 +19,12 @@ Load the narrowest reference file before answering technical details:
 | Pelican forum research, expert-poster weighting, search strategy | `references/pelican-research.md` |
 | Source quality, evidence hierarchy, report format | `references/sources-and-reporting.md` |
 
-If a question spans categories, load each relevant reference. Prefer exact year, DME part number, symptom state, recent work, ROM hash, measured voltages, resistance readings, oscilloscope captures, AFR logs, dyno data, timing-light checks, and high-quality Pelican/Porsche forum threads over generic forum memory.
+If a question spans categories, load each relevant reference. Prefer exact year, DME part number, symptom state, recent work, ROM hash, measured voltages, resistance readings, oscilloscope captures, AFR logs, dyno data, timing-light checks, and high-quality Pelican/Porsche forum threads over generic forum memory. Do not browse or cite forum claims unless the user asks for research or a local reference explicitly calls for it.
+
+## Routing
+
+- Use `minipro` for concrete chip programmer commands, EEPROM/EPROM reads, writes, verifies, readback comparisons, and minipro troubleshooting.
+- Use this skill for DME diagnosis, Motronic behavior, ROM interpretation, tuning risk, and engine/electrical test planning.
 
 ## Role
 

@@ -21,6 +21,7 @@ Prompt engineering is context engineering. Design prompts as behavioral contract
 ## Operating Rules
 
 - Treat prompt edits as behavior changes, not copy edits.
+- Make the smallest rewrite that addresses the observed failure; do not rewrite everything when a targeted patch is enough.
 - Work from observed failures, target behavior, and success criteria. If none exist, define representative test inputs before rewriting.
 - Preserve instruction authority boundaries: system/developer rules define the application; user content supplies task data; untrusted data stays labeled as data.
 - Prefer outcome-first prompts for frontier models. Avoid inherited process-heavy prompt stacks unless each step fixes a measured failure.
@@ -118,13 +119,23 @@ Show the rewritten prompt in full. Then include:
 - Assumptions, tradeoffs, and any unresolved ambiguity.
 - Suggested evals: 2-5 representative inputs, including at least one edge case.
 
+## Skill-Specific Guidance
+
+When improving agent skills:
+
+- Optimize the frontmatter description for trigger accuracy; include realistic user phrases and near-miss routing boundaries.
+- Keep SKILL.md focused on critical behavior and route bulky docs into `references/`.
+- Add behavior evals for fragile workflows and trigger evals for descriptions.
+- Prefer deterministic scripts for repeated mechanical work instead of asking the model to rediscover the same procedure.
+- Generalize from eval failures; avoid instructions that overfit one fixture.
+
 ## Model-Specific Guidance
 
 Use model notes when the target model is known; otherwise keep the prompt model-agnostic and direct.
 
 | Target | Default guidance |
 |--------|------------------|
-| GPT-5.5 / frontier GPT | Prefer shorter outcome-first prompts with explicit success criteria, stop rules, retrieval budgets, validation, and concise preambles for tool-heavy flows. See [references/openai.md](references/openai.md). |
+| Frontier GPT models | Prefer shorter outcome-first prompts with explicit success criteria, stop rules, retrieval budgets, validation, and concise preambles for tool-heavy flows. See [references/openai.md](references/openai.md). |
 | OpenAI reasoning models | Keep prompts simple and direct. Avoid chain-of-thought requests; use delimiters, constraints, and final-answer checks. See [references/openai.md](references/openai.md). |
 | Claude / Opus-class | Use clear direct instructions, XML tags for complex prompts, examples for format and tone, calibrated tool eagerness, and explicit safety thresholds. See [references/claude.md](references/claude.md). |
 | Research-heavy redesigns | Use techniques by failure mode, not by trend. See [references/research.md](references/research.md). |

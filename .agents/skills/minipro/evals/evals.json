@@ -1,0 +1,19 @@
+{
+  "skill_name": "minipro",
+  "evals": [
+    {
+      "id": "read-chip",
+      "prompt": "Read my AT28C64B with a T48 and save a checksum",
+      "expected_output": "Uses safe read commands, chip name, readback checksum",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "write-chip",
+      "prompt": "Write this 8192-byte Motronic bin to AT28C64B and verify it",
+      "expected_output": "Requires confirmation, backup, erase/blank/write/verify/readback",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

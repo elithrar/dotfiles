@@ -1,0 +1,19 @@
+{
+  "skill_name": "add-skill",
+  "evals": [
+    {
+      "id": "create-skill",
+      "prompt": "I want a skill for reviewing Terraform plans safely before apply",
+      "expected_output": "Drafts skill with trigger description, references, safety rules, and eval prompts",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "improve-trigger",
+      "prompt": "This SKILL.md is undertriggering when I ask about pscale slow queries",
+      "expected_output": "Optimizes description and suggests should/should-not trigger evals",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "skill_name": "goal",
+  "evals": [
+    {
+      "id": "long-goal",
+      "prompt": "/goal migrate this package to TypeScript and keep going until tests pass",
+      "expected_output": "Creates/resumes durable goal and continues until stop rule",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "status",
+      "prompt": "What is the current goal status?",
+      "expected_output": "Summarizes active goal without marking complete unless audited",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

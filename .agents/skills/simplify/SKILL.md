@@ -7,12 +7,22 @@ description: "Audits a codebase for unnecessary complexity -- premature abstract
 
 Identify concrete, fixable complexity issues in a codebase. Focus on changes that reduce the cost of reading, modifying, and debugging code -- not style preferences or nitpicks.
 
+## Routing
+
+- Use `code-reviewer` for correctness, security, and behavioral bugs in a diff.
+- Use this skill when the user asks to simplify code, audit maintainability, reduce cognitive load, or identify unnecessary complexity.
+
 ## Workflow
 
 1. Read project documentation (README, AGENTS.md, architecture docs) to understand intended patterns and conventions
 2. Identify the largest and most-modified source files as starting points
-3. Search for patterns in each category below, working outward from hot paths
-4. Produce findings per the output format
+3. Use git churn when available:
+   ```bash
+   git log --name-only --pretty=format: -- . | sort | uniq -c | sort -nr | head
+   find . -type f \( -name '*.ts' -o -name '*.js' -o -name '*.py' -o -name '*.go' -o -name '*.rs' \) -print0 | xargs -0 wc -l | sort -nr | head
+   ```
+4. Search for patterns in each category below, working outward from hot paths
+5. Produce findings per the output format
 
 ## Patterns
 
@@ -41,6 +51,7 @@ Identify concrete, fixable complexity issues in a codebase. Focus on changes tha
 - Read actual source files before making claims. Every finding must cite a specific file path and line range.
 - If a pattern has a documented reason (code comment, AGENTS.md, architecture doc), note the justification and assess whether it's still valid -- do not blindly flag it.
 - Only report findings where the suggested fix genuinely reduces complexity. "Move to a separate file" is not a simplification.
+- Recommend the smallest safe refactor. Avoid architecture astronauting, broad rewrites, or introducing new abstractions as the default fix.
 - Rank by maintenance cost: how much does this pattern increase the effort to read, modify, or debug the surrounding code?
 - **Cap at 10 findings.** Fewer is fine if the codebase is clean.
 

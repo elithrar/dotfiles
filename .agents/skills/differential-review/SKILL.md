@@ -2,9 +2,9 @@
 name: differential-review
 description: >
   Performs security-focused differential review of code changes (PRs, commits, diffs).
-  Adapts analysis depth to codebase size, uses git history for context, calculates
-  blast radius, checks test coverage, and generates comprehensive markdown reports.
-  Automatically detects and prevents security regressions.
+  Load for security audit, regression review, auth/crypto/access-control changes,
+  validation removal, blast-radius analysis, adversarial review, or comprehensive
+  markdown reports. Use standard code-reviewer for ordinary quick reviews.
 allowed-tools:
   - Read
   - Write
@@ -15,206 +15,89 @@ allowed-tools:
 
 # Differential Security Review
 
-Security-focused code review for PRs, commits, and diffs.
+Review code changes as security regressions relative to a baseline. Focus on changed behavior, removed invariants, reachable attack paths, and test coverage.
+
+## Routing
+
+- Use `code-reviewer` for ordinary bug-focused or quick code review.
+- Use this skill when the user asks for security, audit, regression, blast radius, adversarial review, or when the diff touches auth, authorization, crypto, validation, secrets, external calls, data exposure, or value transfer.
+- If the user explicitly asks for a quick summary, scale the report down and state coverage limits instead of forcing a full audit artifact.
+
+## Retrieval Rules
+
+Read the narrowest reference needed:
+
+| Need | Reference |
+|---|---|
+| Detailed phases 0-4 | `methodology.md` |
+| Attacker modeling and exploitability | `adversarial.md` |
+| Final report template | `reporting.md` |
+| Vulnerability pattern lookup | `patterns.md` |
+| Previous full skill text | `references/full-workflow.md` |
 
 ## Core Principles
 
-1. **Risk-First**: Focus on auth, crypto, value transfer, external calls
-2. **Evidence-Based**: Every finding backed by git history, line numbers, attack scenarios
-3. **Adaptive**: Scale to codebase size (SMALL/MEDIUM/LARGE)
-4. **Honest**: Explicitly state coverage limits and confidence level
-5. **Output-Driven**: Always generate comprehensive markdown report file
+1. **Risk-first:** Spend depth on auth, crypto, value transfer, external calls, validation, secrets, and data exposure.
+2. **Evidence-based:** Every finding needs changed code lines, concrete scenario, and security impact.
+3. **Differential:** Look for removed checks, widened access, changed trust boundaries, and broken historical fixes.
+4. **Adaptive:** Scale to codebase size and user intent; be explicit about coverage limits.
+5. **Adversarial when needed:** For high-risk changes, model the attacker and exploit path.
 
----
+## Risk Triage
 
-## Rationalizations (Do Not Skip)
+| Risk | Triggers | Depth |
+|---|---|---|
+| High | Auth, authorization, crypto, external calls, value transfer, validation removal, secrets, data exposure | Read history, callers, tests, and adversarial reference |
+| Medium | Business logic, persistence, state transitions, public APIs, concurrency | Read changed files and direct dependencies |
+| Low | Comments, tests, formatting, logging-only changes | Surface scan unless coupled to high-risk code |
 
-| Rationalization | Why It's Wrong | Required Action |
-|-----------------|----------------|-----------------|
-| "Small PR, quick review" | Heartbleed was 2 lines | Classify by RISK, not size |
-| "I know this codebase" | Familiarity breeds blind spots | Build explicit baseline context |
-| "Git history takes too long" | History reveals regressions | Never skip Phase 1 |
-| "Blast radius is obvious" | You'll miss transitive callers | Calculate quantitatively |
-| "No tests = not my problem" | Missing tests = elevated risk rating | Flag in report, elevate severity |
-| "Just a refactor, no security impact" | Refactors break invariants | Analyze as HIGH until proven LOW |
-| "I'll explain verbally" | No artifact = findings lost | Always write report |
+Treat “refactor” as high risk until preserved invariants are proven when the touched path is security-sensitive.
 
----
+## Workflow
 
-## Quick Reference
+1. Establish baseline: diff range, changed files, purpose, and security-relevant surfaces.
+2. Classify each changed file by risk.
+3. Read high-risk changed files in full, plus direct callers, callees, config, tests, and entry points.
+4. Check git history for removed security code or previous fixes:
+   ```bash
+   git log -S "pattern" --all --oneline --grep="fix\|security\|CVE"
+   git blame <file>
+   ```
+5. Estimate blast radius for high-risk changes: externally reachable routes, callers, tenants/users affected, privilege boundaries crossed.
+6. Check test coverage for changed invariants. Missing tests elevate uncertainty and may elevate severity.
+7. For high-risk findings, create concrete attack scenarios and exploitability ratings using `adversarial.md`.
+8. Generate a report file when the user asked for an audit/report or the review is substantial; otherwise provide concise findings in chat.
 
-### Codebase Size Strategy
+## Red Flags
 
-| Codebase Size | Strategy | Approach |
-|---------------|----------|----------|
-| SMALL (<20 files) | DEEP | Read all deps, full git blame |
-| MEDIUM (20-200) | FOCUSED | 1-hop deps, priority files |
-| LARGE (200+) | SURGICAL | Critical paths only |
+Stop and investigate immediately when you see:
 
-### Risk Level Triggers
+- Removed or weakened permission checks, ownership checks, role checks, or validation.
+- `internal` to `external`, private route to public route, or broader token/session acceptance.
+- Algorithm/mode changes, signature verification changes, key handling changes, or disabled TLS/verification.
+- External calls before state updates, missing idempotency, or value transfer without replay protection.
+- High blast radius plus any high-risk trigger.
 
-| Risk Level | Triggers |
-|------------|----------|
-| HIGH | Auth, crypto, external calls, value transfer, validation removal |
-| MEDIUM | Business logic, state changes, new public APIs |
-| LOW | Comments, tests, UI, logging |
+## Evidence Standard
 
----
+Before reporting:
 
-## Workflow Overview
+- Cite `file:line` for the changed or directly affected code.
+- Provide a concrete attacker action or failure sequence.
+- Explain the security property that fails.
+- Distinguish `Confirmed`, `Likely`, and `Design concern`.
+- Drop generic findings without a reachable scenario.
 
-```
-Pre-Analysis → Phase 0: Triage → Phase 1: Code Analysis → Phase 2: Test Coverage
-    ↓              ↓                    ↓                        ↓
-Phase 3: Blast Radius → Phase 4: Deep Context → Phase 5: Adversarial → Phase 6: Report
-```
+## Output
 
----
+Order findings by severity. Use this format:
 
-## Decision Tree
-
-**Starting a review?**
-
-```
-├─ Need detailed phase-by-phase methodology?
-│  └─ Read: methodology.md
-│     (Pre-Analysis + Phases 0-4: triage, code analysis, test coverage, blast radius)
-│
-├─ Analyzing HIGH RISK change?
-│  └─ Read: adversarial.md
-│     (Phase 5: Attacker modeling, exploit scenarios, exploitability rating)
-│
-├─ Writing the final report?
-│  └─ Read: reporting.md
-│     (Phase 6: Report structure, templates, formatting guidelines)
-│
-├─ Looking for specific vulnerability patterns?
-│  └─ Read: patterns.md
-│     (Regressions, reentrancy, access control, overflow, etc.)
-│
-└─ Quick triage only?
-   └─ Use Quick Reference above, skip detailed docs
+```markdown
+**[SEVERITY] [CONFIDENCE]** Brief description
+`file:line` - Evidence from the diff and surrounding code.
+Attack scenario: Concrete sequence an attacker or untrusted caller can perform.
+Impact: Confidentiality, integrity, availability, privilege, funds/value, or compliance impact.
+Suggested fix: Smallest safe change or invariant-restoring direction.
 ```
 
----
-
-## Quality Checklist
-
-Before delivering:
-
-- [ ] All changed files analyzed
-- [ ] Git blame on removed security code
-- [ ] Blast radius calculated for HIGH risk
-- [ ] Attack scenarios are concrete (not generic)
-- [ ] Findings reference specific line numbers + commits
-- [ ] Report file generated
-- [ ] User notified with summary
-
----
-
-## Integration
-
-**audit-context-building skill:**
-- Pre-Analysis: Build baseline context
-- Phase 4: Deep context on HIGH RISK changes
-
-**issue-writer skill:**
-- Transform findings into formal audit reports
-- Command: `issue-writer --input DIFFERENTIAL_REVIEW_REPORT.md --format audit-report`
-
----
-
-## Example Usage
-
-### Quick Triage (Small PR)
-```
-Input: 5 file PR, 2 HIGH RISK files
-Strategy: Use Quick Reference
-1. Classify risk level per file (2 HIGH, 3 LOW)
-2. Focus on 2 HIGH files only
-3. Git blame removed code
-4. Generate minimal report
-Time: ~30 minutes
-```
-
-### Standard Review (Medium Codebase)
-```
-Input: 80 files, 12 HIGH RISK changes
-Strategy: FOCUSED (see methodology.md)
-1. Full workflow on HIGH RISK files
-2. Surface scan on MEDIUM
-3. Skip LOW risk files
-4. Complete report with all sections
-Time: ~3-4 hours
-```
-
-### Deep Audit (Large, Critical Change)
-```
-Input: 450 files, auth system rewrite
-Strategy: SURGICAL + audit-context-building
-1. Baseline context with audit-context-building
-2. Deep analysis on auth changes only
-3. Blast radius analysis
-4. Adversarial modeling
-5. Comprehensive report
-Time: ~6-8 hours
-```
-
----
-
-## When NOT to Use This Skill
-
-- **Greenfield code** (no baseline to compare)
-- **Documentation-only changes** (no security impact)
-- **Formatting/linting** (cosmetic changes)
-- **User explicitly requests quick summary only** (they accept risk)
-
-For these cases, use standard code review instead.
-
----
-
-## Red Flags (Stop and Investigate)
-
-**Immediate escalation triggers:**
-- Removed code from "security", "CVE", or "fix" commits
-- Access control modifiers removed (onlyOwner, internal → external)
-- Validation removed without replacement
-- External calls added without checks
-- High blast radius (50+ callers) + HIGH risk change
-
-These patterns require adversarial analysis even in quick triage.
-
----
-
-## Tips for Best Results
-
-**Do:**
-- Start with git blame for removed code
-- Calculate blast radius early to prioritize
-- Generate concrete attack scenarios
-- Reference specific line numbers and commits
-- Be honest about coverage limitations
-- Always generate the output file
-
-**Don't:**
-- Skip git history analysis
-- Make generic findings without evidence
-- Claim full analysis when time-limited
-- Forget to check test coverage
-- Miss high blast radius changes
-- Output report only to chat (file required)
-
----
-
-## Supporting Documentation
-
-- **[methodology.md](methodology.md)** - Detailed phase-by-phase workflow (Phases 0-4)
-- **[adversarial.md](adversarial.md)** - Attacker modeling and exploit scenarios (Phase 5)
-- **[reporting.md](reporting.md)** - Report structure and formatting (Phase 6)
-- **[patterns.md](patterns.md)** - Common vulnerability patterns reference
-
----
-
-**For first-time users:** Start with [methodology.md](methodology.md) to understand the complete workflow.
-
-**For experienced users:** Use this page's Quick Reference and Decision Tree to navigate directly to needed content.
+If generating a report file, use `reporting.md` and tell the user the path. If no confirmed issues are found, say what was reviewed, what validation ran or was skipped, and any coverage limits.

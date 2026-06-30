@@ -1,17 +1,17 @@
 # OpenAI Prompting Notes
 
-Use this when the target model is OpenAI GPT, GPT-5.5, an o-series reasoning model, or a Responses API agent workflow.
+Use this when the target model is an OpenAI GPT/frontier model, an o-series reasoning model, or a Responses API agent workflow.
 
 Sources:
 
 - OpenAI prompt engineering guide: <https://platform.openai.com/docs/guides/prompt-engineering>
-- OpenAI GPT-5.5 prompt guidance: <https://platform.openai.com/docs/guides/prompt-guidance>
+- OpenAI prompt guidance: <https://platform.openai.com/docs/guides/prompt-guidance>
 - OpenAI GPT-5 prompting guide: <https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide>
 - OpenAI reasoning best practices: <https://platform.openai.com/docs/guides/reasoning-best-practices>
 
-## GPT-5.5 And Frontier GPT Models
+## Frontier GPT Models
 
-GPT-5.5-style guidance favors shorter, outcome-first prompts over process-heavy stacks.
+Current frontier GPT guidance favors shorter, outcome-first prompts over process-heavy stacks.
 
 - Define the outcome, success criteria, constraints, evidence sources, and final output shape.
 - Keep personality and collaboration style short and separate from task rules.

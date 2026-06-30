@@ -1,0 +1,19 @@
+{
+  "skill_name": "planetscale",
+  "evals": [
+    {
+      "id": "connection",
+      "prompt": "PlanetScale Postgres connection says too many clients in production",
+      "expected_output": "Uses docs, identifies PgBouncer/pooling, avoids secrets",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "slow-query",
+      "prompt": "Analyze slow queries on my PlanetScale branch",
+      "expected_output": "Prefers MCP/read-only insights and EXPLAIN",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

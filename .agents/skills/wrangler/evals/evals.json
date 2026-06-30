@@ -1,0 +1,19 @@
+{
+  "skill_name": "wrangler",
+  "evals": [
+    {
+      "id": "d1",
+      "prompt": "Add a D1 binding and migration to this Worker",
+      "expected_output": "Inspects config, edits binding, generates types, local validation",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "deploy",
+      "prompt": "Deploy this Worker to staging",
+      "expected_output": "Checks auth/config, asks before remote deploy, dry-run/validation",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}
