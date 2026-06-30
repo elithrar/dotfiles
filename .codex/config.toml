@@ -129,7 +129,10 @@ terminal_title = ["spinner", "project", "git-branch"]
 open_transcript = "ctrl-t"
 
 [tui.keymap.composer]
-submit = ["enter", "ctrl-m"]
+submit = "enter"
+
+[tui.keymap.editor]
+insert_newline = "shift-enter"
 
 [tui.keymap.chat]
 interrupt_turn = "f12"
