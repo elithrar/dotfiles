@@ -260,7 +260,7 @@ For each finding, report:
 - Safer API or config design
 - Compatibility notes
 - Confidence
-- Suggested test or eval
+- Suggested test
 
 ## References
 
@@ -303,11 +303,3 @@ Before concluding analysis:
 - [ ] Verified error paths don't bypass security
 - [ ] Checked configuration validation
 - [ ] Constructor params validated (not just defaulted) - see [config-patterns.md](references/config-patterns.md#unvalidated-constructor-parameters)
-
-## Activation And Behavior Evals
-
-- Should activate: "Review this SDK config for secure defaults and footguns."
-- Should activate: "Does this auth API follow pit-of-success design?"
-- Should not activate: "Find a null pointer bug in this function."
-- False-positive eval: `dangerouslyDisableTLS` available only in rejected production config should be downgraded or not reported.
-- Reporting eval: every finding includes evidence, misuse scenario, impact, safer design, and confidence.

@@ -169,11 +169,7 @@ Never sample audit, security, or compliance logs unless policy explicitly permit
 - **OpenTelemetry won't save you** — OTel is a delivery mechanism, not a strategy. It doesn't decide what to log or add business context. You still need to deliberately instrument useful events.
 - **Logs, metrics, and traces have different costs** — High-cardinality fields are often valuable in logs, but dangerous as metric labels or always-indexed dimensions.
 
-## Review Checklist And Evals
+## Review Checklist
 
 - Does the log include correlation, outcome, duration/status, useful event name, and safe error details?
 - Does it avoid secrets, PII, raw payloads, and duplicate error logging at every layer?
-- Should activate: "replace these string logs with structured logs" or "add request IDs to logs."
-- Should not activate: generic test debugging with no logging changes requested.
-- Privacy eval: authorization headers and payment data are removed or redacted.
-- Convention eval: existing camelCase log fields stay camelCase unless a migration is requested.

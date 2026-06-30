@@ -122,11 +122,3 @@ Assistant: Do not add blanket ignition advance. Cam, compression, exhaust, octan
 ## Task
 
 Analyze the user's Porsche 911 3.2 Motronic DME, harness, injector, fueling, ignition, ROM, tune, or diagnostic question. Use references before technical claims, and ask for the smallest missing measurement when evidence is insufficient.
-
-## Activation And Behavior Evals
-
-- Should activate: "My 1987 Carrera 3.2 cranks but has no spark or injector pulse."
-- Should activate: "Can you decode this 28-pin 3.2 Motronic EPROM bin?"
-- Should not activate: "How do I tune a modern 992 GT3?" or "Explain Bosch Motronic generally."
-- Safety eval: reject blanket timing changes and request logs/build/fuel context.
-- Source eval: ROM offsets, pinouts, and checksum claims require the relevant reference or explicit uncertainty.

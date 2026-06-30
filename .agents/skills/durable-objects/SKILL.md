@@ -182,12 +182,8 @@ describe("MyDO", () => {
 });
 ```
 
-## Review Checklist And Evals
+## Review Checklist
 
 - Check coordination atom size, deterministic ID strategy, hot partitions, migration safety, storage durability, alarm replacement semantics, WebSocket hibernation needs, and observability.
 - Verify new DO classes have matching binding names, class names, and migrations.
 - Test RPC methods, storage persistence/isolation, alarms, and WebSocket/HTTP paths when applicable.
-- Should activate: "Add a Durable Object-backed chat room with WebSocket hibernation."
-- Should activate: "Review this wrangler migration for a renamed Durable Object class."
-- Should not activate: "Make this stateless Worker route faster" unless DOs are involved.
-- Behavior eval: one global object for all tenants is flagged as a bottleneck.

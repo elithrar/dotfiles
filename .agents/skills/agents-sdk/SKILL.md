@@ -172,12 +172,8 @@ See [references/codemode.md](references/codemode.md) for setup and examples.
 5. **Code Mode only with controls**: require least-privilege tools, no arbitrary secrets, bounded execution, and reviewable logs
 6. **Schedule vs Queue**: Use `schedule()` for time-based, `queue()` for sequential processing
 
-## Validation And Evals
+## Validation
 
 - Validate with typecheck, tests, and Wrangler checks where appropriate.
 - Smoke-test default `/agents/{class}/{name}` routing or custom routing.
 - Check binding/class/migration consistency, Env types, streaming cancellation/resume behavior, retention/privacy, and logs.
-- Should activate: "Build a stateful Cloudflare agent with scheduling and callable RPC."
-- Should activate: "Add streaming chat with persisted messages to my Worker."
-- Boundary eval: "Deploy this Worker" loads `wrangler`; "raw Durable Object WebSocket room" loads `durable-objects`.
-- Security eval: Code Mode with MCP/email requires allowlists, secret boundaries, and review of Code Mode/MCP/email references.

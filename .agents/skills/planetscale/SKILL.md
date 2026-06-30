@@ -110,14 +110,11 @@ pscale api "organizations/{org}/databases/{db}/branches/{branch}/query-patterns-
 
 Look for queries with high `rows_read / rows_returned` ratio (missing index) or high `total_time_s` (optimization target). See `references/api-queries.md` for analysis guidance.
 
-## Validation And Evals
+## Validation
 
 - Connection issue: verify engine, driver, SSL/TLS, port, pooling mode, and branch-specific credentials; redact all secrets.
 - Slow query: cite Query Insights or EXPLAIN evidence and note index/schema risk.
 - Schema deploy: identify org/database/branch/deploy request, obtain confirmation for production impact, then verify status.
-- Should activate: "Use pscale to list branches for my production database."
-- Should activate with safety gate: "Deploy this PlanetScale schema branch to main."
-- Should not activate: "Optimize a generic local MySQL query" unless PlanetScale is mentioned.
 
 ## Common Errors
 

@@ -126,14 +126,11 @@ For substantial reviews, use multiple focused passes. Use subagents only when th
 - Run one final validation pass over the compiled findings. For each finding, reread the referenced code and classify it as `Confirmed`, `Disputed`, or `Acknowledged`.
 - Present only `Confirmed` findings. If nothing survives validation, say that no confirmed issues were found.
 
-## Stop Rules And Evals
+## Stop Rules
 
 - Stop when changed behavior, relevant callers, and directly affected config/tests have been reviewed.
 - Do not broaden into unrelated repository audit.
 - Respect a user-requested output format over this default format.
-- Eval: "Review my uncommitted changes" inspects staged and unstaged diffs and does not edit.
-- Eval: "Review PR #123 for auth regressions" identifies base/head and focuses auth/security.
-- Eval: "Refactor this file" does not activate review-only behavior unless the user asks for review.
 
 ## Output Format
 

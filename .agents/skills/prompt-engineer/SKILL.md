@@ -37,7 +37,6 @@ When reviewing Cursor/OpenCode-style skills, optimize routing before prose:
 - The body is procedural, short, and action-oriented; deeper material lives in one-level `references/` files.
 - Tool assumptions, side effects, safety gates, validation, and stop rules are explicit.
 - Examples and retrieved references are clearly data, not higher-priority instructions.
-- Evals include positive activation, negative activation, adversarial/untrusted-context, and output-format cases.
 
 ## Workflow
 
@@ -130,7 +129,6 @@ Show the rewritten prompt in full. Then include:
 - Why the changes address the observed failure modes.
 - Assumptions, tradeoffs, and any unresolved ambiguity.
 - Suggested evals: 2-5 representative inputs, including at least one edge case.
-  Include an adversarial/untrusted-context case for RAG, tool, session, or skill prompts; include activation/non-activation cases for skill files.
 
 ## Model-Specific Guidance
 

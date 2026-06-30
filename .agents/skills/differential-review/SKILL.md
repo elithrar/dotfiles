@@ -209,16 +209,6 @@ These patterns require adversarial analysis even in quick triage.
 - Miss high blast radius changes
 - Create files when the user requested review-only chat output
 
-## Activation And Report Evals
-
-- Should activate: "Review this PR for auth regressions" or "Security review the staged diff."
-- Should not activate: grammar, formatting, docs-only, or general style reviews without security focus.
-- Dirty worktree eval: baseline discovery must not run `git checkout`.
-- Evidence eval: removed authorization check yields file/line, attack path, impact, confidence, and test gap.
-- Non-finding eval: benign refactor reports no confirmed issues and states coverage limits.
-
----
-
 ## Supporting Documentation
 
 - **[methodology.md](methodology.md)** - Detailed phase-by-phase workflow (Phases 0-4)

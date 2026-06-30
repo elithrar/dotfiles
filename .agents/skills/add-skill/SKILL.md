@@ -1,6 +1,6 @@
 ---
 name: add-skill
-description: Creates and improves reusable agent skills for Cursor/OpenCode/Claude-style skill loaders. Load when writing SKILL.md frontmatter, activation descriptions, workflow instructions, reference structure, safety boundaries, or eval tests. Do not load for one-off project instructions unless they are being turned into a reusable skill.
+description: Creates and improves reusable agent skills for Cursor/OpenCode/Claude-style skill loaders. Load when writing SKILL.md frontmatter, activation descriptions, workflow instructions, reference structure, or safety boundaries. Do not load for one-off project instructions unless they are being turned into a reusable skill.
 ---
 
 # Creating Agent Skills
@@ -180,13 +180,3 @@ Before finalizing a skill:
 - [ ] Prerequisite verification if skill depends on tools/config
 - [ ] Safety, side-effect, and failure behavior are explicit
 - [ ] Positive and negative activation examples exist
-- [ ] Evals cover activation, content-following, and overbroad-trigger regressions
-
-## Activation And Behavior Evals
-
-Add evals before claiming the skill is ready:
-
-- Positive activation: prompts that should load the skill.
-- Negative activation: nearby prompts that should not load it.
-- Boundary behavior: missing tools, unsafe side effects, or ambiguous user intent.
-- Output behavior: required sections, command syntax, citation style, or edit/no-edit stance.

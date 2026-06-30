@@ -201,12 +201,3 @@ Present findings as:
 4. **Recommendations** - Specific, actionable fixes with code snippets or config changes.
 5. **Codebase Findings** - Only findings tied to observed bottlenecks.
 6. **Not Measured / Caveats** - Missing MCP tools, auth walls, no interaction trace for INP, unstable page, or field-data gaps.
-
-## Activation And Behavior Evals
-
-- Should activate: "Audit this URL for LCP and render-blocking resources."
-- Should activate: "Why did our Lighthouse score drop after adding the hero video?"
-- Should not activate: "Review this ARIA implementation for screen reader correctness."
-- Tool-missing eval: no MCP tools means setup guidance, not invented metrics.
-- INP eval: checkout INP requires scripted interaction data; do not infer from page load alone.
-- Evidence eval: zero-impact render-blocking insight is not recommended as a priority fix.
