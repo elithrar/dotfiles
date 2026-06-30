@@ -1,6 +1,6 @@
 ---
 name: logging-sucks
-description: Use when adding, refactoring, or reviewing logging code and callsites across a codebase. Ensures structured, queryable, context-rich logging.
+description: Use when adding, refactoring, or reviewing application logging, structured log fields, request/job correlation, trace context propagation, log sampling, or incident-debugging observability. Guides agents to preserve existing logging conventions, prefer structured queryable events, add safe context, and avoid leaking secrets or sensitive data.
 license: MIT
 compatibility: opencode
 metadata:
@@ -12,9 +12,17 @@ metadata:
 
 When helping with logging, observability, or debugging strategies, follow these principles:
 
+## Agent Workflow
+
+- Inspect existing logger APIs, field names, tracing, redaction helpers, middleware, and tests before changing code.
+- Preserve compatible schema names and local conventions unless the task is a logging migration.
+- Add context at boundaries such as request middleware, job runners, service clients, or error handlers when possible.
+- Validate emitted shape with tests, snapshots, sample output, or review of the logger call signature.
+- Do not introduce a new logging dependency unless requested or clearly justified.
+
 ## Core Philosophy
 
-- Logs are optimized for querying, not writing — always design with debugging in mind
+- Logs are optimized for querying, not writing — design with debugging in mind
 - Context is everything — a log without correlation IDs is useless in distributed systems
 - Logs are for humans during incidents, not just for compliance or "just in case"
 - If you can't filter and search your logs effectively, they provide zero value
@@ -22,7 +30,7 @@ When helping with logging, observability, or debugging strategies, follow these 
 
 ## Wide Events / Canonical Log Lines
 
-Instead of scattering 10-20 log lines throughout a request, emit **one comprehensive event per request per service**. This is the most important concept for effective logging.
+Instead of scattering 10-20 log lines throughout a request, prefer **one comprehensive event per request or job per service** when applicable. Supplemental logs are useful for meaningful state transitions, external calls, retries, audit/security events, or rare debugging points.
 
 - Build the event object throughout the request lifecycle
 - Enrich it with context as you process (user info, business data, feature flags)
@@ -65,23 +73,23 @@ This enables queries like: "Show all checkout failures for premium users where n
 
 ## Structured Logging Requirements
 
-- Always use key-value pairs (JSON) instead of string interpolation
+- Prefer key-value pairs or another structured format instead of string interpolation
 - Bad: `"Payment failed for user 123"`
 - Good: `{"event": "payment_failed", "user_id": "123", "reason": "insufficient_funds", "amount": 99.99}`
 - Structured logs are machine-parseable, enabling aggregation, alerting, and dashboards
 
-## Required Fields for Every Log Event
+## Recommended Fields
 
-- `timestamp` — RFC3339 with timezone (e.g., `2025-01-24T20:00:00Z`)
+- `timestamp` — RFC3339 with timezone when the logger does not add one
 - `level` — debug, info, warn, error (be consistent, don't invent new levels)
 - `event` — machine-readable event name, snake_case (e.g., `user_login_success`)
-- `request_id` or `trace_id` — for correlating logs across a single request
+- `request_id`, `trace_id`, or `job_id` — whichever correlation scope applies
 - `service` — which service/application emitted this log
 - `environment` — prod, staging, dev
 
 ## Examples of High-Cardinality Fields (always include when available)
 
-- `user_id`, `org_id`, `account_id` — who is affected
+- `user_id`, `org_id`, `account_id` — opaque identifiers for who is affected
 - `request_id`, `trace_id`, `span_id` — for distributed tracing
 - `order_id`, `transaction_id`, `job_id` — domain-specific identifiers
 
@@ -116,15 +124,17 @@ Don't log errors for expected conditions (e.g., user enters wrong password)
 
 ## What NOT to Log
 
-- Sensitive data (passwords, tokens, PII, credit card numbers)
+- Secrets, tokens, raw auth headers, passwords, payment data, unnecessary PII, full payloads, or unbounded user input
 - Logs inside tight loops (will generate millions of useless entries)
 - Success cases that provide no debugging value
 - Redundant information already captured by infrastructure (load balancer logs, etc.)
 
+Use existing redaction/sanitization APIs. Prefer opaque IDs over names, emails, or raw user content.
+
 ## Naming Conventions
 
 - Be consistent across all services — agree on field names as a team
-- Use snake_case for field names: `user_id`, not `userId` or `user-id`
+- Use the codebase's existing field convention. If none exists, prefer snake_case: `user_id`, not `userId` or `user-id`
 - Use past-tense verbs for events: `payment_completed`, not `complete_payment`
 - Prefix events by domain when helpful: `auth.login_failed`, `billing.invoice_created`
 
@@ -136,7 +146,7 @@ Don't log errors for expected conditions (e.g., user enters wrong password)
 
 ## Sampling Strategy (Tail Sampling)
 
-Use **tail sampling** — make the sampling decision *after* the request completes based on its outcome:
+Tail sampling is useful for high-volume request logs — make the sampling decision *after* the request completes based on its outcome:
 
 1. **Always keep errors** — 100% of 5xx status codes, exceptions, and failures
 2. **Always keep slow requests** — anything above your p99 latency threshold
@@ -144,6 +154,8 @@ Use **tail sampling** — make the sampling decision *after* the request complet
 4. **Randomly sample the rest** — happy, fast requests get sampled at 1-5%
 
 This ensures you never lose the events that matter during incidents while keeping costs manageable.
+
+Never sample audit, security, or compliance logs unless policy explicitly permits it. Do not treat high-cardinality log fields as safe metric labels; metrics backends often have different cardinality costs.
 
 ## During Incidents
 
@@ -154,5 +166,14 @@ This ensures you never lose the events that matter during incidents while keepin
 ## Common Misconceptions
 
 - **Structured logging != wide events** — JSON logs with 5 fields scattered across 20 lines are still useless. Wide events are a philosophy: one comprehensive event per request.
-- **OpenTelemetry won't save you** — OTel is a delivery mechanism, not a strategy. It doesn't decide what to log or add business context. You still need to deliberately instrument with wide events.
-- **High cardinality is only expensive on legacy systems** — Modern columnar databases (ClickHouse, BigQuery) are designed for high-cardinality, high-dimensionality data.
+- **OpenTelemetry won't save you** — OTel is a delivery mechanism, not a strategy. It doesn't decide what to log or add business context. You still need to deliberately instrument useful events.
+- **Logs, metrics, and traces have different costs** — High-cardinality fields are often valuable in logs, but dangerous as metric labels or always-indexed dimensions.
+
+## Review Checklist And Evals
+
+- Does the log include correlation, outcome, duration/status, useful event name, and safe error details?
+- Does it avoid secrets, PII, raw payloads, and duplicate error logging at every layer?
+- Should activate: "replace these string logs with structured logs" or "add request IDs to logs."
+- Should not activate: generic test debugging with no logging changes requested.
+- Privacy eval: authorization headers and payment data are removed or redacted.
+- Convention eval: existing camelCase log fields stay camelCase unless a migration is requested.

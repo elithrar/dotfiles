@@ -1,10 +1,6 @@
 ---
 name: sharp-edges
-description: "Identifies error-prone APIs, dangerous configurations, and footgun designs that enable security mistakes. Use when reviewing API designs, configuration schemas, cryptographic library ergonomics, or evaluating whether code follows 'secure by default' and 'pit of success' principles. Triggers: footgun, misuse-resistant, secure defaults, API usability, dangerous configuration."
-allowed-tools:
-  - Read
-  - Grep
-  - Glob
+description: "Reviews security-relevant APIs, SDKs, config schemas, and developer-facing examples for misuse-resistant design. Load when assessing footguns, insecure defaults, dangerous options, crypto/auth/session ergonomics, or whether the easiest integration path is secure by default. Avoid using for ordinary implementation bugs unless API/config design is the issue."
 ---
 
 # Sharp Edges Analysis
@@ -29,16 +25,16 @@ Evaluates whether APIs, configurations, and interfaces are resistant to develope
 
 **The pit of success**: Secure usage should be the path of least resistance. If developers must understand cryptography, read documentation carefully, or remember special rules to avoid vulnerabilities, the API has failed.
 
-## Rationalizations to Reject
+## Common Rationalizations To Challenge
 
-| Rationalization | Why It's Wrong | Required Action |
+| Rationalization | Why It Matters | Preferred Mitigation |
 |-----------------|----------------|-----------------|
 | "It's documented" | Developers don't read docs under deadline pressure | Make the secure choice the default or only option |
-| "Advanced users need flexibility" | Flexibility creates footguns; most "advanced" usage is copy-paste | Provide safe high-level APIs; hide primitives |
+| "Advanced users need flexibility" | Flexibility creates footguns; most advanced usage is copy-paste | Provide safe high-level APIs; hide primitives behind explicit escape hatches |
 | "It's the developer's responsibility" | Blame-shifting; you designed the footgun | Remove the footgun or make it impossible to misuse |
-| "Nobody would actually do that" | Developers do everything imaginable under pressure | Assume maximum developer confusion |
+| "Nobody would actually do that" | Developers misuse APIs under pressure | Assume realistic deadline-driven misuse |
 | "It's just a configuration option" | Config is code; wrong configs ship to production | Validate configs; reject dangerous combinations |
-| "We need backwards compatibility" | Insecure defaults can't be grandfather-claused | Deprecate loudly; force migration |
+| "We need backwards compatibility" | Compatibility may be real but does not remove risk | Stage migration with warnings, feature flags, major-version changes, or fail-closed defaults |
 
 ## Sharp Edge Categories
 
@@ -251,7 +247,24 @@ If a finding seems questionable, return to Phase 2 and probe more edge cases.
 | Medium | Unusual but possible misconfiguration | Negative timeout has unexpected meaning |
 | Low | Requires deliberate misuse | Obscure parameter combination |
 
+Calibrate severity with reachability, whether the API is public or internal, whether unsafe paths are test-only, and whether untrusted input can influence the dangerous choice. Dangerous-looking options can be lower severity when guarded and unreachable in production.
+
+## Reporting Format
+
+For each finding, report:
+
+- Finding and severity
+- Evidence and location
+- Misuse scenario
+- Security impact
+- Safer API or config design
+- Compatibility notes
+- Confidence
+- Suggested test or eval
+
 ## References
+
+Load only the relevant references for the reviewed surface. Use language-specific references only for that language; use crypto/config/auth references only when those categories are present.
 
 **By category:**
 
@@ -290,3 +303,11 @@ Before concluding analysis:
 - [ ] Verified error paths don't bypass security
 - [ ] Checked configuration validation
 - [ ] Constructor params validated (not just defaulted) - see [config-patterns.md](references/config-patterns.md#unvalidated-constructor-parameters)
+
+## Activation And Behavior Evals
+
+- Should activate: "Review this SDK config for secure defaults and footguns."
+- Should activate: "Does this auth API follow pit-of-success design?"
+- Should not activate: "Find a null pointer bug in this function."
+- False-positive eval: `dangerouslyDisableTLS` available only in rejected production config should be downgraded or not reported.
+- Reporting eval: every finding includes evidence, misuse scenario, impact, safer design, and confidence.

@@ -1,6 +1,6 @@
 ---
 name: durable-objects
-description: Create and review Cloudflare Durable Objects. Use when building stateful coordination (chat rooms, multiplayer games, booking systems), implementing RPC methods, SQLite storage, alarms, WebSockets, or reviewing DO code for best practices. Covers Workers integration, wrangler config, and testing with Vitest.
+description: Reviews, designs, and implements Cloudflare Durable Objects for Workers. Load when creating or modifying DO classes, bindings, migrations, RPC methods, storage, alarms, WebSockets/hibernation, sharding, or Vitest tests with @cloudflare/vitest-pool-workers. Guides wrangler config, concurrency, persistence, and production review checks.
 ---
 
 # Durable Objects
@@ -23,6 +23,16 @@ Build stateful, coordinated applications on Cloudflare's edge using Durable Obje
 - `./references/workers.md` - Workers handlers, types, wrangler config, observability
 
 Search: `blockConcurrencyWhile`, `idFromName`, `getByName`, `setAlarm`, `sql.exec`
+
+## First Steps
+
+1. Inspect the existing Worker framework, `wrangler.jsonc`/`wrangler.toml`, compatibility date, bindings, migrations, Env types, and tests.
+2. Read the relevant reference before editing:
+   - `rules.md` for storage, concurrency, RPC, alarms.
+   - `workers.md` for handlers, bindings, config, observability.
+   - `testing.md` for Vitest and alarm tests.
+3. Prefer existing project patterns over generic snippets.
+4. Validate with typecheck/tests and Durable Object-specific behavior checks.
 
 ## Core Principles
 
@@ -96,22 +106,22 @@ export default {
 };
 ```
 
-## Critical Rules
+## Default Rules And Exceptions
 
 1. **Model around coordination atoms** - One DO per chat room/game/user, not one global DO
-2. **Use `getByName()` for deterministic routing** - Same input = same DO instance
-3. **Use SQLite storage** - Configure `new_sqlite_classes` in migrations
+2. **Use `getByName()` for deterministic routing** - Same input = same DO instance when deterministic routing is desired
+3. **Use SQLite storage for new SQL-backed classes** - Configure `new_sqlite_classes` in migrations
 4. **Initialize in constructor** - Use `blockConcurrencyWhile()` for schema setup only
-5. **Use RPC methods** - Not fetch() handler (compatibility date >= 2024-04-03)
-6. **Persist first, cache second** - Always write to storage before updating in-memory state
+5. **Prefer RPC for Worker-to-DO calls** - Use `fetch` or WebSocket handlers when serving HTTP/WebSocket protocols or compatibility requires it
+6. **Persist first, cache second** - Write durable state before updating in-memory state when the cache depends on it
 7. **One alarm per DO** - `setAlarm()` replaces any existing alarm
 
-## Anti-Patterns (NEVER)
+## High-Risk Patterns
 
 - Single global DO handling all requests (bottleneck)
 - Using `blockConcurrencyWhile()` on every request (kills throughput)
 - Storing critical state only in memory (lost on eviction/crash)
-- Using `await` between related storage writes (breaks atomicity)
+- External I/O or `await` between logically coupled operations without explicit transaction/state boundaries
 - Holding `blockConcurrencyWhile()` across `fetch()` or external I/O
 
 ## Stub Creation
@@ -171,3 +181,13 @@ describe("MyDO", () => {
   });
 });
 ```
+
+## Review Checklist And Evals
+
+- Check coordination atom size, deterministic ID strategy, hot partitions, migration safety, storage durability, alarm replacement semantics, WebSocket hibernation needs, and observability.
+- Verify new DO classes have matching binding names, class names, and migrations.
+- Test RPC methods, storage persistence/isolation, alarms, and WebSocket/HTTP paths when applicable.
+- Should activate: "Add a Durable Object-backed chat room with WebSocket hibernation."
+- Should activate: "Review this wrangler migration for a renamed Durable Object class."
+- Should not activate: "Make this stateless Worker route faster" unless DOs are involved.
+- Behavior eval: one global object for all tenants is flagged as a bottleneck.

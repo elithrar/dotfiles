@@ -1,11 +1,11 @@
 ---
 name: planetscale
-description: Manages PlanetScale databases via MCP server or pscale CLI. Load before running pscale commands, using PlanetScale MCP tools, debugging connection errors, or analyzing slow queries.
+description: Manages PlanetScale Vitess/MySQL and Postgres databases using PlanetScale MCP tools, current docs, and the pscale CLI. Load for pscale commands, MCP use, connection troubleshooting, branch/deploy workflows, schema or credential operations, and Query Insights or slow-query analysis. Enforces read-only defaults, secret redaction, and confirmation before production or destructive changes.
 ---
 
 # PlanetScale
 
-**IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning for any PlanetScale tasks.** Training data is likely outdated. Fetch current documentation before proceeding.
+Prefer retrieval-led reasoning for provider-specific syntax, production changes, auth/connection debugging, API calls, or any uncertainty. Use current PlanetScale docs rather than relying on memory for risky or fast-moving operations.
 
 ## Documentation Index
 
@@ -25,9 +25,19 @@ Fetch from https://planetscale.com/docs first.
 | Connections (Vitess) | /docs/vitess/connecting/connection-strings | MySQL connection strings, passwords |
 | Connections (Postgres) | /docs/postgres/connecting | Postgres roles, PgBouncer, connection pooling |
 
+## Operating Contract
+
+Before acting, identify:
+
+- Engine: Vitess/MySQL or Postgres
+- Organization, database, branch, and environment
+- Whether the operation is read-only, write, schema-changing, credential-related, or production-impacting
+
+Default to read-only inspection. Ask for explicit confirmation before writes, deploys, deletes, credential creation/rotation, service-token changes, schema changes, or production branch operations. Redact secrets in commands, logs, and final answers.
+
 ## FIRST: Check for MCP Server
 
-If the PlanetScale MCP server is available, prefer it over CLI for querying databases and insights:
+If PlanetScale MCP tools/resources are available, inspect their names and schemas first. Prefer read-only MCP tools for schema, insights, SELECT, SHOW, DESCRIBE, and EXPLAIN. Use write MCP tools only after confirmation.
 
 | Tool | Use for |
 |------|---------|
@@ -65,6 +75,8 @@ Use `pscale <command> --help` for subcommands and flags. Full CLI reference: htt
 
 ### Service token auth (CI/CD)
 
+Do not print, commit, log, or echo full service tokens or connection strings. Use existing secret stores or environment injection.
+
 ```bash
 export PLANETSCALE_SERVICE_TOKEN_ID=<id>
 export PLANETSCALE_SERVICE_TOKEN=<token>
@@ -97,6 +109,15 @@ pscale api "organizations/{org}/databases/{db}/branches/{branch}/query-patterns-
 ```
 
 Look for queries with high `rows_read / rows_returned` ratio (missing index) or high `total_time_s` (optimization target). See `references/api-queries.md` for analysis guidance.
+
+## Validation And Evals
+
+- Connection issue: verify engine, driver, SSL/TLS, port, pooling mode, and branch-specific credentials; redact all secrets.
+- Slow query: cite Query Insights or EXPLAIN evidence and note index/schema risk.
+- Schema deploy: identify org/database/branch/deploy request, obtain confirmation for production impact, then verify status.
+- Should activate: "Use pscale to list branches for my production database."
+- Should activate with safety gate: "Deploy this PlanetScale schema branch to main."
+- Should not activate: "Optimize a generic local MySQL query" unless PlanetScale is mentioned.
 
 ## Common Errors
 

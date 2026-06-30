@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: Reviews code changes for bugs, security regressions, type-safety issues, and maintainability. Use when asked to review uncommitted changes, the last commit, a PR/MR, a diff, or specific changed files.
+description: Reviews code diffs, commits, PRs/MRs, and changed files for confirmed bugs, security regressions, type-safety issues, and maintainability risks. Load when the user asks for code review, PR review, diff review, or review of uncommitted changes. Reports findings without editing unless fixes are explicitly requested.
 ---
 
 # Code Reviewer
@@ -9,6 +9,7 @@ Use this skill for evidence-based code review. Prioritize real behavioral risks 
 
 ## Scope
 
+- Review mode is read-only unless the user explicitly asks for fixes.
 - Review uncommitted changes by default.
 - If there are no uncommitted changes, review the last commit.
 - If the user provides a PR/MR number or URL, fetch the diff with the appropriate CLI first.
@@ -17,13 +18,20 @@ Use this skill for evidence-based code review. Prioritize real behavioral risks 
 
 ## Workflow
 
-1. Build context before judging the diff.
+1. Identify the review target and diff range before judging the diff.
 2. Read changed files in full, plus direct imports, callers, or config referenced by the change.
 3. Keep context proportional: for 3 changed files, read roughly 5-10 total files, not the whole repository.
 4. Identify the change purpose, maintained invariants, and risky paths.
 5. Check relevant git history when a change touches security, validation, auth, crypto, access control, or a suspicious regression.
 6. Run the project's configured validation commands when feasible.
 7. Verify every finding against the referenced code before presenting it.
+
+Target defaults:
+
+- Uncommitted review: inspect both unstaged and staged diffs.
+- Last-commit review: inspect `HEAD~1..HEAD`.
+- PR/MR review: identify base and head when possible, then review that diff.
+- User-provided files: review those files and their direct callers/config only.
 
 Useful history checks:
 
@@ -45,6 +53,7 @@ Prefer project commands over generic fallbacks.
 | `go.mod` | `go vet ./...` and relevant `go test ./...` packages |
 
 Tool failures are evidence. Include only failures relevant to the reviewed change.
+Run targeted validation first. If a full suite is too expensive, unavailable, or outside scope, state what was skipped and why.
 
 ## Risk Triage
 
@@ -78,6 +87,7 @@ Spend review depth where the risk is highest. For critical paths, estimate blast
 - Check input validation, auth checks, authorization boundaries, injection vectors, secret handling, and data exposure.
 - For auth changes, verify access was not widened and session or token handling follows existing project patterns.
 - Treat removed validation or permission checks as high risk until proven safe.
+- Check dependency/script changes, SSRF, path traversal, unsafe redirects, deserialization, tenant isolation, secrets or PII in logs, and prompt/tool injection in AI-agent code when relevant.
 
 ### Complexity and Maintainability
 
@@ -107,14 +117,23 @@ Provability labels:
 - `Likely`: the code strongly suggests a real issue, but full confirmation needs runtime context not available in the repository.
 - `Design concern`: the issue is about maintainability, coupling, or approach rather than a definite bug.
 
-## Parallel Review Pattern
+## Focused Review Passes
 
-For substantial reviews, use multiple focused passes or subagents:
+For substantial reviews, use multiple focused passes. Use subagents only when the current runtime and user instructions allow them:
 
 - Run three parallel review passes when feasible: correctness, security and resilience, complexity and maintainability.
 - Deduplicate findings. Keep the version with stronger evidence and use the higher severity when reviewers disagree.
 - Run one final validation pass over the compiled findings. For each finding, reread the referenced code and classify it as `Confirmed`, `Disputed`, or `Acknowledged`.
 - Present only `Confirmed` findings. If nothing survives validation, say that no confirmed issues were found.
+
+## Stop Rules And Evals
+
+- Stop when changed behavior, relevant callers, and directly affected config/tests have been reviewed.
+- Do not broaden into unrelated repository audit.
+- Respect a user-requested output format over this default format.
+- Eval: "Review my uncommitted changes" inspects staged and unstaged diffs and does not edit.
+- Eval: "Review PR #123 for auth regressions" identifies base/head and focuses auth/security.
+- Eval: "Refactor this file" does not activate review-only behavior unless the user asks for review.
 
 ## Output Format
 

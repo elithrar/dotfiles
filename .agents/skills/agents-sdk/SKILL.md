@@ -1,13 +1,24 @@
 ---
 name: agents-sdk
-description: Build stateful AI agents using the Cloudflare Agents SDK. Load when creating agents with persistent state, scheduling, RPC, MCP servers, email handling, or streaming chat. Covers Agent class, AIChatAgent, state management, and Code Mode for reduced token usage.
+description: Build or review Cloudflare Agents SDK applications using Agent, AIChatAgent, or McpAgent. Load for stateful Workers agents, persisted state, scheduling, callable RPC, chat streaming, resumable UI messages, MCP client/server integration, email-routed agents, or Code Mode evaluation. For deployment/config commands also load wrangler; for low-level Durable Object design also load durable-objects. Treat Code Mode as experimental and require security review.
 ---
 
 # Cloudflare Agents SDK
 
 Build persistent, stateful AI agents on Cloudflare Workers using the `agents` npm package.
 
-## FIRST: Verify Installation
+## Activation And Boundaries
+
+- Use this skill when implementing or reviewing Cloudflare Agents SDK features.
+- Also load `wrangler` before running Wrangler commands or changing deployment config.
+- Also load `durable-objects` when designing raw Durable Object storage, WebSocket, migration, or concurrency behavior.
+- Treat Code Mode as experimental/high-risk until security boundaries are reviewed.
+
+## FIRST: Inspect The Project
+
+Before coding, inspect the package manager, dependencies, `wrangler.jsonc`/`wrangler.toml`, `tsconfig`, Env types, source entrypoint, tests, bindings, migrations, and existing Agent/Worker patterns.
+
+## Verify Installation
 
 ```bash
 npm install agents
@@ -40,7 +51,7 @@ Agents require a binding in `wrangler.jsonc`:
 
 - **Agent** base class provides state, scheduling, RPC, MCP, and email capabilities
 - **AIChatAgent** adds streaming chat with automatic message persistence and resumable streams
-- **Code Mode** generates executable code instead of tool calls—reduces token usage significantly
+- **Code Mode** generates executable code instead of tool calls; use only with sandboxing, least-privilege tools, auditability, and explicit approval boundaries
 - **this.state / this.setState()** - automatic persistence to SQLite, broadcasts to clients
 - **this.schedule()** - schedule tasks at Date, delay (seconds), or cron expression
 - **@callable** decorator - expose methods to clients via WebSocket RPC
@@ -109,7 +120,7 @@ import { openai } from "@ai-sdk/openai";
 export class Chat extends AIChatAgent<Env> {
   async onChatMessage(onFinish) {
     const result = streamText({
-      model: openai("gpt-4o"),
+      model: openai("<project-selected-model>"),
       messages: await convertToModelMessages(this.messages),
       onFinish
     });
@@ -133,15 +144,17 @@ const { messages, input, handleSubmit } = useAgentChat({ agent });
 
 ## Detailed References
 
+Read the relevant reference before coding that area:
+
 - **[references/state-scheduling.md](references/state-scheduling.md)** - State persistence, scheduling, queues
 - **[references/streaming-chat.md](references/streaming-chat.md)** - AIChatAgent, resumable streams, UI patterns
-- **[references/codemode.md](references/codemode.md)** - Generate code instead of tool calls (token savings)
+- **[references/codemode.md](references/codemode.md)** - Code Mode setup and security review
 - **[references/mcp.md](references/mcp.md)** - MCP server integration
 - **[references/email.md](references/email.md)** - Email routing and handling
 
 ## When to Use Code Mode
 
-Code Mode generates executable JavaScript instead of making individual tool calls. Use it when:
+Code Mode generates executable JavaScript instead of making individual tool calls. Consider it only after reviewing security boundaries. Use it when:
 
 - Chaining multiple tool calls in sequence
 - Complex conditional logic across tools
@@ -156,5 +169,15 @@ See [references/codemode.md](references/codemode.md) for setup and examples.
 2. **Use AIChatAgent for chat**: Handles message persistence and resumable streams automatically
 3. **Type your state**: `Agent<Env, State>` ensures type safety for `this.state`
 4. **Use @callable for RPC**: Cleaner than manual WebSocket message handling
-5. **Code Mode for complex workflows**: Reduces round-trips and token usage
+5. **Code Mode only with controls**: require least-privilege tools, no arbitrary secrets, bounded execution, and reviewable logs
 6. **Schedule vs Queue**: Use `schedule()` for time-based, `queue()` for sequential processing
+
+## Validation And Evals
+
+- Validate with typecheck, tests, and Wrangler checks where appropriate.
+- Smoke-test default `/agents/{class}/{name}` routing or custom routing.
+- Check binding/class/migration consistency, Env types, streaming cancellation/resume behavior, retention/privacy, and logs.
+- Should activate: "Build a stateful Cloudflare agent with scheduling and callable RPC."
+- Should activate: "Add streaming chat with persisted messages to my Worker."
+- Boundary eval: "Deploy this Worker" loads `wrangler`; "raw Durable Object WebSocket room" loads `durable-objects`.
+- Security eval: Code Mode with MCP/email requires allowlists, secret boundaries, and review of Code Mode/MCP/email references.

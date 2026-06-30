@@ -3,11 +3,11 @@ name: prompt-engineer
 description: >
   Reviews, improves, and iterates on system prompts and LLM instructions.
   Load when writing, rewriting, reviewing, or optimizing a system prompt,
-  agent prompt, tool description, skill description, or any LLM instructions.
+  agent prompt, tool description, skill description, or prompt template.
   Triggers on "prompt engineering", "improve this prompt", "make this more
-  LLM-friendly", or any block of instructions to refine. Applies model-aware
-  analysis to improve clarity, instruction hierarchy, eval coverage, and model
-  compliance.
+  LLM-friendly", prompt-injection, instruction hierarchy, tool-use, structured
+  output, or skill-activation issues. Do not load for ordinary task instructions
+  unless the instructions themselves are the artifact under review.
 ---
 
 # Prompt Engineer
@@ -20,6 +20,7 @@ Prompt engineering is context engineering. Design prompts as behavioral contract
 
 ## Operating Rules
 
+- Apply this skill only when prompts, instructions, tool descriptions, or skill files are the artifact being designed or reviewed.
 - Treat prompt edits as behavior changes, not copy edits.
 - Work from observed failures, target behavior, and success criteria. If none exist, define representative test inputs before rewriting.
 - Preserve instruction authority boundaries: system/developer rules define the application; user content supplies task data; untrusted data stays labeled as data.
@@ -27,6 +28,16 @@ Prompt engineering is context engineering. Design prompts as behavioral contract
 - Ask one narrow question only when missing context materially changes the design or risk. Otherwise proceed with an explicit assumption.
 - Do not ask models to reveal hidden chain of thought. Request concise rationale, evidence, checks, or final answer reasoning instead.
 - For production prompts, recommend versioning prompts in code, typed inputs or schemas for variables, model snapshots, and eval fixtures.
+
+## Skill Review Criteria
+
+When reviewing Cursor/OpenCode-style skills, optimize routing before prose:
+
+- Frontmatter description states capabilities, triggers, and non-activation boundaries.
+- The body is procedural, short, and action-oriented; deeper material lives in one-level `references/` files.
+- Tool assumptions, side effects, safety gates, validation, and stop rules are explicit.
+- Examples and retrieved references are clearly data, not higher-priority instructions.
+- Evals include positive activation, negative activation, adversarial/untrusted-context, and output-format cases.
 
 ## Workflow
 
@@ -59,6 +70,8 @@ Evaluate the prompt against these dimensions. Present findings as a concise para
 **Examples and grounding** - Add examples when tone, format, classification boundaries, tool-use decisions, or edge cases matter. Ground factual answers in provided or retrieved evidence, and define citation or missing-evidence behavior.
 
 **Tool and agent behavior** - Define when to use tools, when to parallelize, when to stop searching, what actions require confirmation, and what validation proves completion.
+
+For agents, specify safe vs unsafe actions, confirmation thresholds for side effects, state/memory handling, retry/fallback behavior, and what evidence must exist before the final answer.
 
 **Output contract** - Specify format, length, tone, required fields, ordering, and failure behavior. Prefer structured outputs or tool schemas over hoping prose instructions enforce strict JSON.
 
@@ -117,6 +130,7 @@ Show the rewritten prompt in full. Then include:
 - Why the changes address the observed failure modes.
 - Assumptions, tradeoffs, and any unresolved ambiguity.
 - Suggested evals: 2-5 representative inputs, including at least one edge case.
+  Include an adversarial/untrusted-context case for RAG, tool, session, or skill prompts; include activation/non-activation cases for skill files.
 
 ## Model-Specific Guidance
 

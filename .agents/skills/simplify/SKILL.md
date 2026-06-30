@@ -1,18 +1,25 @@
 ---
 name: simplify
-description: "Audits a codebase for unnecessary complexity -- premature abstractions, deep nesting, inconsistent patterns, and indirection that hurts readability. Use when asked to simplify code, audit complexity, reduce cognitive load, or review maintainability. Triggers: simplify, complexity audit, too complex, hard to read, maintainability review."
+description: "Audits or simplifies code by identifying concrete, behavior-preserving reductions in complexity: unnecessary indirection, single-use abstractions, deep nesting, inconsistent patterns, and readability-costly control flow. Load when the user explicitly asks to simplify, reduce complexity, refactor for readability, audit maintainability, or explain why code is hard to follow. Avoid using for general bug/security/code review unless complexity is the main focus."
 ---
 
-# Complexity Audit
+# Simplify Code And Audit Complexity
 
 Identify concrete, fixable complexity issues in a codebase. Focus on changes that reduce the cost of reading, modifying, and debugging code -- not style preferences or nitpicks.
 
+## Modes
+
+- **Audit mode**: if the user asks for an audit or review, return findings only.
+- **Edit mode**: if the user asks to simplify or refactor, make the smallest behavior-preserving edits and verify them.
+
 ## Workflow
 
-1. Read project documentation (README, AGENTS.md, architecture docs) to understand intended patterns and conventions
-2. Identify the largest and most-modified source files as starting points
-3. Search for patterns in each category below, working outward from hot paths
-4. Produce findings per the output format
+1. Read project documentation (README, AGENTS.md, architecture docs) to understand intended patterns and conventions.
+2. Identify the target scope from the user request; use large, high-churn, or user-specified files as starting points.
+3. Inspect source and call sites before judging an abstraction.
+4. Search for patterns in each category below, working outward from hot paths.
+5. In edit mode, preserve public APIs and run targeted tests/typechecks when available.
+6. In audit mode, produce capped findings per the output format.
 
 ## Patterns
 
@@ -43,6 +50,8 @@ Identify concrete, fixable complexity issues in a codebase. Focus on changes tha
 - Only report findings where the suggested fix genuinely reduces complexity. "Move to a separate file" is not a simplification.
 - Rank by maintenance cost: how much does this pattern increase the effort to read, modify, or debug the surrounding code?
 - **Cap at 10 findings.** Fewer is fine if the codebase is clean.
+- Do not report generated code, vendor code, framework-required boilerplate, or stable public abstractions without considering compatibility.
+- Do not replace clear duplication with a shared abstraction that increases coupling.
 
 ## Output Format
 
@@ -74,3 +83,11 @@ Fix: Align both to the Result pattern already used in `getUser()`, since the pro
 - "Move `parseInput()` to a separate utils file" -- moving code is not simplifying it.
 - "This function is 80 lines long" -- length alone is not a complexity problem if the logic is linear and readable.
 - Flagging a pattern that AGENTS.md explicitly mandates without acknowledging the justification.
+
+## Activation And Behavior Evals
+
+- Should activate: "Simplify this handler; it is too nested."
+- Should activate: "Audit this repo for unnecessary abstractions."
+- Should not activate: "Review this PR for security bugs" unless complexity is the requested focus.
+- Edit eval: a requested simplification preserves behavior and runs relevant validation.
+- Boundary eval: duplicated code across bounded contexts is not abstracted unless shared coupling is clearly lower risk.

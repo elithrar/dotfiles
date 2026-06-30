@@ -1,15 +1,15 @@
 ---
 name: web-perf
-description: Analyzes web performance using Chrome DevTools MCP. Measures Core Web Vitals (FCP, LCP, TBT, CLS, Speed Index), identifies render-blocking resources, network dependency chains, layout shifts, caching issues, and accessibility gaps. Use when asked to audit, profile, debug, or optimize page load performance, Lighthouse scores, or site speed.
+description: Audits page-load performance with Chrome DevTools MCP. Use when asked to profile a URL, investigate Lighthouse/Core Web Vitals symptoms, diagnose LCP, CLS, TBT/main-thread work, render-blocking resources, network dependency chains, caching, large assets, or site speed regressions. Produces evidence-backed recommendations with trace conditions and impact estimates; includes only lightweight accessibility observations visible from DevTools.
 ---
 
 # Web Performance Audit
 
 Audit web page performance using Chrome DevTools MCP tools. This skill focuses on Core Web Vitals, network optimization, and high-level accessibility gaps.
 
-## FIRST: Verify MCP Tools Available
+## Prerequisite: Chrome DevTools MCP
 
-**Run this before starting.** Try calling `navigate_page` or `performance_start_trace`. If unavailable, STOP—the chrome-devtools MCP server isn't configured.
+Verify Chrome DevTools MCP tools are available in the current tool list before starting. If unavailable, stop and provide setup guidance; do not hallucinate trace results.
 
 Ask the user to add this to their MCP config:
 
@@ -22,12 +22,20 @@ Ask the user to add this to their MCP config:
 
 ## Key Guidelines
 
-- **Be assertive**: Verify claims by checking network requests, DOM, or codebase—then state findings definitively.
+- **Calibrate claims to evidence**: Say "observed in this trace" for lab-only findings.
 - **Verify before recommending**: Confirm something is unused before suggesting removal.
 - **Quantify impact**: Use estimated savings from insights. Don't prioritize changes with 0ms impact.
 - **Skip non-issues**: If render-blocking resources have 0ms estimated impact, note but don't recommend action.
 - **Be specific**: Say "compress hero.png (450KB) to WebP" not "optimize images".
 - **Prioritize ruthlessly**: A site with 200ms LCP and 0 CLS is already excellent—say so.
+
+## Audit Inputs And Measurement Rules
+
+- Capture URL/route, device or viewport, network/CPU throttling, cache state, auth state, timestamp, and run count.
+- Prefer mobile cold-load unless the user specifies otherwise.
+- Run 2-3 traces for noisy or surprising metrics when making priority calls.
+- Chrome traces are lab diagnostics. For real-user Core Web Vitals, request or propose RUM, CrUX, or PageSpeed Insights field data.
+- Report INP only when interaction data is measured; otherwise use TBT/main-thread work as a load responsiveness proxy.
 
 ## Quick Reference
 
@@ -92,7 +100,7 @@ Example:
 performance_analyze_insight(insightSetId: "<id-from-trace>", insightName: "LCPBreakdown")
 ```
 
-**Key thresholds (good/needs-improvement/poor):**
+**Key thresholds (good/needs-improvement/poor):** These are field-oriented CWV thresholds; lab traces help diagnose causes but do not prove real-user population health.
 - TTFB: < 800ms / < 1.8s / > 1.8s
 - FCP: < 1.8s / < 3s / > 3s
 - LCP: < 2.5s / < 4s / > 4s
@@ -131,15 +139,15 @@ take_snapshot(verbose: true)
 
 **Flag high-level gaps:**
 - Missing or duplicate ARIA IDs
-- Elements with poor contrast ratios (check against WCAG AA: 4.5:1 for normal text, 3:1 for large text)
-- Focus traps or missing focus indicators
 - Interactive elements without accessible names
+
+Do not claim contrast, focus order, or keyboard-trap compliance unless those properties were directly verified.
 
 ## Phase 5: Codebase Analysis
 
 **Skip if auditing a third-party site without codebase access.**
 
-Analyze the codebase to understand where improvements can be made.
+Analyze code only to explain observed bottlenecks or implement likely fixes.
 
 ### Detect Framework & Bundler
 
@@ -187,7 +195,18 @@ Also check `package.json` for framework dependencies and build scripts.
 
 Present findings as:
 
-1. **Core Web Vitals Summary** - Table with metric, value, and rating (good/needs-improvement/poor)
-2. **Top Issues** - Prioritized list of problems with estimated impact (high/medium/low)
-3. **Recommendations** - Specific, actionable fixes with code snippets or config changes
-4. **Codebase Findings** - Framework/bundler detected, optimization opportunities (omit if no codebase access)
+1. **Repro Context** - URL, device/viewport, throttling, cache state, run count, auth state, timestamp.
+2. **Metrics Summary** - Table with metric, value, rating, and lab/field source.
+3. **Top Issues** - Prioritized list with evidence and estimated impact.
+4. **Recommendations** - Specific, actionable fixes with code snippets or config changes.
+5. **Codebase Findings** - Only findings tied to observed bottlenecks.
+6. **Not Measured / Caveats** - Missing MCP tools, auth walls, no interaction trace for INP, unstable page, or field-data gaps.
+
+## Activation And Behavior Evals
+
+- Should activate: "Audit this URL for LCP and render-blocking resources."
+- Should activate: "Why did our Lighthouse score drop after adding the hero video?"
+- Should not activate: "Review this ARIA implementation for screen reader correctness."
+- Tool-missing eval: no MCP tools means setup guidance, not invented metrics.
+- INP eval: checkout INP requires scripted interaction data; do not infer from page load alone.
+- Evidence eval: zero-impact render-blocking insight is not recommended as a priority fix.
