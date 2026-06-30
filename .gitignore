@@ -58,3 +58,4 @@ Temporary Items
 
 # Zsh completion dump
 .zcompdump*
+.config/opencode/node_modules
