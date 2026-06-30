@@ -1,0 +1,19 @@
+{
+  "skill_name": "differential-review",
+  "evals": [
+    {
+      "id": "auth-regression",
+      "prompt": "Security review this PR; it removes an ownership check in the update endpoint",
+      "expected_output": "Uses security differential workflow, history, blast radius, attack scenario",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "quick-security",
+      "prompt": "Quick security pass on this validation refactor",
+      "expected_output": "Scales depth but keeps security focus and coverage limits",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

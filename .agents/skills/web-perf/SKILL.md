@@ -1,6 +1,6 @@
 ---
 name: web-perf
-description: Analyzes web performance using Chrome DevTools MCP. Measures Core Web Vitals (FCP, LCP, TBT, CLS, Speed Index), identifies render-blocking resources, network dependency chains, layout shifts, caching issues, and accessibility gaps. Use when asked to audit, profile, debug, or optimize page load performance, Lighthouse scores, or site speed.
+description: Analyzes web performance using Chrome DevTools MCP. Measures Core Web Vitals and related lab metrics (FCP, LCP, INP/TBT, CLS, Speed Index), identifies render-blocking resources, network dependency chains, layout shifts, caching issues, and accessibility gaps. Use when asked to audit, profile, debug, or optimize page load performance, Lighthouse scores, or site speed.
 ---
 
 # Web Performance Audit
@@ -25,9 +25,11 @@ Ask the user to add this to their MCP config:
 - **Be assertive**: Verify claims by checking network requests, DOM, or codebase—then state findings definitively.
 - **Verify before recommending**: Confirm something is unused before suggesting removal.
 - **Quantify impact**: Use estimated savings from insights. Don't prioritize changes with 0ms impact.
+- **Account for variance**: Prefer multiple traces for important conclusions, or state when findings are from a single run.
 - **Skip non-issues**: If render-blocking resources have 0ms estimated impact, note but don't recommend action.
 - **Be specific**: Say "compress hero.png (450KB) to WebP" not "optimize images".
 - **Prioritize ruthlessly**: A site with 200ms LCP and 0 CLS is already excellent—say so.
+- **Separate mobile and desktop**: Note the tested viewport/device conditions and avoid generalizing across them without evidence.
 
 ## Quick Reference
 
@@ -116,6 +118,7 @@ list_network_requests(resourceTypes: ["Script", "Stylesheet", "Document", "Font"
 4. **Caching issues**: Missing or weak `Cache-Control`, `ETag`, or `Last-Modified` headers
 5. **Large payloads**: Uncompressed or oversized JS/CSS bundles
 6. **Unused preconnects**: If flagged, verify by checking if ANY requests went to that origin. If zero requests, it's definitively unused—recommend removal. If requests exist but loaded late, the preconnect may still be valuable.
+7. **Third-party resources**: Do not recommend removal without confirming ownership, business purpose, and measured impact. Prefer defer, consent-gate, async, or lazy-load recommendations when removal is not clearly safe.
 
 For detailed request info:
 ```

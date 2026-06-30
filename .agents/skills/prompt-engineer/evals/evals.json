@@ -1,0 +1,19 @@
+{
+  "skill_name": "prompt-engineer",
+  "evals": [
+    {
+      "id": "system-prompt",
+      "prompt": "Improve this system prompt so the agent stops over-searching",
+      "expected_output": "Diagnoses failure, rewrites minimally with stop rules and evals",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "skill-desc",
+      "prompt": "Make this skill description trigger more reliably",
+      "expected_output": "Adds realistic triggers and near-miss evals",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

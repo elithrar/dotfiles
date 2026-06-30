@@ -1,0 +1,19 @@
+{
+  "skill_name": "agents-sdk",
+  "evals": [
+    {
+      "id": "base-agent",
+      "prompt": "Create a Cloudflare Agent with persistent counter state and RPC increment method",
+      "expected_output": "Uses Agents SDK, wrangler binding/migration, typed state, validation",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "chat-agent",
+      "prompt": "Build streaming chat with persisted messages on Cloudflare Agents",
+      "expected_output": "Chooses AIChatAgent and current package/config pattern",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

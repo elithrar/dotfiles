@@ -13,7 +13,7 @@ Load `references/command-recipes.md` before giving detailed command sequences, e
 
 ## FIRST: Verify Installation And Programmer
 
-Run these before write/erase operations:
+Run these before write/erase operations. For read-only identification, prefer non-mutating commands first.
 
 ```bash
 minipro --version
@@ -27,10 +27,11 @@ Interpretation:
 |---|---|---|
 | `Supported programmers` includes `T48` | CLI supports the programmer | Continue |
 | `minipro -k` reports a T48 | USB connection is working | Continue |
-| `No programmer found` | Programmer not visible over USB | Check USB cable, power, hub, permissions, and that no other XGecu software has the device open |
+| `No programmer found` | Programmer not visible over USB | Check USB cable, power, hub, OS permissions, and that no other XGecu software has the device open |
 
 ## Core Rules
 
+- Ask for explicit confirmation before write, erase, or other chip-mutating operations unless the user already clearly authorized the exact operation.
 - Treat `-p` as the **chip/device name**, not the programmer model.
 - Let `minipro` auto-detect the USB programmer; do not pass `T48` as the chip.
 - Quote device names containing `@`, for example `-p 'AT28C64B@DIP28'`.
@@ -39,6 +40,7 @@ Interpretation:
 - Run erase and blank-check before writing EEPROMs unless the chip/device workflow says otherwise.
 - Do not use lowercase `-e` when the intent is erase; lowercase `-e` means **skip erase**. Use uppercase `-E` for erase-only.
 - Keep verification enabled. Do not use `-v` unless the user explicitly asks to skip verify.
+- Before overwriting a chip, read and save the original contents when possible.
 - Confirm important writes by reading back the chip and comparing/checksumming the readback file.
 - Warn that successful programming only proves bytes were written; it does not prove a tune is safe.
 
@@ -72,6 +74,8 @@ minipro -d 'AT28C64B@DIP28'
 stat -f%z 'image.bin'
 shasum -a 256 'image.bin'
 minipro -p 'AT28C64B@DIP28' -z
+minipro -p 'AT28C64B@DIP28' -r 'original-backup.bin'
+shasum -a 256 'original-backup.bin'
 minipro -p 'AT28C64B@DIP28' -E
 minipro -p 'AT28C64B@DIP28' -b
 minipro -p 'AT28C64B@DIP28' -w 'image.bin'

@@ -7,6 +7,12 @@ description: Reviews code changes for bugs, security regressions, type-safety is
 
 Use this skill for evidence-based code review. Prioritize real behavioral risks over style preferences.
 
+## Routing
+
+- Use `differential-review` instead when the user requests a security-focused audit, regression analysis, blast-radius report, or comprehensive PR security review.
+- Use `simplify` instead when the user asks only for complexity, maintainability, readability, or cognitive-load review.
+- Use this skill for normal code review of diffs, commits, PRs, MRs, or changed files.
+
 ## Scope
 
 - Review uncommitted changes by default.
@@ -22,7 +28,7 @@ Use this skill for evidence-based code review. Prioritize real behavioral risks 
 3. Keep context proportional: for 3 changed files, read roughly 5-10 total files, not the whole repository.
 4. Identify the change purpose, maintained invariants, and risky paths.
 5. Check relevant git history when a change touches security, validation, auth, crypto, access control, or a suspicious regression.
-6. Run the project's configured validation commands when feasible.
+6. Run the project's configured validation commands when feasible. Avoid destructive commands and broad long-running suites unless they are the project default or the user asked for them.
 7. Verify every finding against the referenced code before presenting it.
 
 Useful history checks:
@@ -136,4 +142,10 @@ Severity labels:
 - `MEDIUM`: validation gap, edge case, resilience issue, or maintainability risk with concrete impact.
 - `LOW`: minor but real issue, usually tooling, documentation accuracy, or narrowly scoped correctness.
 
-If no confirmed issues exist, respond with that result and mention validation performed or skipped.
+If no confirmed issues exist, use this shape:
+
+```markdown
+No confirmed issues found.
+Validation: <commands run, skipped, or not available>.
+Notes: <coverage limits, if any>.
+```

@@ -5,7 +5,12 @@ description: Create and review Cloudflare Durable Objects. Use when building sta
 
 # Durable Objects
 
-Build stateful, coordinated applications on Cloudflare's edge using Durable Objects.
+Build stateful, coordinated applications on Cloudflare's edge using Durable Objects. Prefer current Cloudflare docs over memory for runtime, storage, RPC, and migration details.
+
+## Routing
+
+- Use `agents-sdk` when the code uses Cloudflare Agents SDK classes such as `Agent`, `AIChatAgent`, `McpAgent`, or Code Mode.
+- Use this skill for raw Durable Objects, storage, RPC methods, alarms, WebSockets, sharding, Workers integration, and DO tests.
 
 ## When to Use
 
@@ -15,6 +20,10 @@ Build stateful, coordinated applications on Cloudflare's edge using Durable Obje
 - Configuring wrangler.jsonc/toml for DO bindings and migrations
 - Writing tests with `@cloudflare/vitest-pool-workers`
 - Designing sharding strategies and parent-child relationships
+
+## Retrieval Rules
+
+Check current Cloudflare Durable Objects documentation before using uncertain syntax, compatibility-date behavior, SQLite storage details, alarms, WebSockets, or RPC features. Read existing `wrangler.jsonc`/`wrangler.toml` and compatibility date before edits.
 
 ## Reference Documentation
 
@@ -105,6 +114,7 @@ export default {
 5. **Use RPC methods** - Not fetch() handler (compatibility date >= 2024-04-03)
 6. **Persist first, cache second** - Always write to storage before updating in-memory state
 7. **One alarm per DO** - `setAlarm()` replaces any existing alarm
+8. **Keep atomic state changes together** - Avoid `await` between logically related storage writes; use synchronous SQL operations or explicit transactions where appropriate
 
 ## Anti-Patterns (NEVER)
 
@@ -113,6 +123,7 @@ export default {
 - Storing critical state only in memory (lost on eviction/crash)
 - Using `await` between related storage writes (breaks atomicity)
 - Holding `blockConcurrencyWhile()` across `fetch()` or external I/O
+- Using an Agent SDK abstraction when a raw Durable Object is required, or vice versa, without explaining the tradeoff
 
 ## Stub Creation
 

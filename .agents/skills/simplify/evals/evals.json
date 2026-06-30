@@ -1,0 +1,19 @@
+{
+  "skill_name": "simplify",
+  "evals": [
+    {
+      "id": "complexity",
+      "prompt": "Audit this repo for unnecessary complexity",
+      "expected_output": "Reads docs/hot files/churn and reports capped actionable findings",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "function",
+      "prompt": "Simplify this deeply nested handler",
+      "expected_output": "Uses guard clauses/smallest safe refactor",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

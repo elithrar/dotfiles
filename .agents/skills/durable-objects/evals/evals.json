@@ -1,0 +1,19 @@
+{
+  "skill_name": "durable-objects",
+  "evals": [
+    {
+      "id": "rpc-do",
+      "prompt": "Create a Durable Object for per-room chat state with RPC methods",
+      "expected_output": "Uses raw DO, getByName, SQLite migration, tests",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "alarm",
+      "prompt": "Review this DO alarm code for best practices",
+      "expected_output": "Checks one alarm semantics, storage, concurrency",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

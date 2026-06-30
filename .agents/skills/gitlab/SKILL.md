@@ -9,9 +9,10 @@ Operate on GitLab repositories using the `glab` CLI — merge requests, CI/CD pi
 
 ## FIRST: Verify Environment
 
-Run both checks before any `glab` command. If either fails, STOP.
+Run these checks before any `glab` command. If remote/auth checks fail, STOP.
 
 ```bash
+git status --short --branch
 git remote -v | grep -i gitlab
 glab auth status
 ```
@@ -23,6 +24,7 @@ If `glab` is not installed, ask the user to install it (`brew install glab` on m
 - **Avoid interactive commands.** `glab ci view` launches a TUI the agent cannot operate. Use `glab ci status` for pipeline state and `glab ci view --web` to open in browser. Always pass `--fill --yes` to `glab mr create` to skip interactive prompts.
 - **Check CI before requesting review.** Run `glab ci status` after pushing. A broken pipeline wastes reviewer time and signals the MR isn't ready.
 - **Pull logs first on CI failure.** Run `glab ci trace <job-name>` before anything else — 90% of failures are self-explanatory from the logs.
+- **Do not approve, merge, retry destructive jobs, or change protected branches unless explicitly asked.** These actions affect shared remote state.
 
 ## Behavioral Guidelines
 
@@ -39,6 +41,7 @@ If `glab` is not installed, ask the user to install it (`brew install glab` on m
 | List open MRs | `glab mr list` |
 | View MR details | `glab mr view 123` |
 | View MR comments | `glab mr view 123 --comments` |
+| View MR as JSON | `glab mr view 123 --output json` |
 | View MR diff | `glab mr diff 123` |
 | Check out MR locally | `glab mr checkout 123` |
 | Mark draft as ready | `glab mr update 123 --ready` |
@@ -96,6 +99,6 @@ glab mr merge --squash --remove-source-branch
 | Missing env/secret | `undefined`, `authentication failed` |
 | Dependency issue | `404 Not Found`, `version not found` |
 
-For operations not covered by glab subcommands, use `glab api` directly. For detailed command options, issue management, releases, search, and advanced CI debugging, see [references/commands.md](references/commands.md).
+For operations not covered by glab subcommands, use `glab api` directly. Prefer JSON/non-interactive output when parsing. For detailed command options, issue management, releases, search, and advanced CI debugging, see [references/commands.md](references/commands.md).
 
 Use `--fill --yes` for MR creation and `glab ci status` instead of `glab ci view` — interactive TUI commands will hang.

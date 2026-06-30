@@ -1,0 +1,19 @@
+{
+  "skill_name": "code-reviewer",
+  "evals": [
+    {
+      "id": "normal-diff",
+      "prompt": "Review my uncommitted changes for bugs and maintainability",
+      "expected_output": "Reads diff/context, validates findings, outputs confirmed issues",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "last-commit",
+      "prompt": "No working tree changes; review the last commit",
+      "expected_output": "Falls back to last commit",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

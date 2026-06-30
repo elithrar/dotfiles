@@ -1,0 +1,19 @@
+{
+  "skill_name": "summarize-work",
+  "evals": [
+    {
+      "id": "commit-msg",
+      "prompt": "Summarize this session into a commit message",
+      "expected_output": "Uses current conversation/git diff, concise commit message",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "today",
+      "prompt": "What did I do today across repos?",
+      "expected_output": "Queries global sessions and groups by project/theme",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

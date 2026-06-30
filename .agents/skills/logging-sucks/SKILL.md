@@ -10,7 +10,7 @@ metadata:
 
 > This skill is adapted from ["Logging sucks. And here's how to make it better."](https://loggingsucks.com/) by Boris Tane.
 
-When helping with logging, observability, or debugging strategies, follow these principles:
+When helping with logging, observability, or debugging strategies, first identify the current logger, transport, schema, and deployment/runtime constraints. Then follow these principles:
 
 ## Core Philosophy
 
@@ -116,10 +116,19 @@ Don't log errors for expected conditions (e.g., user enters wrong password)
 
 ## What NOT to Log
 
-- Sensitive data (passwords, tokens, PII, credit card numbers)
+- Sensitive data (passwords, tokens, PII, credit card numbers, session cookies, API keys, OAuth codes, private URLs)
 - Logs inside tight loops (will generate millions of useless entries)
 - Success cases that provide no debugging value
 - Redundant information already captured by infrastructure (load balancer logs, etc.)
+
+## Language Examples
+
+| Runtime | Preferred pattern |
+|---|---|
+| Node/TypeScript | Use structured loggers such as `pino`, `winston` JSON format, or platform-native structured logs; pass context objects, not interpolated strings. |
+| Python | Use `structlog` or `logging` with JSON formatter and `extra` fields. |
+| Go | Use `log/slog` with typed attributes and request-scoped context. |
+| Cloudflare Workers | Emit JSON via `console.log(JSON.stringify(event))` only after redacting secrets and keeping payload sizes bounded. |
 
 ## Naming Conventions
 
@@ -144,6 +153,16 @@ Use **tail sampling** — make the sampling decision *after* the request complet
 4. **Randomly sample the rest** — happy, fast requests get sampled at 1-5%
 
 This ensures you never lose the events that matter during incidents while keeping costs manageable.
+
+## Review Workflow
+
+When reviewing logging changes:
+
+1. Identify existing field names and logger conventions.
+2. Check whether logs answer who/what/when/where/how long/why failed.
+3. Check correlation propagation across HTTP, queues, jobs, and external calls.
+4. Check redaction and high-cardinality identifiers.
+5. Flag noisy logs, tight-loop logs, string interpolation, missing request IDs, and secrets.
 
 ## During Incidents
 

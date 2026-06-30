@@ -5,9 +5,18 @@ description: Build stateful AI agents using the Cloudflare Agents SDK. Load when
 
 # Cloudflare Agents SDK
 
-Build persistent, stateful AI agents on Cloudflare Workers using the `agents` npm package.
+Build persistent, stateful AI agents on Cloudflare Workers using the `agents` npm package. Prefer current Cloudflare Agents SDK docs over memory for API details because the SDK changes quickly.
 
-## FIRST: Verify Installation
+## FIRST: Verify Project And Installation
+
+Inspect before mutating dependencies:
+
+```bash
+ls package.json wrangler.jsonc wrangler.toml 2>/dev/null
+node -e "const p=require('./package.json'); console.log(p.dependencies?.agents || p.devDependencies?.agents || 'agents not installed')" 2>/dev/null
+```
+
+Install only when creating or updating an Agents project:
 
 ```bash
 npm install agents
@@ -27,6 +36,10 @@ Agents require a binding in `wrangler.jsonc`:
   ]
 }
 ```
+
+## Retrieval Rules
+
+Check current Cloudflare Agents SDK documentation before using uncertain APIs, decorators, package names, Code Mode details, or wrangler migration syntax. Read existing `wrangler.jsonc`/`wrangler.toml`, lockfile, framework files, and compatibility date before editing.
 
 ## Choosing an Agent Type
 
@@ -158,3 +171,9 @@ See [references/codemode.md](references/codemode.md) for setup and examples.
 4. **Use @callable for RPC**: Cleaner than manual WebSocket message handling
 5. **Code Mode for complex workflows**: Reduces round-trips and token usage
 6. **Schedule vs Queue**: Use `schedule()` for time-based, `queue()` for sequential processing
+7. **Validate config**: Run `wrangler types` and project tests after binding or migration changes
+
+## Routing
+
+- Use `durable-objects` for raw Durable Object design, storage, alarms, WebSockets, and RPC methods without the Agents SDK.
+- Use this skill when the code uses `Agent`, `AIChatAgent`, `McpAgent`, `agents`, `@cloudflare/ai-chat`, persistent agent state, or Code Mode.
