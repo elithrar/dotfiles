@@ -3,5 +3,9 @@
   "theme": "dark",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "medium"
+  "defaultThinkingLevel": "medium",
+  "hideThinkingBlock": false,
+  "editorPaddingX": 2,
+  "followUpMode": "all",
+  "steeringMode": "one-at-a-time"
 }
