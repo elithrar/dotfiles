@@ -42,7 +42,8 @@ quick-terminal-position = top
 quick-terminal-screen = mouse
 quick-terminal-animation-duration = 0.15
 
-keybind = shift+enter=text:\n
+# Let TUIs that request extended keyboard protocols distinguish Shift+Enter.
+keybind = shift+enter=unbind
 keybind = global:ctrl+grave_accent=toggle_quick_terminal
 
 # Smart copy: only intercept cmd+c when there's a selection

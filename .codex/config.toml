@@ -267,3 +267,6 @@ skill = "#cf2f98"
 
 [desktop.open-in-target-preferences]
 global = "zed"
+
+[notice]
+hide_rate_limit_model_nudge = true
