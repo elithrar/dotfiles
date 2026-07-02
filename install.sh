@@ -6,7 +6,7 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age agg asciinema atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jq lua make mkcert neovim nmap node pscale pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree try uv websocat wget wrk yarn zoxide zsh)
+BREW_PACKAGES=(age agg asciinema ast-grep atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jq lua make mkcert neovim nmap node pscale pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree try uv websocat wget wrk yarn zoxide zsh)
 CF_BREW_PACKAGES=(cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
 CASKS=(claude ghostty raycast zed@preview)
 SSH_EMAIL="matt@eatsleeprepeat.net"
@@ -231,6 +231,12 @@ if ! brew_formula_installed "bun"; then
     brew install --quiet oven-sh/bun/bun
 else
     print_success "bun already installed"
+fi
+
+# Enable repository-local hooks, including secret checks for staged auth files.
+if [[ -d "${HOME}/repos/dotfiles/.git" ]]; then
+    git -C "${HOME}/repos/dotfiles" config core.hooksPath .githooks
+    print_success "dotfiles git hooks configured"
 fi
 
 # reattach-to-user-namespace

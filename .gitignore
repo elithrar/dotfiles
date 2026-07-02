@@ -33,6 +33,7 @@ Temporary Items
 .claude/settings.local.json
 
 # Codex config and curated assets are tracked; runtime state/cache files are local-only.
+.codex/auth.json
 .codex/*
 !.codex/config.toml
 !.codex/model-catalogs/
@@ -61,4 +62,5 @@ Temporary Items
 .config/opencode/node_modules
 
 # Pi agent runtime sessions
+.pi/agent/auth.json
 .pi/agent/sessions/

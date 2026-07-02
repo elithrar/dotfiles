@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v ast-grep >/dev/null 2>&1; then
+    printf '%s\n' "pre-commit: ast-grep is required. Run install.sh or install ast-grep." >&2
+    exit 1
+fi
+
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "${tmpdir}"' EXIT
+
+failed=false
+
+while IFS= read -r file; do
+    [[ -n "${file}" ]] || continue
+
+    case "${file}" in
+        *.json|*.jsonc|*.jsonl|*auth.json|*models.json)
+            ;;
+        *)
+            continue
+            ;;
+    esac
+
+    staged="${tmpdir}/${file}"
+    mkdir -p "$(dirname "${staged}")"
+
+    if ! git show ":${file}" > "${staged}" 2>/dev/null; then
+        continue
+    fi
+
+    # Prefer an ast-grep parse for JSON string structure, but do not let JSONL
+    # or malformed JSON bypass the token patterns below.
+    ast-grep run --pattern '"$TOKEN"' --lang json "${staged}" >/dev/null 2>&1 || true
+
+    if perl -0777 -ne 'exit 42 if /"(?:access|access_token|id_token)"\s*:\s*"eyJ[A-Za-z0-9_-]{80,}\.[A-Za-z0-9_-]{80,}\.[A-Za-z0-9_-]{80,}"/s' "${staged}"; then
+        :
+    else
+        status=$?
+        if [[ ${status} -eq 42 ]]; then
+            printf '%s\n' "pre-commit: blocked staged OpenAI/Codex JWT in ${file}" >&2
+            failed=true
+        else
+            exit "${status}"
+        fi
+    fi
+
+    if perl -0777 -ne 'exit 42 if /"(?:refresh|refresh_token)"\s*:\s*"rt\.[^"]{40,}"/s' "${staged}"; then
+        :
+    else
+        status=$?
+        if [[ ${status} -eq 42 ]]; then
+            printf '%s\n' "pre-commit: blocked staged OpenAI/Codex refresh token in ${file}" >&2
+            failed=true
+        else
+            exit "${status}"
+        fi
+    fi
+
+    if perl -0777 -ne 'exit 42 if /"expires"\s*:\s*\d{10,}/s && /"rt\.[^"]{40,}"/s' "${staged}"; then
+        :
+    else
+        status=$?
+        if [[ ${status} -eq 42 ]]; then
+            printf '%s\n' "pre-commit: blocked staged auth token bundle in ${file}" >&2
+            failed=true
+        else
+            exit "${status}"
+        fi
+    fi
+done < <(git diff --cached --name-only --diff-filter=ACMR)
+
+if [[ "${failed}" == true ]]; then
+    printf '%s\n' "pre-commit: remove auth tokens from staged files before committing." >&2
+    exit 1
+fi
