@@ -48,6 +48,7 @@ Temporary Items
 
 # Database tools config
 .config/configstore/
+.config/minipro-tui/
 .config/pgcli/*
 .config/planetscale/*
 
@@ -60,6 +61,7 @@ Temporary Items
 # Zsh completion dump
 .zcompdump*
 .config/opencode/node_modules
+.config/opencode/service.json
 
 # Pi agent runtime sessions
 .pi/agent/auth.json
