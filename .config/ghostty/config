@@ -19,8 +19,9 @@ window-save-state = always
 
 window-colorspace = display-p3
 scrollback-limit = 20000000
+window-decoration = auto
 macos-option-as-alt = true
-macos-titlebar-style = hidden
+macos-titlebar-style = native
 macos-icon = chalkboard
 clipboard-paste-protection = true
 copy-on-select = true
