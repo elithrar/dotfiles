@@ -69,52 +69,37 @@ trust_level = "trusted"
 # OpenCode-style filesystem and network defaults.
 # Command prefix allow/prompt/forbid rules live in .codex/rules/default.rules.
 [permissions.opencode-default]
-description = "Workspace editing with OpenCode-style secret denies and repo/temp roots."
+description = "Workspace editing with secret denies and Git metadata access."
 extends = ":workspace"
 
 [permissions.opencode-default.workspace_roots]
 "/Users/matt/repos" = true
-"/tmp" = true
-"/private/tmp" = true
 
 [permissions.opencode-default.filesystem]
 glob_scan_max_depth = 8
 
 [permissions.opencode-default.filesystem.":workspace_roots"]
-"." = "write"
-"**/.env" = "deny"
+# The built-in workspace profile protects Git metadata. Trusted repositories
+# need it writable for branches, staging, rebases, commits, and worktrees.
+".git" = "write"
 "**/*.env" = "deny"
 # Keep examples readable. Codex deny rules win over allow/read rules, so avoid
 # broad `.env.*` denies that would also catch `.env.example`.
-"**/.env.local" = "deny"
 "**/*.env.local" = "deny"
-"**/.env.development" = "deny"
 "**/*.env.development" = "deny"
-"**/.env.development.local" = "deny"
 "**/*.env.development.local" = "deny"
-"**/.env.test" = "deny"
 "**/*.env.test" = "deny"
-"**/.env.test.local" = "deny"
 "**/*.env.test.local" = "deny"
-"**/.env.production" = "deny"
 "**/*.env.production" = "deny"
-"**/.env.production.local" = "deny"
 "**/*.env.production.local" = "deny"
-"**/.env.staging" = "deny"
 "**/*.env.staging" = "deny"
-"**/.env.staging.local" = "deny"
 "**/*.env.staging.local" = "deny"
-"**/.env.preview" = "deny"
 "**/*.env.preview" = "deny"
-"**/.env.preview.local" = "deny"
 "**/*.env.preview.local" = "deny"
-"**/.dev.vars" = "deny"
 "**/*.dev.vars" = "deny"
 
 [permissions.opencode-default.network]
 enabled = true
-mode = "full"
-allow_local_binding = false
 
 [tui]
 theme = "orng"
@@ -271,13 +256,11 @@ global = "zed"
 [notice]
 hide_rate_limit_model_nudge = true
 
+[shell_environment_policy]
+# Keep stale CI or shell tokens from overriding the authenticated gh keyring.
+exclude = ["GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN"]
+
 [shell_environment_policy.set]
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "5b74180ac40ca4cf726cad15c5ff886f159224f1c0306ea364ad9eea6a7e7ac2,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/matt/.codex"
-
-[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.enable_auto_merge"]
-approval_mode = "approve"
-
-[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.merge_pull_request"]
-approval_mode = "approve"
