@@ -67,6 +67,8 @@ alias sl="ls"
 alias oc="opencode --continue"
 alias ocr="opencode run"
 alias ocs="opencode ~/repos/scratch"
+alias codexr="codex resume"
+alias codexa="codex resume --last"
 unalias gb 2>/dev/null
 
 # Go

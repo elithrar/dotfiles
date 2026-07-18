@@ -187,17 +187,18 @@
       <key>name</key>
       <string>Inserted diff</string>
       <key>scope</key>
-      <string>markup.inserted, markup.inserted.diff, meta.diff.header.to-file</string>
+      <string>markup.inserted, markup.inserted.diff, diff.inserted, meta.diff.header.to-file</string>
       <key>settings</key>
-      <dict><key>foreground</key><string>#6BA1E6</string></dict>
+      <!-- Codex renders diff-scope backgrounds as opaque, so preblend orng-zed's 10% tint. -->
+      <dict><key>foreground</key><string>#6BA1E6</string><key>background</key><string>#1F2836</string></dict>
     </dict>
     <dict>
       <key>name</key>
       <string>Deleted diff</string>
       <key>scope</key>
-      <string>markup.deleted, markup.deleted.diff, meta.diff.header.from-file</string>
+      <string>markup.deleted, markup.deleted.diff, diff.deleted, meta.diff.header.from-file</string>
       <key>settings</key>
-      <dict><key>foreground</key><string>#E06C75</string></dict>
+      <dict><key>foreground</key><string>#E06C75</string><key>background</key><string>#2B222B</string></dict>
     </dict>
     <dict>
       <key>name</key>
