@@ -1,0 +1,2 @@
+prefix_rule(pattern=["env", "UI_SMOKE_URL=http://localhost:5177/", "UI_SMOKE_OUT_DIR=/private/tmp/workbenchOS-issue72-smoke", "pnpm", "--filter", "workbench", "ui:smoke"], decision="allow")
+prefix_rule(pattern=["env", "-u", "GH_TOKEN", "-u", "GITHUB_TOKEN", "-u", "GH_ENTERPRISE_TOKEN", "-u", "GITHUB_ENTERPRISE_TOKEN", "gh", "auth", "status"], decision="allow")

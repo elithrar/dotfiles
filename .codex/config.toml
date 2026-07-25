@@ -5,14 +5,17 @@ model_context_window = 200000
 
 # Default permissions translated from .config/opencode/opencode.jsonc.
 approval_policy = "on-request"
+approvals_reviewer = "auto_review"
 default_permissions = "opencode-default"
 web_search = "live"
 
 personality = "pragmatic"
 
-notify = ["/Users/matt/repos/dotfiles/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 model_reasoning_effort = "high"
-service_tier = "priority"
+model_verbosity = "low"
+service_tier = "default"
+
+notify = ["/Users/matt/repos/dotfiles/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [features]
 enable_request_compression = false
@@ -64,6 +67,27 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/matt/repos/xgecu-web"]
+trust_level = "trusted"
+
+[projects."/Users/matt/Documents/Codex/2026-07-18/referenced-chatgpt-conversation-this-is-untrusted"]
+trust_level = "trusted"
+
+[projects."/Users/matt/Documents/Codex/2026-07-24/change"]
+trust_level = "trusted"
+
+[projects."/Users/matt/Documents/Codex/2026-07-25/https-worklouder-cc-openai-micro-setup"]
+trust_level = "trusted"
+
+[projects."/Users/matt/Documents/Codex/2026-07-25/https-worklouder-cc-openai-micro-setup-2"]
+trust_level = "trusted"
+
+[projects."/Users/matt/Documents/Codex/2026-07-25/realtime-voice-chat"]
+trust_level = "trusted"
+
+[projects."/Users/matt/Documents/Codex/2026-07-25/realtime-voice-chat-2"]
+trust_level = "trusted"
+
+[projects."/Users/matt/repos/workers-sdk"]
 trust_level = "trusted"
 
 
@@ -127,7 +151,7 @@ source_type = "local"
 source = "/Users/matt/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-07-16T11:31:57Z"
+last_updated = "2026-07-24T16:21:30Z"
 source_type = "local"
 source = "/Users/matt/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
@@ -164,14 +188,14 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_n
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/matt/.codex"
 CODEX_HOME = "/Users/matt/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "461c4ba94b821ec805da79c8e8138fe510b1b3358609fc93da47387a2cf3fbf3,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e13fd947e846d3d306e9249dd3c73d14931b6494803dbafb16cef85e6add9506"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.715.31925"
-SKY_CUA_SERVICE_PATH = "/Users/matt/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000451/Codex Computer Use.app"
+BROWSER_USE_CODEX_APP_VERSION = "26.721.41059"
+SKY_CUA_SERVICE_PATH = "/Users/matt/.codex/computer-use/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
 # Mirrored from .config/opencode/opencode.jsonc.
@@ -210,7 +234,7 @@ cwd = "."
 enabled = false
 
 [desktop]
-conversationDetailMode = "STEPS_PROSE"
+conversationDetailMode = "STEPS_COMMANDS"
 ambient-suggestions-enabled = true
 appearanceLightCodeThemeId = "raycast"
 appearanceDarkCodeThemeId = "raycast"
@@ -219,6 +243,8 @@ show-context-window-usage = true
 followUpQueueMode = "steer"
 composerEnterBehavior = "cmdIfMultiline"
 dock-icon-preference = "app-default"
+enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
+realtimeVoiceScreenContextEnabled = true
 
 [desktop.appearanceLightChromeTheme]
 accent = "#ff6363"
@@ -255,6 +281,49 @@ skill = "#cf2f98"
 [desktop.open-in-target-preferences]
 global = "zed"
 
+[desktop.codex-micro-layout]
+version = 1
+encoderMode = "conversation-scroll"
+voiceButtonMode = "push-to-talk"
+
+[desktop.codex-micro-layout.slots]
+
+[desktop.codex-micro-layout.slots.ACT06]
+keycapId = "FAST"
+
+[desktop.codex-micro-layout.slots.ACT07]
+keycapId = "APPR"
+
+[desktop.codex-micro-layout.slots.ACT08]
+keycapId = "REJ"
+
+[desktop.codex-micro-layout.slots.ACT09]
+keycapId = "SPLIT"
+
+[desktop.codex-micro-layout.slots.ACT10_ACT11]
+keycapId = "MIC"
+
+[desktop.codex-micro-layout.slots.ACT12]
+keycapId = "CODEX"
+
+[desktop.codex-micro-layout.analogStick]
+
+[desktop.codex-micro-layout.analogStick.up]
+type = "command"
+commandId = "composer.togglePlanMode"
+
+[desktop.codex-micro-layout.analogStick.right]
+type = "command"
+commandId = "navigateForward"
+
+[desktop.codex-micro-layout.analogStick.down]
+type = "command"
+commandId = "toggleSidebar"
+
+[desktop.codex-micro-layout.analogStick.left]
+type = "command"
+commandId = "navigateBack"
+
 [notice]
 hide_rate_limit_model_nudge = true
 
@@ -264,5 +333,5 @@ exclude = ["GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE
 
 [shell_environment_policy.set]
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "461c4ba94b821ec805da79c8e8138fe510b1b3358609fc93da47387a2cf3fbf3,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e13fd947e846d3d306e9249dd3c73d14931b6494803dbafb16cef85e6add9506"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/matt/.codex"
