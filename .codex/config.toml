@@ -217,6 +217,10 @@ url = "https://mcp.cloudflare.com/mcp"
 [mcp_servers."cloudflare-docs"]
 url = "https://docs.mcp.cloudflare.com/mcp"
 
+# Public, stateless WorkbenchOS Motronic ROM/XDF tools.
+[mcp_servers.workbenchos]
+url = "https://workbench.questionable.services/mcp"
+
 [mcp_servers."google-workspace"]
 url = "https://google-workspace-mcp.cto.cfdata.org/mcp"
 enabled = false
