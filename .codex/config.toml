@@ -3,10 +3,10 @@ model = "gpt-5.6-sol"
 # model_catalog_json = "./model-catalogs/cloudflare-ai-gateway.json"
 model_context_window = 200000
 
-# Default permissions translated from .config/opencode/opencode.jsonc.
+# Workspace permissions with explicit secret-file protections.
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
-default_permissions = "opencode-default"
+default_permissions = "codex-default"
 web_search = "live"
 
 personality = "pragmatic"
@@ -21,6 +21,7 @@ notify = ["/Users/matt/repos/dotfiles/.codex/computer-use/Codex Computer Use.app
 enable_request_compression = false
 memories = true
 prevent_idle_sleep = true
+js_repl = false
 
 [model_providers.cloudflare-ai-gateway]
 name = "OpenAI: Cloudflare AI Gateway"
@@ -90,20 +91,26 @@ trust_level = "trusted"
 [projects."/Users/matt/repos/workers-sdk"]
 trust_level = "trusted"
 
+[projects."/Users/matt/Documents/Codex/2026-07-25/referenced-chatgpt-conversation-this-is-untrusted"]
+trust_level = "trusted"
 
-# OpenCode-style filesystem and network defaults.
+[projects."/Users/matt/Documents/Codex/2026-07-26/referenced-chatgpt-conversation-this-is-untrusted"]
+trust_level = "trusted"
+
+
+# Codex filesystem and network defaults.
 # Command prefix allow/prompt/forbid rules live in .codex/rules/default.rules.
-[permissions.opencode-default]
+[permissions.codex-default]
 description = "Workspace editing with secret denies and Git metadata access."
 extends = ":workspace"
 
-[permissions.opencode-default.workspace_roots]
+[permissions.codex-default.workspace_roots]
 "/Users/matt/repos" = true
 
-[permissions.opencode-default.filesystem]
+[permissions.codex-default.filesystem]
 glob_scan_max_depth = 8
 
-[permissions.opencode-default.filesystem.":workspace_roots"]
+[permissions.codex-default.filesystem.":workspace_roots"]
 # The built-in workspace profile protects Git metadata. Trusted repositories
 # need it writable for branches, staging, rebases, commits, and worktrees.
 ".git" = "write"
@@ -123,7 +130,7 @@ glob_scan_max_depth = 8
 "**/*.env.preview.local" = "deny"
 "**/*.dev.vars" = "deny"
 
-[permissions.opencode-default.network]
+[permissions.codex-default.network]
 enabled = true
 
 [tui]
@@ -234,7 +241,7 @@ cwd = "."
 enabled = false
 
 [desktop]
-conversationDetailMode = "STEPS_COMMANDS"
+conversationDetailMode = "STEPS_PROSE"
 ambient-suggestions-enabled = true
 appearanceLightCodeThemeId = "raycast"
 appearanceDarkCodeThemeId = "raycast"
@@ -245,6 +252,10 @@ composerEnterBehavior = "cmdIfMultiline"
 dock-icon-preference = "app-default"
 enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
 realtimeVoiceScreenContextEnabled = true
+codex-micro-lighting-brightness = 30
+codex-micro-agent-source = "custom"
+dictationDictionary = ["WOT = wide open throttle", "Motronic (Bosch Motronic ECU)"]
+preventSleepWhileRunning = true
 
 [desktop.appearanceLightChromeTheme]
 accent = "#ff6363"
@@ -284,7 +295,7 @@ global = "zed"
 [desktop.codex-micro-layout]
 version = 1
 encoderMode = "conversation-scroll"
-voiceButtonMode = "push-to-talk"
+voiceButtonMode = "realtime"
 
 [desktop.codex-micro-layout.slots]
 
@@ -304,7 +315,12 @@ keycapId = "SPLIT"
 keycapId = "MIC"
 
 [desktop.codex-micro-layout.slots.ACT12]
-keycapId = "CODEX"
+keycapId = "BUG"
+
+[desktop.codex-micro-layout.slots.ACT12.action]
+type = "skill"
+skillName = "review-agent"
+skillPath = "/Users/matt/repos/dotfiles/.codex/skills/.system/review-agent/SKILL.md"
 
 [desktop.codex-micro-layout.analogStick]
 
