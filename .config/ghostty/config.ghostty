@@ -1,6 +1,7 @@
 # github.com/elithrar/dotfiles
 
 theme = orng-dark
+minimum-contrast = 1.1
 font-size = 15
 font-family = "TX-02"
 
@@ -31,8 +32,14 @@ mouse-hide-while-typing = true
 mouse-shift-capture = never
 cursor-style-blink = false
 
-# Enable all shell integration features including SSH env/terminfo (1.2.0)
-shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
+# Enable all shell integration features, including SSH support and PATH setup.
+shell-integration-features = true
+
+# Notify after long-running commands finish while an integrated shell is unfocused.
+# tmux consumes raw OSC 133 markers, so this applies to direct Ghostty shells.
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = no-bell,notify
+notify-on-command-finish-after = 30s
 
 link-url = true
 link-previews = osc8
@@ -56,5 +63,3 @@ keybind = cmd+shift+l=copy_url_to_clipboard
 # Jump between shell prompts (requires shell integration)
 keybind = shift+up=jump_to_prompt:-1
 keybind = shift+down=jump_to_prompt:1
-
-command-palette-entry = title:vim mode,action:activate_key_table:vim
