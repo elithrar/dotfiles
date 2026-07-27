@@ -1,0 +1,32 @@
+# USGC RETICLE - Ghostty Theme
+# Adapted from USGC-RETICLE-IT by U.S. Graphics Company.
+# Values preserve the source Display P3 components; use with
+# window-colorspace = display-p3 for a faithful match.
+
+background = #000000
+foreground = #459A65
+cursor-color = #868D96
+cursor-text = #FFFFFF
+selection-background = #01057C
+selection-foreground = #F6C443
+bold-color = #75767C
+
+# Standard colors (0-7)
+palette = 0=#262626
+palette = 1=#CD0400
+palette = 2=#F6C443
+palette = 3=#F6C443
+palette = 4=#6B40EF
+palette = 5=#EA3D8D
+palette = 6=#3477F6
+palette = 7=#FFFFFF
+
+# Bright colors (8-15)
+palette = 8=#484747
+palette = 9=#CD0400
+palette = 10=#EBBC40
+palette = 11=#F6C443
+palette = 12=#EE7B3B
+palette = 13=#EA3D8D
+palette = 14=#3376F6
+palette = 15=#FEFEFF
