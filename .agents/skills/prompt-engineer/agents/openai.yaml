@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prompt Engineer"
+  short_description: "Audit and improve LLM prompts"
+  default_prompt: "Use $prompt-engineer to audit and improve this prompt with minimal behavioral changes."

@@ -2,18 +2,95 @@
   "skill_name": "code-reviewer",
   "evals": [
     {
-      "id": "normal-diff",
-      "prompt": "Review my uncommitted changes for bugs and maintainability",
-      "expected_output": "Reads diff/context, validates findings, outputs confirmed issues",
+      "id": "introduced-null-dereference",
+      "prompt": "Review this diff:\n```diff\n function accountId(user) {\n-  if (!user) return null;\n+  if (!user) console.warn('missing user');\n   return user.account.id;\n }\n```",
+      "expected_output": "Reports one actionable finding on the changed guard because a missing user now falls through and dereferences null.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Activates code-reviewer.",
+        "Reports exactly one P1 or P2 finding.",
+        "Cites the changed guard line.",
+        "Explains the missing-user scenario without speculative claims."
+      ]
     },
     {
-      "id": "last-commit",
-      "prompt": "No working tree changes; review the last commit",
-      "expected_output": "Falls back to last commit",
+      "id": "safe-null-counterexample",
+      "prompt": "Review this diff:\n```diff\n function accountId(user) {\n-  return user.account.id;\n+  if (!user) return null;\n+  return user.account.id;\n }\n```",
+      "expected_output": "Reports no finding because the change safely handles the missing-user case.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Activates code-reviewer.",
+        "Returns No findings.",
+        "Does not invent a style or return-type complaint without repository evidence."
+      ]
+    },
+    {
+      "id": "preexisting-issue-outside-diff",
+      "prompt": "Review this diff and do not fix files:\n```diff\n function legacyParser(input) {\n   return JSON.parse(input);\n }\n \n+// Keep this wrapper for API compatibility.\n export function parse(input) {\n   return legacyParser(input);\n }\n```",
+      "expected_output": "Does not report the unchanged parser behavior as a change-introduced defect.",
+      "files": [],
+      "assertions": [
+        "Activates code-reviewer.",
+        "Returns No findings unless repository context demonstrates a defect introduced by the comment.",
+        "Does not cite unchanged code as the cause of a finding."
+      ]
+    },
+    {
+      "id": "style-only-diff",
+      "prompt": "Review this diff:\n```diff\n-const result=compute(value)\n+const result = compute(value);\n```",
+      "expected_output": "Returns no finding unless the repository's configured tooling proves the change breaks a required convention.",
+      "files": [],
+      "assertions": [
+        "Activates code-reviewer.",
+        "Does not report a preference-only finding.",
+        "Does not run broad validation without a candidate defect."
+      ]
+    },
+    {
+      "id": "intentional-tested-change",
+      "prompt": "Review a change that intentionally makes retry count zero disable retries. The implementation, public docs, and regression test all agree on the new behavior.",
+      "expected_output": "Does not report the documented behavior change merely because it differs from the prior implementation.",
+      "files": [],
+      "assertions": [
+        "Activates code-reviewer.",
+        "Checks the implementation and test before judging intent.",
+        "Does not treat an intentional tested change as a regression."
+      ]
+    },
+    {
+      "id": "base-branch-merge-base",
+      "prompt": "Review this branch against main. The local main ref is behind origin/main, and the branch has an upstream.",
+      "expected_output": "Resolves the appropriate comparison ref, computes the merge base, and reviews the changes that would actually merge.",
+      "files": [],
+      "assertions": [
+        "Activates code-reviewer.",
+        "Uses the upstream comparison ref when it is ahead and available.",
+        "Does not diff HEAD directly against the branch tip.",
+        "Keeps the workflow read-only."
+      ]
+    },
+    {
+      "id": "clean-working-tree-no-target",
+      "prompt": "Review my uncommitted changes.",
+      "expected_output": "When the working tree is clean, reports that no uncommitted review target exists instead of silently reviewing the last commit.",
+      "files": [],
+      "assertions": [
+        "Activates code-reviewer.",
+        "Does not fall back to the last commit.",
+        "Does not modify the working tree."
+      ]
+    },
+    {
+      "id": "scoped-rule-safe-counterexample",
+      "prompt": "AGENTS.md says rawResponseItem event names must remain backward compatible. Review a diff that changes only an unrelated internal variable name.",
+      "expected_output": "Applies the repository rule only to its governed integration surface and reports no compatibility finding for the unrelated rename.",
+      "files": [],
+      "assertions": [
+        "Activates code-reviewer.",
+        "Reads the applicable AGENTS.md rule.",
+        "Returns No findings for the unrelated safe change.",
+        "Does not broaden a scoped invariant into a generic naming rule."
+      ]
     }
   ]
 }

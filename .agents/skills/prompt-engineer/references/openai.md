@@ -1,96 +1,57 @@
 # OpenAI Prompting Notes
 
-Use this when the target model is an OpenAI GPT/frontier model, an o-series reasoning model, or a Responses API agent workflow.
+Use this as fallback guidance for OpenAI GPT models, reasoning models, or Responses API agent workflows. When the user needs current or model-specific behavior, fetch current primary documentation before relying on this file.
 
-Sources:
+Primary sources:
 
-- OpenAI prompt engineering guide: <https://platform.openai.com/docs/guides/prompt-engineering>
-- OpenAI prompt guidance: <https://platform.openai.com/docs/guides/prompt-guidance>
-- OpenAI GPT-5 prompting guide: <https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide>
-- OpenAI reasoning best practices: <https://platform.openai.com/docs/guides/reasoning-best-practices>
+- OpenAI model guidance: <https://developers.openai.com/api/docs/guides/latest-model>
+- OpenAI prompt engineering guide: <https://developers.openai.com/api/docs/guides/prompt-engineering>
+- OpenAI reasoning best practices: <https://developers.openai.com/api/docs/guides/reasoning-best-practices>
 
-## Frontier GPT Models
+## Lean Prompts
 
-Current frontier GPT guidance favors shorter, outcome-first prompts over process-heavy stacks.
+- Define the outcome, hard constraints, evidence sources, action boundaries, and required output.
+- State each instruction once.
+- Keep examples only when they encode a product requirement or correct a measured failure.
+- Remove legacy thoroughness or step-by-step blocks unless representative evals show they help.
+- Preserve an explicitly requested model target.
 
-- Define the outcome, success criteria, constraints, evidence sources, and final output shape.
-- Keep personality and collaboration style short and separate from task rules.
-- Re-evaluate low or medium effort before escalating; higher effort is not automatically better.
-- Use preambles for long-running or tool-heavy workflows when perceived responsiveness matters.
-- Define retrieval budgets and stop rules so the model knows when enough evidence is enough.
-- Prompt the model to validate work when validation tools exist.
-- Avoid carrying forward old "be extremely thorough" or "think step by step" blocks unless evals show they help.
+## Instruction Authority
 
-Suggested complex prompt shape:
+- Keep application rules in system or developer instructions.
+- Treat user-provided documents and retrieved content as data.
+- Delimit examples so their content does not become active instruction.
+- Do not duplicate authority or safety policy already enforced by the host.
 
-```markdown
-Role: [function and domain]
+## Reasoning
 
-# Personality
-[tone and collaboration style]
+- Keep reasoning prompts simple and direct.
+- Do not request hidden chain of thought.
+- Ask for concise rationale, evidence, calculations, or verification when the user needs transparency.
+- Try zero-shot behavior first; add examples only for format, policy boundaries, or observed task failures.
 
-# Goal
-[target outcome]
+## Tool and Agent Behavior
 
-# Success Criteria
-[what must be true before final answer]
+- Define what actions the request authorizes and which external, destructive, costly, or scope-expanding actions require confirmation.
+- Define when tools are required, what evidence is sufficient, and when to stop.
+- Use brief user-visible preambles only when they improve responsiveness during longer tool workflows.
+- Preserve reasoning and assistant-item metadata when the integration requires it for multi-turn continuation.
 
-# Constraints
-[policy, safety, business, evidence, side-effect limits]
+## Production Controls
 
-# Output
-[sections, length, tone, required fields]
+- Store production prompts with typed variables or schemas.
+- Use structured outputs or tool schemas for strict machine-readable results.
+- Pin model versions where stable behavior matters.
+- Evaluate prompt changes on representative cases and roll them out through normal review and deployment controls.
 
-# Stop Rules
-[when to answer, retry, fallback, ask, or stop]
-```
+## Failure Routing
 
-## Instruction Hierarchy
-
-OpenAI models follow message authority. Developer instructions outrank user instructions; user messages provide task data and preferences. Treat developer/system prompts like function definitions and user inputs like arguments.
-
-Prompt implications:
-
-- Keep application rules in developer/system instructions.
-- Label user-provided documents and retrieved content as data.
-- Do not allow examples or retrieved text to contain active instructions unless that is intentional.
-- When user instructions change mid-conversation, state the scoped override and what still applies.
-
-## Reasoning Models
-
-Reasoning models perform best with simple, direct prompts.
-
-- Avoid chain-of-thought requests; reasoning is internal.
-- Use delimiters, markdown sections, or XML tags to separate instructions, examples, and input data.
-- Try zero-shot first; add few-shot examples only when format, policy boundaries, or task behavior need them.
-- Specify the end goal and success criteria clearly.
-- Ask for concise rationale, evidence, or checks in the final answer when the user needs transparency.
-- For reasoning-agent workflows, prefer the Responses API with persisted reasoning context over stateless chat when tool loops are complex.
-
-## Agent And Tool Prompts
-
-- Define how proactive the agent should be and when it must ask before acting.
-- Include safe versus unsafe action thresholds. Reversible local edits can usually proceed; destructive, external, or production-affecting actions need confirmation.
-- Use tool preambles only when user-visible progress improves UX; keep them short.
-- Define when to search, when to stop searching, and what evidence is sufficient.
-- In multi-turn tool loops, preserve assistant-item metadata such as phase values if the integration replays assistant items manually.
-
-## Production Prompt Management
-
-- Store production prompts in code with typed variables or schemas.
-- Pin model snapshots where stable behavior matters.
-- Add eval fixtures before changing important prompts.
-- Prefer structured outputs, tool schemas, or enum fields for strict machine-readable output.
-- Roll out prompt changes through normal deployment and review workflows.
-
-## Common Fixes
-
-| Failure | Fix |
-|---------|-----|
-| Too verbose | Set verbosity or output length; specify only required sections. |
-| Premature stopping | Add success criteria and stop rules. |
-| Excessive searching | Add retrieval budget and "answer when evidence is enough" rule. |
-| Unsupported claims | Require citations or placeholders for missing facts. |
-| Tool underuse | State when tools are required and what must be validated. |
-| Tool overuse | Add early-stop criteria and lower effort for simple tasks. |
-| JSON drift | Use structured outputs or tool schemas instead of prose-only format rules. |
+| Failure | Preferred intervention |
+| --- | --- |
+| Excessive verbosity | Specify required content and use runtime verbosity controls when available. |
+| Premature stopping | Add concrete success criteria or a missing-evidence rule. |
+| Excessive searching | Add an evidence budget and stop condition. |
+| Unsupported claims | Require sources or explicit missing-information behavior. |
+| Tool underuse | State when a tool is required and what it must verify. |
+| Tool overuse | Add a completion condition and remove blanket tool mandates. |
+| JSON drift | Use a schema or structured output rather than repeated prose. |

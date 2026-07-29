@@ -1,199 +1,107 @@
 ---
 name: prompt-engineer
-description: >
-  Reviews, improves, and iterates on system prompts and LLM instructions.
-  Load when writing, rewriting, reviewing, or optimizing a system prompt,
-  agent prompt, tool description, skill description, or any LLM instructions.
-  Triggers on "prompt engineering", "improve this prompt", "make this more
-  LLM-friendly", or any block of instructions to refine. Applies model-aware
-  analysis to improve clarity, instruction hierarchy, eval coverage, and model
-  compliance.
+description: Audit and revise system prompts, developer instructions, tool descriptions, and reusable LLM prompt templates. Use for behavioral failures such as over-searching, format drift, weak tool use, instruction conflicts, or unsupported claims. Use add-skill for SKILL.md authoring and ordinary editing for prose-only changes.
 ---
 
 # Prompt Engineer
 
-Review, improve, and iterate on system prompts, developer instructions, agent prompts, skills, tool descriptions, and prompt templates.
-
-## Core Principle
-
-Prompt engineering is context engineering. Design prompts as behavioral contracts: the smallest high-signal set of goals, constraints, context, examples, and verification rules that reliably produces the desired behavior.
+Treat prompts as behavioral interfaces. Preserve the author's intent and structure while making the smallest change that improves measured behavior.
 
 ## Operating Rules
 
 - Treat prompt edits as behavior changes, not copy edits.
-- Make the smallest rewrite that addresses the observed failure; do not rewrite everything when a targeted patch is enough.
-- Work from observed failures, target behavior, and success criteria. If none exist, define representative test inputs before rewriting.
-- Preserve instruction authority boundaries: system/developer rules define the application; user content supplies task data; untrusted data stays labeled as data.
-- Prefer outcome-first prompts for frontier models. Avoid inherited process-heavy prompt stacks unless each step fixes a measured failure.
-- Ask one narrow question only when missing context materially changes the design or risk. Otherwise proceed with an explicit assumption.
-- Do not ask models to reveal hidden chain of thought. Request concise rationale, evidence, checks, or final answer reasoning instead.
-- For production prompts, recommend versioning prompts in code, typed inputs or schemas for variables, model snapshots, and eval fixtures.
+- Work from observed failures, target behavior, and success criteria. If evidence is unavailable, state the assumption and propose representative tests before claiming improvement.
+- Preserve instruction authority: system and developer rules define the application, user content supplies task data, and retrieved or user-provided documents remain labeled as data.
+- Prefer lean, outcome-first prompts. Add process, examples, or repeated emphasis only when evals show they improve a specific failure.
+- Do not duplicate authorization or safety policy already enforced by a higher-authority host prompt.
+- Do not ask models to reveal hidden chain of thought. Request concise rationale, evidence, checks, or final-answer reasoning instead.
+- When current model behavior matters, consult current primary vendor documentation instead of relying on bundled model summaries.
+- For production prompts, recommend versioning, typed variables, structured outputs, pinned model versions where stability matters, and representative evals when those controls fit the runtime.
 
 ## Workflow
 
-### 1. Identify The Contract
+### 1. Establish the Contract
 
-Before editing, identify:
+Identify only the dimensions that affect the revision:
 
-| Dimension | Question |
-|-----------|----------|
-| Target behavior | What must the model do reliably? |
-| Failure mode | What is currently wrong: undertriggering, overtriggering, verbosity, hallucination, format drift, weak tool use, refusal, safety risk? |
-| Target model | GPT, Claude, reasoning model, small model, open-source model, or unknown? |
-| Runtime | Chat UI, API, agent loop, tool caller, RAG pipeline, evaluator, or skill loader? |
-| Authority | Which content is system/developer instruction, user instruction, retrieved context, or untrusted data? |
-| Output contract | Free text, markdown, JSON/schema, tool call, citation format, or UI artifact? |
-| Evaluation | What examples, tests, traces, or user reports prove improvement? |
+- Desired behavior and observed failure.
+- Target model and runtime.
+- Instruction authority and untrusted inputs.
+- Required inputs, tools, action boundaries, and output.
+- Evidence that will distinguish an improvement from a regression.
 
-### 2. Diagnose The Prompt
+If missing context materially changes the design or risk, ask one focused question. Otherwise proceed with an explicit assumption.
 
-Evaluate the prompt against these dimensions. Present findings as a concise paragraph or bullets, not a giant rubric.
+### 2. Diagnose the Failure
 
-**Goal and success criteria** - Does the prompt define the desired outcome, what "done" means, and when to ask, retry, fallback, or stop?
+Check for:
 
-**Instruction hierarchy** - Are higher-priority rules separated from user data and examples? Are untrusted inputs clearly delimited so the model does not treat them as instructions?
+- **Goal and completion**: Is the desired result clear, including what counts as done and when to ask, retry, fallback, or stop?
+- **Instruction hierarchy**: Are authoritative instructions separated from examples, user data, and retrieved content?
+- **Specificity and contradictions**: Do vague qualifiers, conflicting rules, or unjustified absolutes make behavior unstable?
+- **Structure and attention**: Are critical rules easy to find, and are instructions clearly separated from data?
+- **Examples and grounding**: Is the minimum evidence or example needed to correct a measured boundary, format, or factual failure present?
+- **Tool and action boundaries**: Does the prompt define when tools or external actions are required, optional, prohibited, or complete?
+- **Output contract**: Should strict machine-readable output be enforced with a schema or tool definition rather than prose alone?
+- **Signal density**: Can duplicate rules, cargo-cult structure, overbroad persona text, or legacy reasoning instructions be removed?
 
-**Specificity and contradictions** - Flag vague qualifiers ("try to", "if possible"), conflicting rules, and absolute words (`always`, `never`, `must`) used for judgment calls instead of true invariants.
+Present the diagnosis concisely. Do not turn every prompt review into a generic rubric.
 
-**Structure and attention** - Group related rules. Put critical reusable instructions early, bulky context in clearly tagged sections, and the immediate task plus stop rules near the end. Avoid burying key facts in the middle of long context.
+### 3. Revise
 
-**Examples and grounding** - Add examples when tone, format, classification boundaries, tool-use decisions, or edge cases matter. Ground factual answers in provided or retrieved evidence, and define citation or missing-evidence behavior.
-
-**Tool and agent behavior** - Define when to use tools, when to parallelize, when to stop searching, what actions require confirmation, and what validation proves completion.
-
-**Output contract** - Specify format, length, tone, required fields, ordering, and failure behavior. Prefer structured outputs or tool schemas over hoping prose instructions enforce strict JSON.
-
-**Signal density** - Remove duplicate rules, cargo-cult XML, overbroad persona text, and legacy "think step by step" instructions that add noise for modern reasoning models.
-
-### 3. Rewrite
-
-Apply the smallest rewrite that addresses the failure mode. For a full rewrite, use this structure as a starting point and delete sections that do not change behavior:
+Apply the smallest change that addresses the failure. Use only the sections that alter behavior. A complex prompt may need:
 
 ```markdown
-Role: [1-2 sentences defining function and domain]
-
-# Personality
-[Tone and collaboration style, if user-facing]
-
 # Goal
-[User-visible outcome]
-
-# Success Criteria
-[What must be true before final response]
+[Desired result]
 
 # Context
-[Reference data, retrieved facts, schemas, domain rules]
+[Only information that changes the result]
 
-# Constraints
-[Safety, evidence, privacy, side-effect, and scope limits]
-
-# Tools
-[When to use tools, when not to, confirmation thresholds]
+# Boundaries
+[Scope, evidence, safety, and authorization limits]
 
 # Output
-[Sections, fields, length, tone, citation rules]
+[Required format and content]
 
-# Stop Rules
-[When to answer, ask, retry, fallback, or stop]
-
-# Task
-[Immediate user request or template variable]
+# Verification
+[Final checks or missing-evidence behavior]
 ```
 
-Rewrite rules:
+Omit sections that do not change behavior. Add role, personality, tools, examples, or stop rules only when the application needs them or an eval demonstrates the gap.
 
-- Use imperative mood: "Return JSON" not "You should return JSON".
-- Explain why for non-obvious constraints, especially formatting, safety, or tool-use limits.
-- Use XML tags or markdown headers to separate distinct content types; avoid nesting that only adds ceremony.
-- Add positive instructions before negative constraints: "Write in prose paragraphs" beats "Do not use bullets".
-- Include at least one positive example when format or tone matters; add an edge or negative example when the boundary is ambiguous.
-- For long-context prompts, attach source metadata and ask the model to quote or cite relevant evidence before synthesis when accuracy matters.
-- End with the immediate task, success criteria, or stop condition so the last thing read reinforces the outcome.
+Use imperative language. State desired behavior directly, then add negative constraints for genuine prohibitions. Explain non-obvious constraints when the reason helps the model generalize.
 
-### 4. Present The Result
+Use markdown headings or XML tags only to separate real content types. For long-context work, attach source metadata and define citation or missing-evidence behavior; require quote extraction only when the task genuinely needs quoted evidence.
 
-Show the rewritten prompt in full. Then include:
+### 4. Present the Result
 
-- Material changes: moved, merged, removed, or added.
-- Why the changes address the observed failure modes.
-- Assumptions, tradeoffs, and any unresolved ambiguity.
-- Suggested evals: 2-5 representative inputs, including at least one edge case.
+- For an audit, report the failure mechanism and exact proposed edits without silently rewriting the artifact.
+- For a targeted edit, show the patch or changed sections.
+- For a requested rewrite, show the complete revised prompt.
+- Preserve the author's voice, intent, and authority boundaries.
+- Include assumptions, material tradeoffs, and representative evals.
+- Distinguish tested improvements from untested proposals.
 
-## Skill-Specific Guidance
+## Skill Routing
 
-When improving agent skills:
-
-- Optimize the frontmatter description for trigger accuracy; include realistic user phrases and near-miss routing boundaries.
-- Keep SKILL.md focused on critical behavior and route bulky docs into `references/`.
-- Add behavior evals for fragile workflows and trigger evals for descriptions.
-- Prefer deterministic scripts for repeated mechanical work instead of asking the model to rediscover the same procedure.
-- Generalize from eval failures; avoid instructions that overfit one fixture.
+For `SKILL.md` creation, resource organization, metadata, and activation testing, use `add-skill`. Use this skill only when the primary problem is prompt behavior inside the skill.
 
 ## Model-Specific Guidance
 
-Use model notes when the target model is known; otherwise keep the prompt model-agnostic and direct.
+Keep the core analysis model-agnostic. When behavior depends on a named or current model:
 
-| Target | Default guidance |
-|--------|------------------|
-| Frontier GPT models | Prefer shorter outcome-first prompts with explicit success criteria, stop rules, retrieval budgets, validation, and concise preambles for tool-heavy flows. See [references/openai.md](references/openai.md). |
-| OpenAI reasoning models | Keep prompts simple and direct. Avoid chain-of-thought requests; use delimiters, constraints, and final-answer checks. See [references/openai.md](references/openai.md). |
-| Claude / Opus-class | Use clear direct instructions, XML tags for complex prompts, examples for format and tone, calibrated tool eagerness, and explicit safety thresholds. See [references/claude.md](references/claude.md). |
-| Research-heavy redesigns | Use techniques by failure mode, not by trend. See [references/research.md](references/research.md). |
+1. Consult the vendor's current primary documentation.
+2. Preserve an explicitly requested target model.
+3. Treat bundled references as fallback technique maps, not confirmation of current behavior.
+4. Record model-specific advice only when it changes the proposed prompt.
 
-## Iteration Loop
+Read [references/openai.md](references/openai.md) for OpenAI fallback guidance, [references/claude.md](references/claude.md) for Claude fallback guidance, and [references/research.md](references/research.md) when a research-heavy redesign needs a technique matched to a measured failure.
 
-- Change one behavioral lever at a time when debugging a specific failure.
-- Test against representative inputs before another revision.
+## Iteration
+
+- Change one behavioral lever at a time when diagnosing a specific failure.
+- Run the same representative cases after each change.
 - Track what changed and what failed to avoid cycling back.
-- If prompt edits cannot fix the failure, recommend model selection, tool/schema changes, retrieval changes, fine-tuning, or eval redesign.
-
-## Example
-
-**Before**
-
-```text
-You are helpful. Be concise. Don't use bullets. Don't make things up.
-If the user asks about pricing, try to be accurate.
-```
-
-**After**
-
-```xml
-<role>
-You are a customer support assistant for Acme, a B2B SaaS platform.
-</role>
-
-<goal>
-Answer pricing questions from the published pricing data only.
-</goal>
-
-<constraints>
-- Write in short prose paragraphs because this appears in a chat widget with limited list formatting.
-- If the answer is not present in <pricing_data>, say you do not have that pricing detail and offer to connect the user with sales.
-- Do not invent prices, discounts, limits, or roadmap commitments.
-</constraints>
-
-<example>
-User: What's the difference between Pro and Enterprise?
-Assistant: Pro includes up to 50 seats and standard integrations. Enterprise adds unlimited seats, SSO, and a dedicated account manager. If you want a quote for Enterprise, I can connect you with sales.
-</example>
-
-<pricing_data>
-{{PRICING_DATA}}
-</pricing_data>
-```
-
-**What changed:** Replaced vague style and truthfulness instructions with a grounded task contract, positive formatting rule, missing-evidence behavior, and an example.
-
-## Anti-Patterns
-
-| Anti-pattern | Fix |
-|-------------|-----|
-| Instruction soup | Group rules by goal, constraints, tools, output, and stop rules. |
-| Contradictions | Resolve priority explicitly; do not ask the model to reconcile impossible rules. |
-| Phantom emphasis | Reserve `IMPORTANT`/caps/bold for true invariants. |
-| Negative-only rules | State the desired behavior first. |
-| Orphaned context | Remove data no instruction uses, or add a rule that uses it. |
-| Legacy overprompting | Delete process-heavy steps that do not improve evals on modern frontier models. |
-| Hidden CoT requests | Ask for concise rationale, evidence, verification, or final answer reasoning. |
-| No evals | Add representative fixtures before claiming improvement. |
+- Keep the simplest variant that meets the success criteria.
+- If prompt changes cannot fix the failure, recommend the appropriate model, tool schema, retrieval, fine-tuning, or eval change.

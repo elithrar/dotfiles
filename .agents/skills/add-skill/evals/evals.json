@@ -2,18 +2,82 @@
   "skill_name": "add-skill",
   "evals": [
     {
-      "id": "create-skill",
-      "prompt": "I want a skill for reviewing Terraform plans safely before apply",
-      "expected_output": "Drafts skill with trigger description, references, safety rules, and eval prompts",
+      "id": "create-portable-skill",
+      "prompt": "Create a reusable skill for reviewing Terraform plans safely before apply. It must work in Codex and Claude Code.",
+      "expected_output": "Creates a focused portable skill with a clear trigger boundary, safe workflow, minimal resources, and representative activation and output evals.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Activates add-skill.",
+        "Resolves the target hosts and safety boundary.",
+        "Keeps portable frontmatter limited to supported fields.",
+        "Defines direct, negative, incomplete, and edge eval cases."
+      ]
     },
     {
-      "id": "improve-trigger",
-      "prompt": "This SKILL.md is undertriggering when I ask about pscale slow queries",
-      "expected_output": "Optimizes description and suggests should/should-not trigger evals",
+      "id": "update-existing-trigger",
+      "prompt": "This SKILL.md is undertriggering when I ask about pscale slow queries. Improve it without rewriting the whole workflow.",
+      "expected_output": "Reads the existing skill, makes a minimal description change, and proposes activation cases that distinguish it from generic database questions.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Activates add-skill.",
+        "Preserves unrelated skill content.",
+        "Front-loads the recognizable task and tool terms.",
+        "Includes at least one plausible non-trigger near miss."
+      ]
+    },
+    {
+      "id": "repair-invalid-frontmatter",
+      "prompt": "Fix this skill frontmatter: name: PDF--Helper, description: Helps with files.",
+      "expected_output": "Normalizes the name, strengthens the description, and explains only the validation failures that matter.",
+      "files": [],
+      "assertions": [
+        "Activates add-skill.",
+        "Uses lowercase letters, digits, and single hyphens.",
+        "Makes the description state what the skill does and when to use it.",
+        "Does not invent unrelated workflow requirements."
+      ]
+    },
+    {
+      "id": "incomplete-installation-scope",
+      "prompt": "Make me a skill that prepares release notes.",
+      "expected_output": "Clarifies the installation location or makes an explicit safe default before creating files when the available context does not resolve scope.",
+      "files": [],
+      "assertions": [
+        "Activates add-skill.",
+        "Identifies installation scope as the material missing input.",
+        "Asks no more than one focused question when a safe default is unavailable."
+      ]
+    },
+    {
+      "id": "near-miss-ui-feature",
+      "prompt": "Add a skill selector to this React settings page.",
+      "expected_output": "Treats skill selector as an application feature rather than authoring a SKILL.md workflow.",
+      "files": [],
+      "assertions": [
+        "Does not activate add-skill.",
+        "Does not create a SKILL.md file."
+      ]
+    },
+    {
+      "id": "near-miss-review-process",
+      "prompt": "Help me improve how my team reviews pull requests.",
+      "expected_output": "Answers as a process or documentation task unless the user asks to package the workflow as an Agent Skill.",
+      "files": [],
+      "assertions": [
+        "Does not activate add-skill without a reusable-skill request.",
+        "Does not force skill-specific metadata or evals into the answer."
+      ]
+    },
+    {
+      "id": "instructions-only-default",
+      "prompt": "Create a skill that turns a supplied incident timeline into a concise postmortem outline.",
+      "expected_output": "Uses an instruction-only skill unless a repeated deterministic transformation or packaged asset is actually required.",
+      "files": [],
+      "assertions": [
+        "Activates add-skill.",
+        "Does not add a script without a reliability or repetition need.",
+        "Defines the expected input, output, and missing-evidence behavior."
+      ]
     }
   ]
 }

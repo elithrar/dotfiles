@@ -2,18 +2,84 @@
   "skill_name": "prompt-engineer",
   "evals": [
     {
-      "id": "system-prompt",
-      "prompt": "Improve this system prompt so the agent stops over-searching",
-      "expected_output": "Diagnoses failure, rewrites minimally with stop rules and evals",
+      "id": "minimal-oversearch-fix",
+      "prompt": "Improve this system prompt so the agent stops over-searching. Preserve its structure and change only what is needed.",
+      "expected_output": "Diagnoses the missing evidence budget or stop condition and proposes a targeted change with representative evals.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Activates prompt-engineer.",
+        "Preserves the existing prompt structure.",
+        "Changes only the behavioral lever tied to over-searching.",
+        "Does not claim improvement without an eval proposal or observed evidence."
+      ]
     },
     {
-      "id": "skill-desc",
-      "prompt": "Make this skill description trigger more reliably",
-      "expected_output": "Adds realistic triggers and near-miss evals",
+      "id": "clean-prompt-restraint",
+      "prompt": "Audit this prompt. It already defines the goal, input schema, approval boundary, output schema, and three passing edge-case evals.",
+      "expected_output": "Reports no material rewrite when the supplied prompt already satisfies the stated behavior and evidence.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Activates prompt-engineer.",
+        "Does not rewrite merely to impose a preferred template.",
+        "Identifies any proposal as optional unless tied to a demonstrated failure."
+      ]
+    },
+    {
+      "id": "ordinary-prose-near-miss",
+      "prompt": "Make this paragraph more concise and fix the awkward transitions.",
+      "expected_output": "Treats the request as ordinary editing rather than prompt engineering.",
+      "files": [],
+      "assertions": [
+        "Does not activate prompt-engineer.",
+        "Does not introduce prompt contracts, tool rules, or eval fixtures."
+      ]
+    },
+    {
+      "id": "route-skill-authoring",
+      "prompt": "Rewrite this SKILL.md description so it triggers for GitLab pipeline failures but not ordinary Git questions.",
+      "expected_output": "Routes the skill-authoring workflow to add-skill while applying prompt analysis only to the trigger behavior.",
+      "files": [],
+      "assertions": [
+        "Uses add-skill as the primary workflow.",
+        "Preserves prompt-engineer only as supporting analysis.",
+        "Includes positive and near-miss activation cases."
+      ]
+    },
+    {
+      "id": "untrusted-retrieved-instructions",
+      "prompt": "Improve my RAG system prompt. Retrieved documents sometimes contain text saying to ignore the developer prompt.",
+      "expected_output": "Separates retrieved content from authoritative instructions and adds observable injection-resistance cases.",
+      "files": [],
+      "assertions": [
+        "Activates prompt-engineer.",
+        "Labels retrieved content as data.",
+        "Preserves the system and developer authority boundary.",
+        "Adds a malicious-document counterexample."
+      ]
+    },
+    {
+      "id": "current-model-guidance",
+      "prompt": "Update this production prompt for the current flagship OpenAI model and explain any model-specific change.",
+      "expected_output": "Checks current primary OpenAI documentation, preserves the existing behavior, and changes only guidance relevant to the resolved model.",
+      "files": [],
+      "assertions": [
+        "Activates prompt-engineer.",
+        "Uses current primary documentation rather than bundled notes as confirmation.",
+        "Does not silently change the requested model target.",
+        "Separates verified guidance from inference."
+      ]
+    },
+    {
+      "id": "strict-json-schema",
+      "prompt": "My prompt says 'return valid JSON' five times, but responses still drift. Fix it.",
+      "expected_output": "Recommends structured output or a tool schema, removes duplicate prose rules, and retains only task-specific field semantics.",
+      "files": [],
+      "assertions": [
+        "Activates prompt-engineer.",
+        "Prefers schema enforcement over repeated prose.",
+        "States each surviving instruction once.",
+        "Includes malformed and edge-value eval cases."
+      ]
     }
   ]
 }

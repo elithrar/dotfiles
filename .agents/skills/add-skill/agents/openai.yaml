@@ -1,0 +1,4 @@
+interface:
+  display_name: "Add Skill"
+  short_description: "Create or update reusable agent skills"
+  default_prompt: "Use $add-skill to create or improve a reusable agent skill."

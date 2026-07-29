@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Reviewer"
+  short_description: "Review code changes for actionable defects"
+  default_prompt: "Use $code-reviewer to review this code change and return actionable findings."
