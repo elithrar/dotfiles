@@ -76,6 +76,16 @@ fi
 print_info "Detected OS: ${OS}"
 print_info "Interactive shell session: ${INTERACTIVE}"
 
+WORK_MACHINE=false
+WARP_ORG=""
+if command -v warp-cli &>/dev/null; then
+    WARP_ORG="$(warp-cli registration organization 2>/dev/null || true)"
+    if [[ "${WARP_ORG}" == cloudflare-* ]]; then
+        WORK_MACHINE=true
+        print_info "Detected Cloudflare work machine (${WARP_ORG})"
+    fi
+fi
+
 # On Linux, we may need to install some packages.
 DISTRO=""
 if [[ "${OS}" == "Linux" ]]; then
@@ -200,7 +210,7 @@ else
     print_success "All Homebrew packages already installed"
 fi
 
-if [[ "${CF:-false}" == "true" ]]; then
+if [[ "${CF:-false}" == "true" || "${WORK_MACHINE}" == "true" ]]; then
     print_info "Installing Cloudflare Homebrew packages"
     missing_cf_packages=()
     for pkg in "${CF_BREW_PACKAGES[@]}"; do
@@ -290,6 +300,15 @@ fi
 print_info "Linking dotfiles"
 stow --dir="${HOME}/repos/dotfiles" --target="${HOME}" .
 print_success "dotfiles installed"
+
+# Keep the Cloudflare AI Gateway provider local to Cloudflare-managed machines.
+if [[ "${WORK_MACHINE}" == "true" ]] &&
+    command -v cloudflared &>/dev/null &&
+    [[ -x "${HOME}/.codex/bin/codex" ]]; then
+    mkdir -p "${HOME}/.local/bin"
+    ln -sf "${HOME}/.codex/bin/codex" "${HOME}/.local/bin/codex"
+    print_success "Codex Cloudflare AI Gateway launcher installed"
+fi
 
 # --- Configure zsh
 if [[ ! -d "${HOME}/.oh-my-zsh" ]]; then

@@ -1,0 +1,56 @@
+#!/bin/sh
+set -eu
+
+for candidate in \
+  /opt/homebrew/bin/codex \
+  /usr/local/bin/codex \
+  /home/linuxbrew/.linuxbrew/bin/codex
+do
+  if [ -x "$candidate" ]; then
+    codex_bin="$candidate"
+    break
+  fi
+done
+
+if [ -z "${codex_bin:-}" ]; then
+  printf '%s\n' "Unable to find the Codex executable" >&2
+  exit 127
+fi
+
+use_gateway=true
+for arg in "$@"; do
+  if [ "$arg" = "--ignore-user-config" ]; then
+    use_gateway=false
+    break
+  fi
+done
+
+work_machine=false
+if command -v warp-cli >/dev/null 2>&1; then
+  warp_org="$(warp-cli registration organization 2>/dev/null || true)"
+  case "$warp_org" in
+    cloudflare-*) work_machine=true ;;
+  esac
+fi
+
+if [ "$use_gateway" = true ] &&
+  [ "$work_machine" = true ] &&
+  command -v cloudflared >/dev/null 2>&1
+then
+  codex_home="${CODEX_HOME:-${HOME}/.codex}"
+  adapter="${codex_home}/bin/cloudflare-ai-gateway.js"
+  if [ ! -f "$adapter" ]; then
+    adapter="${HOME}/repos/dotfiles/.codex/bin/cloudflare-ai-gateway.js"
+  fi
+  export CODEX_CF_GATEWAY_ADAPTER="$adapter"
+  set -- \
+    -c 'model_provider="cloudflare-ai-gateway"' \
+    -c "model_catalog_json=\"${codex_home}/model-catalogs/cloudflare-ai-gateway.json\"" \
+    -c 'mcp_servers.cf-portal.url="https://portal.mcp.cfdata.org/mcp?codemode=search_and_execute"' \
+    -c 'mcp_servers.cf-portal.enabled=false' \
+    -c 'mcp_servers.google-workspace.url="https://google-workspace-mcp.cto.cfdata.org/mcp"' \
+    -c 'mcp_servers.google-workspace.enabled=false' \
+    "$@"
+fi
+
+exec env -u SSL_CERT_FILE -u CODEX_CA_CERTIFICATE "$codex_bin" "$@"

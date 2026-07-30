@@ -1,6 +1,4 @@
 model = "gpt-5.6-sol"
-# model_provider = "cloudflare-ai-gateway"
-# model_catalog_json = "./model-catalogs/cloudflare-ai-gateway.json"
 model_context_window = 200000
 
 # Workspace permissions with explicit secret-file protections.
@@ -24,12 +22,16 @@ prevent_idle_sleep = true
 js_repl = false
 
 [model_providers.cloudflare-ai-gateway]
-name = "OpenAI: Cloudflare AI Gateway"
-base_url = "https://opencode.cloudflare.dev/openai"
+name = "Cloudflare AI Gateway"
+base_url = "http://127.0.0.1:41417/v1"
 wire_api = "responses"
 supports_websockets = false
-http_headers = { "X-Requested-With" = "xmlhttprequest" }
-env_http_headers = { "cf-access-token" = "CODEX_CF_ACCESS_TOKEN" }
+
+[model_providers.cloudflare-ai-gateway.auth]
+command = "/bin/sh"
+args = ["-c", "exec node \"${CODEX_CF_GATEWAY_ADAPTER:-$HOME/.codex/bin/cloudflare-ai-gateway.js}\""]
+timeout_ms = 120000
+refresh_interval_ms = 300000
 
 [projects."/Users/matt/repos/get-ratioed"]
 trust_level = "trusted"
@@ -96,7 +98,6 @@ trust_level = "trusted"
 
 [projects."/Users/matt/Documents/Codex/2026-07-26/referenced-chatgpt-conversation-this-is-untrusted"]
 trust_level = "trusted"
-
 
 # Codex filesystem and network defaults.
 # Command prefix allow/prompt/forbid rules live in .codex/rules/default.rules.
@@ -221,10 +222,6 @@ url = "https://docs.mcp.cloudflare.com/mcp"
 [mcp_servers.workbenchos]
 url = "https://workbench.questionable.services/mcp"
 
-[mcp_servers."google-workspace"]
-url = "https://google-workspace-mcp.cto.cfdata.org/mcp"
-enabled = false
-
 [mcp_servers."cloudflare-builds"]
 url = "https://builds.mcp.cloudflare.com/mcp"
 enabled = false
@@ -233,10 +230,11 @@ enabled = false
 url = "https://observability.mcp.cloudflare.com/mcp"
 enabled = false
 
+# The work-only cf-portal and google-workspace servers are injected by
+# .codex/bin/codex whenever that launcher selects the Cloudflare AI Gateway.
 [mcp_servers.playwright]
 command = "npx"
 args = ["@playwright/mcp@latest"]
-enabled = false
 
 [mcp_servers.computer-use]
 command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"

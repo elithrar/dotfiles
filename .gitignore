@@ -36,6 +36,10 @@ Temporary Items
 .codex/auth.json
 .codex/*
 !.codex/config.toml
+!.codex/bin/
+.codex/bin/*
+!.codex/bin/codex
+!.codex/bin/cloudflare-ai-gateway.js
 !.codex/model-catalogs/
 .codex/model-catalogs/*
 !.codex/model-catalogs/cloudflare-ai-gateway.json
