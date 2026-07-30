@@ -99,6 +99,9 @@ trust_level = "trusted"
 [projects."/Users/matt/Documents/Codex/2026-07-26/referenced-chatgpt-conversation-this-is-untrusted"]
 trust_level = "trusted"
 
+[projects."/Users/matt/repos/cloudflare-docs"]
+trust_level = "trusted"
+
 # Codex filesystem and network defaults.
 # Command prefix allow/prompt/forbid rules live in .codex/rules/default.rules.
 [permissions.codex-default]
@@ -187,13 +190,13 @@ enabled = true
 # macOS Codex app Browser Use bridge. Expected to warn under Linux.
 [mcp_servers.node_repl]
 args = []
-command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+command = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node_repl"
 startup_timeout_sec = 120
 
 [mcp_servers.node_repl.env]
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
-NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/matt/.codex"
 CODEX_HOME = "/Users/matt/.codex"
 NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e13fd947e846d3d306e9249dd3c73d14931b6494803dbafb16cef85e6add9506"
@@ -204,7 +207,7 @@ NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS th
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
 BROWSER_USE_CODEX_APP_VERSION = "26.721.41059"
 SKY_CUA_SERVICE_PATH = "/Users/matt/.codex/computer-use/Codex Computer Use.app"
-CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
+CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 # Mirrored from .config/opencode/opencode.jsonc.
 [mcp_servers."chrome-devtools"]
