@@ -1,0 +1,7 @@
+{
+  "id": "peewee",
+  "displayName": "PeeWee",
+  "description": "A speedy blocky ARM-style Kbot companion with twin energy machine guns.",
+  "spriteVersionNumber": 2,
+  "spritesheetPath": "spritesheet.webp"
+}
