@@ -49,6 +49,14 @@ Temporary Items
 !.codex/themes/
 .codex/themes/*
 !.codex/themes/orng.tmTheme
+!.codex/pets/
+.codex/pets/*
+!.codex/pets/peewee/
+!.codex/pets/peewee/*
+!.codex/pets/maverick/
+!.codex/pets/maverick/*
+!.codex/pets/arm-commander/
+!.codex/pets/arm-commander/*
 
 # Database tools config
 .config/configstore/

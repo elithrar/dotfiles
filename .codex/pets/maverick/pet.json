@@ -1,0 +1,7 @@
+{
+  "id": "maverick",
+  "displayName": "Maverick",
+  "description": "ARM Level 2 dual-gun Kbot from Total Annihilation.",
+  "spriteVersionNumber": 2,
+  "spritesheetPath": "spritesheet.webp"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "arm-commander",
+  "displayName": "ARM Commander",
+  "description": "The ARM Commander from Total Annihilation.",
+  "spriteVersionNumber": 2,
+  "spritesheetPath": "spritesheet.webp"
+}
