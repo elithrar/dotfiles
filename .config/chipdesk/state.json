@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "database": "t48",
+  "showAllFiles": false,
+  "advanced": {
+    "backupBeforeWrite": false
+  },
+  "recentFilePaths": [
+    "/Users/matt/Downloads/HMAF0012with34InjectorsH1.34.06.03.bin"
+  ],
+  "recentDirectories": [
+    "/Users/matt/Downloads",
+    "/Users/matt",
+    "/Users",
+    "/Users/matt/repos"
+  ],
+  "recentChips": [
+    "AT28C64B@DIP28",
+    "AT28C64B"
+  ],
+  "recentDatabases": [
+    "t48",
+    "t76",
+    "t56"
+  ]
+}
