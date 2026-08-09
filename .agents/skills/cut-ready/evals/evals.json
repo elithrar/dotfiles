@@ -1,0 +1,95 @@
+{
+  "skill_name": "cut-ready",
+  "evals": [
+    {
+      "id": "sendcutsend-step-incomplete",
+      "prompt": "Make a SendCutSend-ready STEP for this bent mounting bracket. I attached the sketch, but I have not chosen material or thickness yet.",
+      "expected_output": "Activates cut-ready, identifies material and stock thickness as geometry-changing inputs, and asks one focused question before generating the sheet-metal body.",
+      "files": [],
+      "assertions": [
+        "Activates cut-ready.",
+        "Does not invent material, thickness, bend radius, or K factor.",
+        "Asks no more than one focused question.",
+        "Does not call an ungenerated or unverified STEP cut-ready."
+      ]
+    },
+    {
+      "id": "indirect-laser-dxf",
+      "prompt": "Turn this dimensioned plate sketch into something I can upload for laser cutting.",
+      "expected_output": "Routes to a 1:1 2D production file, confirms manufacturing inputs, creates deterministic geometry, and requires contour, readback, render, and vendor checks.",
+      "files": [],
+      "assertions": [
+        "Activates cut-ready even though DXF is not named.",
+        "Distinguishes supplied dimensions from assumptions.",
+        "Checks closed contours, duplicates, bounds, minimum features, and independent import.",
+        "Uses a readiness label that matches completed validation."
+      ]
+    },
+    {
+      "id": "frozen-color-revision",
+      "prompt": "Change the red to #B12B28 and the gold to #E3AB37. Change nothing else, then give me the revised production SVG and DXF.",
+      "expected_output": "Creates a new revision, freezes all geometry and non-target attributes, changes only the declared colors where the format supports color, and proves the non-delta before handoff.",
+      "files": [],
+      "assertions": [
+        "Activates cut-ready.",
+        "Treats change nothing else as a revision invariant.",
+        "Preserves the accepted baseline and canonical geometry.",
+        "Does not imply that a conventional cut-only DXF necessarily carries production color intent."
+      ]
+    },
+    {
+      "id": "photo-derived-decal",
+      "prompt": "Use these side photos to recreate the door number at the correct historical size and give me a cutter-ready DXF.",
+      "expected_output": "Builds an evidence ledger, calibrates against defensible physical anchors, labels the result as a reconstruction with uncertainty, and requires a 1:1 proof before production.",
+      "files": [],
+      "assertions": [
+        "Activates cut-ready.",
+        "Does not present photo-derived dimensions as exact historical fact.",
+        "Separates the relevant visible mounting surface from unrelated overall envelopes.",
+        "Uses draft or reconstruction status until physical scale is confirmed."
+      ]
+    },
+    {
+      "id": "vinyl-laser-safety",
+      "prompt": "Make this SVG laser-ready for ordinary 3M automotive vinyl.",
+      "expected_output": "Activates cut-ready, corrects the process to drag-knife or plotter cutting unless the exact material and machine are certified, and continues with vector and contour-cut checks.",
+      "files": [],
+      "assertions": [
+        "Activates cut-ready.",
+        "Does not describe ordinary vinyl or PVC as laser-safe.",
+        "Preserves the user's fabrication goal while changing the unsafe process assumption."
+      ]
+    },
+    {
+      "id": "missing-cad-readback",
+      "prompt": "The STEP export exists, but this machine has no CAD application or STEP parser. Is it cut-ready?",
+      "expected_output": "Does not claim cut-ready, reports the readback limitation, and uses a blocked or locally incomplete status with the exact remaining validation step.",
+      "files": [],
+      "assertions": [
+        "Activates cut-ready.",
+        "Does not treat file existence or extension as validation.",
+        "Names independent import and geometry checks as unverified."
+      ]
+    },
+    {
+      "id": "near-miss-web-svg",
+      "prompt": "Draw a responsive SVG logo for the footer of my website.",
+      "expected_output": "Treats this as web graphics work because no physical fabrication-ready output is requested.",
+      "files": [],
+      "assertions": [
+        "Does not activate cut-ready.",
+        "Does not impose manufacturing intake or vendor checks."
+      ]
+    },
+    {
+      "id": "near-miss-cad-tutorial",
+      "prompt": "How do I use the revolve tool in Fusion?",
+      "expected_output": "Answers as general CAD instruction unless the user adds a fabrication-ready deliverable or manufacturing audit.",
+      "files": [],
+      "assertions": [
+        "Does not activate cut-ready.",
+        "Does not force a cut-file package workflow onto a general tutorial."
+      ]
+    }
+  ]
+}
