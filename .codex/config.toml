@@ -114,6 +114,9 @@ trust_level = "trusted"
 [projects."/Users/matt/Documents/Codex/2026-08-09/referenced-chatgpt-conversation-this-is-an"]
 trust_level = "trusted"
 
+[projects."/Users/matt/repos/actions-compat"]
+trust_level = "trusted"
+
 # Codex filesystem and network defaults.
 # Command prefix allow/prompt/forbid rules live in .codex/rules/default.rules.
 [permissions.codex-default]
