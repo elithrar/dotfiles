@@ -6,7 +6,7 @@
 
 # Configuration
 DOTFILES_REPO="https://github.com/elithrar/dotfiles"
-BREW_PACKAGES=(age agg asciinema ast-grep atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jq lua make mkcert neovim nmap node pscale pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree try uv websocat wget wrk yarn zoxide zsh)
+BREW_PACKAGES=(age agg asciinema ast-grep atuin bat cmake curl delta fd ffmpeg fzf gh gifski git glab go htop jq lua make mkcert neovim nmap node pipx pnpm python rbenv rcm ripgrep ruff ruby-build shellcheck stow tmux tree try uv websocat wget wrk yarn zoxide zsh)
 CF_BREW_PACKAGES=(cloudflare/cloudflare/cloudflared cloudflare/engineering/cloudflare-certs)
 CASKS=(claude ghostty raycast zed@preview)
 SSH_EMAIL="matt@eatsleeprepeat.net"
@@ -280,6 +280,15 @@ else
     print_info "Skipping Cask installation: not on macOS"
 fi
 
+if [[ "${OS}" == "Darwin" ]]; then
+    zed_cli="/Applications/Zed Preview.app/Contents/MacOS/cli"
+    if [[ -x "${zed_cli}" ]]; then
+        mkdir -p "${HOME}/.local/bin"
+        ln -sf "${zed_cli}" "${HOME}/.local/bin/zed"
+        print_success "Zed Preview CLI installed"
+    fi
+fi
+
 print_success "Homebrew packages"
 # --- dotfiles
 # Clone & install dotfiles
@@ -329,14 +338,6 @@ if [[ ! -d "${HOME}/.atuin" ]]; then
     curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
 else
     print_success "Atuin already installed"
-fi
-
-# --- Install nvm
-if [[ ! -d "${HOME}/.nvm" ]]; then
-    print_info "Installing nvm"
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | PROFILE=/dev/null bash
-else
-    print_success "nvm already installed"
 fi
 
 # Install uv - skip if already installed via brew

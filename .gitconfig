@@ -11,7 +11,7 @@
 [tag]
     gpgsign = true
 [core]
-    editor = "/usr/local/bin/zed --wait"
+    editor = "\"/Applications/Zed Preview.app/Contents/MacOS/cli\" --wait"
     excludesfile = ~/.gitignore
     fileMode = false
     # https://notes.takashiidobe.com/tools/git/delta
@@ -28,7 +28,7 @@
     colorMoved = default
     tool = zed
 [difftool "zed"]
-	cmd = \"/usr/local/bin/zed\" --wait $LOCAL $REMOTE
+	cmd = \"/Applications/Zed Preview.app/Contents/MacOS/cli\" --wait $LOCAL $REMOTE
 [rerere]
     enabled = true
 [branch]

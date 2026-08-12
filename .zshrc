@@ -1,3 +1,5 @@
+typeset -U path fpath
+
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 
@@ -7,11 +9,6 @@ zstyle ':omz:alpha:lib:git' async-prompt yes
 # Completion options
 CASE_SENSITIVE="false"
 HYPHEN_INSENSITIVE="true"
-
-# Skip oh-my-zsh's compinit and compaudit - we handle it ourselves for faster startup
-# DISABLE_COMPFIX skips compaudit, skip_global_compinit skips compinit entirely
-DISABLE_COMPFIX=true
-export skip_global_compinit=1
 
 umask 027
 
@@ -28,7 +25,6 @@ plugins=(
 	gem
 	git
 	github
-	uv
 	zsh-autosuggestions
 	zsh-syntax-highlighting
 	)
@@ -132,22 +128,13 @@ time-at() {
 }
 
 # tmux
-alias tmux="tmux -2 -u"
-if command -v tmux &>/dev/null; then
-    test -z "$TMUX" && (tmux attach || tmux new-session)
+if [[ -o interactive && -z $TMUX && $TERM_PROGRAM == ghostty ]] && command -v tmux &>/dev/null; then
+  exec tmux new-session -A -s main
 fi
 
 # PATH related settings
-# Removes duplicate PATH entries but keeps the original order.
-# https://github.com/gabebw/dotfiles/blob/master/zsh/path.zsh
-trim_path() {
-  # http://chunchung.blogspot.com/2007/11/remove-duplicate-paths-from-path-in.html
-  PATH=$(awk -F: '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=":"}}}'<<<"$PATH")
-  export PATH
-}
-
-# Reload PATH from shell config (useful after installing new tools)
-env-update() { source ~/.zshrc; }
+# Restart the shell after installing tools so startup state is rebuilt once.
+env-update() { exec zsh; }
 
 # prompt
 # Git prompt colors and symbols
@@ -162,47 +149,15 @@ export PROMPT='%{$fg_bold[green]%}%p%{$fg_bold[blue]%}%~$(git_prompt_info)% %{$r
 # editor
 unalias zed 2>/dev/null || true
 zed() {
-  local app="Zed"
-  [[ -d "/Applications/Zed Preview.app" ]] && app="Zed Preview"
-  open "$@" -a "$app"
+  command "/Applications/Zed Preview.app/Contents/MacOS/cli" "$@"
 }
-export EDITOR="zed --wait"
+export EDITOR='"/Applications/Zed Preview.app/Contents/MacOS/cli" --wait'
 
 
 # ripgrep
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 
 export NO_D1_WARNING=1
-
-# nvm (https://github.com/nvm-sh/nvm)
-export NVM_DIR="$HOME/.nvm"
-# Lazy load nvm - only loads when nvm/node/npm/npx is called
-if [[ -s "$NVM_DIR/nvm.sh" ]]; then
-  # Defer nvm loading
-  nvm() {
-    unset -f nvm node npm npx
-    source "$NVM_DIR/nvm.sh"
-    nvm "$@"
-  }
-
-  node() {
-    unset -f nvm node npm npx
-    source "$NVM_DIR/nvm.sh"
-    node "$@"
-  }
-
-  npm() {
-    unset -f nvm node npm npx
-    source "$NVM_DIR/nvm.sh"
-    npm "$@"
-  }
-
-  npx() {
-    unset -f nvm node npm npx
-    source "$NVM_DIR/nvm.sh"
-    npx "$@"
-  }
-fi
 
 # rbenv (https://github.com/rbenv/rbenv)
 export RBENV_SHELL=zsh
@@ -246,27 +201,24 @@ eval "$(zoxide init zsh)"
 # Note: Order matters! Earlier entries take precedence.
 
 # User-specific bins
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.sst/bin:$PATH"
-export PATH="$HOME/.codeium/windsurf/bin:$PATH"
+path=("$HOME/.local/bin" $path)
+path=("$HOME/.sst/bin" $path)
+path=("$HOME/.codeium/windsurf/bin" $path)
 
 # Ruby (rbenv)
-export PATH="$HOME/.rbenv/shims:$PATH"
+path=("$HOME/.rbenv/shims" $path)
 
 # Rust
-export PATH="$HOME/.cargo/bin:$PATH"
+path=("$HOME/.cargo/bin" $path)
 
 # Go
-export PATH="$GOBIN:$PATH"
+path=("$GOBIN" $path)
 
 # Bun
-export PATH="$HOME/.bun/bin:$PATH"
+path=("$HOME/.bun/bin" $path)
 
 # Homebrew curl (override system curl)
-export PATH="/usr/local/opt/curl/bin:$PATH"
-
-# Remove duplicate PATH entries
-trim_path
+path=(/opt/homebrew/opt/curl/bin $path)
 
 # try - inlined from `try init ~/repos/tries` to avoid subprocess on every shell
 # Hardcode path - command -v fails on re-source since the function shadows the binary
@@ -283,26 +235,5 @@ if [[ -x "$_try_bin" ]]; then
   }
 fi
 
-# bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# Lazy-load CLI completions (pscale)
-# Completions are cached to ~/.cache/zsh and regenerated daily
-_lazy_completion_cache="$HOME/.cache/zsh"
-[[ -d "$_lazy_completion_cache" ]] || mkdir -p "$_lazy_completion_cache"
-
-_load_cached_completion() {
-  local cmd=$1 cache="$_lazy_completion_cache/_$cmd" generator=$2
-  # Regenerate if cache missing or older than 24h
-  if [[ ! -f "$cache" || -n "$cache"(#qN.mh+24) ]]; then
-    command -v "$cmd" &>/dev/null && eval "$generator" > "$cache" 2>/dev/null
-  fi
-  [[ -f "$cache" ]] && source "$cache"
-}
-
-_load_cached_completion pscale "pscale completion zsh"
-unset _lazy_completion_cache
-
 # zerobrew
-export PATH="$HOME/.local/bin:/opt/zerobrew/prefix/bin:$PATH"
+path=("$HOME/.local/bin" /opt/zerobrew/prefix/bin $path)
