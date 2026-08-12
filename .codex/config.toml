@@ -117,6 +117,15 @@ trust_level = "trusted"
 [projects."/Users/matt/repos/actions-compat"]
 trust_level = "trusted"
 
+[projects."/Users/matt/repos/codex"]
+trust_level = "trusted"
+
+[projects."/Users/matt/Documents/sandbox"]
+trust_level = "trusted"
+
+[projects."/Users/matt/Documents/Codex/2026-08-11/go-figure-out-where-my-disk"]
+trust_level = "trusted"
+
 # Codex filesystem and network defaults.
 # Command prefix allow/prompt/forbid rules live in .codex/rules/default.rules.
 [permissions.codex-default]
@@ -188,19 +197,28 @@ enabled = true
 enabled = true
 
 [plugins."presentations@openai-primary-runtime"]
-enabled = true
+enabled = false
 
 [plugins."pdf@openai-primary-runtime"]
 enabled = true
 
 [plugins."template-creator@openai-primary-runtime"]
-enabled = true
+enabled = false
 
 [plugins."chrome@openai-bundled"]
 enabled = true
 
 [plugins."computer-use@openai-bundled"]
 enabled = true
+
+[plugins."google-drive@openai-curated-remote"]
+enabled = true
+
+[plugins."expedia@openai-curated-remote"]
+enabled = false
+
+[plugins."app-6938a94a61d881918ef32cb999ff937c@openai-curated-remote"]
+enabled = false
 
 # macOS Codex app Browser Use bridge. Expected to warn under Linux.
 [mcp_servers.node_repl]
@@ -261,7 +279,7 @@ cwd = "."
 enabled = false
 
 [desktop]
-conversationDetailMode = "STEPS_PROSE"
+conversationDetailMode = "STEPS_COMMANDS"
 ambient-suggestions-enabled = true
 appearanceLightCodeThemeId = "raycast"
 appearanceDarkCodeThemeId = "raycast"
@@ -276,6 +294,8 @@ codex-micro-lighting-brightness = 30
 codex-micro-agent-source = "custom"
 dictationDictionary = ["WOT = wide open throttle", "Motronic (Bosch Motronic ECU)"]
 preventSleepWhileRunning = true
+keepRemoteControlAwakeWhilePluggedIn = true
+external-agent-import-sync-enabled = true
 
 [desktop.appearanceLightChromeTheme]
 accent = "#ff6363"
@@ -371,3 +391,31 @@ exclude = ["GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "323bc3e687e17d7e377238d9f4c69111c4d0e6219103b6316d8c52082489533b"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/matt/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+
+[[skills.config]]
+path = "/Users/matt/repos/dotfiles/.codex/plugins/cache/openai-curated-remote/cloudflare/0.1.2/skills/agents-sdk/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/matt/repos/dotfiles/.codex/plugins/cache/openai-curated-remote/cloudflare/0.1.2/skills/building-ai-agent-on-cloudflare/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/matt/repos/dotfiles/.codex/plugins/cache/openai-curated-remote/cloudflare/0.1.2/skills/building-mcp-server-on-cloudflare/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/matt/repos/dotfiles/.codex/plugins/cache/openai-curated-remote/cloudflare/0.1.2/skills/sandbox-sdk/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/matt/repos/dotfiles/.codex/plugins/cache/openai-curated-remote/cloudflare/0.1.2/skills/wrangler/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/matt/repos/dotfiles/.agents/skills/differential-review/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/matt/repos/dotfiles/.agents/skills/goal/SKILL.md"
+enabled = false
