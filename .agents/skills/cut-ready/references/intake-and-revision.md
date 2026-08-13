@@ -11,7 +11,7 @@ Record only facts that affect the result:
 | 2D profile or graphic | Process, material, thickness when relevant, units, finished dimensions, inside and outside cut intent, quantity, handed variants, target vendor |
 | Printed sticker or decal | Product type, substrate and finish, finished size, die-cut or kiss-cut intent, bleed and safe area from the named vendor, artwork color profile, white-ink or transparency intent, application surface, target vendor |
 | Cut vinyl or mask | Vinyl or mask stock, positive graphic or stencil intent, finished size, face-cut or reverse-cut orientation, transfer method, weeding constraints, registration strategy, target cutter or vendor |
-| Production vector drawing | Physical output process, page or face size, units, authoritative geometry and glyph sources, line and arrow convention, minimum reproducible feature, required editable and outlined outputs |
+| Production vector drawing | Physical output process, page or face size, units, authoritative geometry and glyph sources, viewing direction and object orientation, text hierarchy, shared component and arrow conventions, minimum reproducible feature, required editable and outlined outputs |
 | Formed sheet part | Material, exact stock thickness, units, formed dimensions, bend angles and directions, grain or cosmetic face when relevant, target vendor |
 | Machined STEP part | Material, units, critical dimensions and tolerances, inaccessible or sharp internal features, threads or finishing services, target vendor |
 | Reference-derived replica | Source images, at least one defensible scale anchor, intended physical surface, perspective limits, target size or fit check |
