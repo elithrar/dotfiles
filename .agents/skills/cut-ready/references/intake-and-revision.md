@@ -9,6 +9,9 @@ Record only facts that affect the result:
 | Job | Required inputs |
 |---|---|
 | 2D profile or graphic | Process, material, thickness when relevant, units, finished dimensions, inside and outside cut intent, quantity, handed variants, target vendor |
+| Printed sticker or decal | Product type, substrate and finish, finished size, die-cut or kiss-cut intent, bleed and safe area from the named vendor, artwork color profile, white-ink or transparency intent, application surface, target vendor |
+| Cut vinyl or mask | Vinyl or mask stock, positive graphic or stencil intent, finished size, face-cut or reverse-cut orientation, transfer method, weeding constraints, registration strategy, target cutter or vendor |
+| Production vector drawing | Physical output process, page or face size, units, authoritative geometry and glyph sources, line and arrow convention, minimum reproducible feature, required editable and outlined outputs |
 | Formed sheet part | Material, exact stock thickness, units, formed dimensions, bend angles and directions, grain or cosmetic face when relevant, target vendor |
 | Machined STEP part | Material, units, critical dimensions and tolerances, inaccessible or sharp internal features, threads or finishing services, target vendor |
 | Reference-derived replica | Source images, at least one defensible scale anchor, intended physical surface, perspective limits, target size or fit check |
@@ -21,6 +24,7 @@ Classify every controlling dimension or shape:
 
 - **Measured:** Taken from the actual part, vehicle, mounting points, scan, or calibrated drawing.
 - **Specified:** Supplied by the user or a current primary manufacturer or vendor source.
+- **Source-exact:** Reused without reconstruction from an accepted production master, calibrated vector source, glyph library, or canonical component.
 - **Derived:** Calculated from measured or specified inputs. Show the calculation.
 - **Reconstructed:** Estimated from photographs or secondary sources. Record the scale anchor, perspective assumptions, range, and confidence.
 - **Stylistic:** Chosen for appearance rather than fit or manufacturing necessity.
@@ -44,12 +48,13 @@ Checks: <how the requested delta and non-delta will be proven>
 Apply these rules:
 
 - Preserve accepted elements directly. Do not redraw them from memory.
-- Reuse canonical components such as glyph alphabets, logos, hole patterns, bend rules, and generator functions.
+- Reuse canonical components such as glyph alphabets, logos, stripe or tick geometry, hole patterns, bend rules, and generator functions.
 - Define percentage changes with an explicit anchor and axis. "10% larger" is incomplete without the center, fixed edge, or reference frame.
 - For a color-only revision, change only the declared color values and prove geometry is unchanged.
 - For a localized geometry revision, compare unchanged component counts, bounds, and hashes where byte stability is expected. Use overlays or geometry diffs when serialization can change.
 - Keep the previous revision available. Do not overwrite it unless asked.
 - Regenerate previews and validation reports from the production export, not from an earlier source view.
+- Preserve deliberate occlusion as a layer relationship. Do not shorten, reradius, or move canonical background geometry merely to clear foreground labels when a mask or underprint is the accepted construction.
 
 ## Visual review
 
@@ -58,6 +63,8 @@ Render at useful scales and inspect:
 - Overall proportions and intended physical fit.
 - Negative space, visual fill, alignment, and optical balance.
 - Small features at actual production size, not only enlarged on screen.
+- Every label, glyph, arrowhead, leader, tick, ring, stripe, hole, slot, and bend marker expected by the source or object inventory.
+- Unintended crossings, tangencies, hidden objects, clipped marks, inconsistent arrowheads, and z-order failures.
 - Mirrored or reverse-cut variants, including readable orientation after application.
 - Requested changes against the baseline and unintended changes outside scope.
 

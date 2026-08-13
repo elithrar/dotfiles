@@ -1,4 +1,4 @@
 interface:
   display_name: "Cut Ready"
-  short_description: "Prepare and verify fabrication-ready CAD files"
-  default_prompt: "Use $cut-ready to create or revise a fabrication-ready DXF, SVG, STEP, or STP package."
+  short_description: "Prepare and verify production-ready CAD and artwork"
+  default_prompt: "Use $cut-ready to create or revise production-ready CAD, sticker, decal, or vector artwork."

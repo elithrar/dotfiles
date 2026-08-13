@@ -50,6 +50,54 @@
       ]
     },
     {
+      "id": "printed-contour-cut-sticker",
+      "prompt": "Turn this Shore Leave illustration into a 4-inch die-cut sticker file. The printer has not been selected yet.",
+      "expected_output": "Activates cut-ready, separates editable artwork from a closed vector cut contour, establishes physical size and installed orientation, and avoids inventing universal bleed, safe-area, spot-color, or color-profile values before a vendor is selected.",
+      "files": [],
+      "assertions": [
+        "Activates cut-ready even though no CAD format is named.",
+        "Distinguishes printed contour-cut artwork from cut vinyl or a stencil.",
+        "Does not hard-code one vendor's cutline or bleed rules as universal.",
+        "Requires actual-size rendering and a vendor proof before cut-ready status."
+      ]
+    },
+    {
+      "id": "technical-vector-arrow-review",
+      "prompt": "Audit this production SVG technical diagram. Several leaders curve around parts, arrowheads overlap labels, and some marks disappear under other objects. Fix only those readability defects and return SVG and PDF.",
+      "expected_output": "Activates cut-ready, freezes all unrelated geometry and styling, routes leaders with straight segments and deliberate sharp turns, makes endpoints and arrowheads unambiguous, inventories object visibility, and proves only the requested delta.",
+      "files": [],
+      "assertions": [
+        "Activates cut-ready for a physically produced vector diagram.",
+        "Uses a consistent documented or source-derived line and arrow convention.",
+        "Checks crossings, clipping, z-order, endpoints, and overlaps object by object.",
+        "Preserves unrelated source geometry and typography."
+      ]
+    },
+    {
+      "id": "canonical-stripes-occlusion",
+      "prompt": "The six gauge-face stripes must stay on their exact radii, but they cannot run visibly through the speed numerals. Do not inset, trim, or reradius the stripe bundle.",
+      "expected_output": "Preserves the canonical continuous stripe geometry and resolves the visual collision with an explicit foreground occlusion or underprint that is validated against the reference.",
+      "files": [],
+      "assertions": [
+        "Activates cut-ready.",
+        "Does not move, locally reradius, or rectangularly gap the stripe system.",
+        "Treats occlusion as an explicit layer relationship.",
+        "Checks the production exports at actual size and with overlays."
+      ]
+    },
+    {
+      "id": "generated-bracket-profile-count",
+      "prompt": "Generate a Fusion model and DXF for this two-slot bent bracket. The script produced two overlapping base profiles but the preview looks right.",
+      "expected_output": "Activates cut-ready, rejects appearance as proof, simplifies to a single continuous base profile with explicit slot cuts, asserts expected profile and body counts, and independently validates the DXF and folded STEP.",
+      "files": [],
+      "assertions": [
+        "Activates cut-ready.",
+        "Fails on unexpected or overlapping sketch profiles.",
+        "Uses geometry-based selection and explicit topology assertions.",
+        "Reconciles flat and folded geometry before assigning readiness."
+      ]
+    },
+    {
       "id": "vinyl-laser-safety",
       "prompt": "Make this SVG laser-ready for ordinary 3M automotive vinyl.",
       "expected_output": "Activates cut-ready, corrects the process to drag-knife or plotter cutting unless the exact material and machine are certified, and continues with vector and contour-cut checks.",
@@ -79,6 +127,16 @@
       "assertions": [
         "Does not activate cut-ready.",
         "Does not impose manufacturing intake or vendor checks."
+      ]
+    },
+    {
+      "id": "near-miss-digital-sticker-style",
+      "prompt": "Make a sticker-style PNG reaction image for our Discord server.",
+      "expected_output": "Treats this as digital illustration because no physical production, print-and-cut, mask, or fabrication artifact is requested.",
+      "files": [],
+      "assertions": [
+        "Does not activate cut-ready.",
+        "Does not impose physical scale, cut-contour, bleed, or vendor gates."
       ]
     },
     {
