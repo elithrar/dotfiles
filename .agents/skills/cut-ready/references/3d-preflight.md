@@ -2,6 +2,8 @@
 
 Use for neutral 3D CAD files intended for formed sheet or plate, CNC machining, or another subtractive manufacturing process. This skill does not cover STL or 3MF print-mesh preparation.
 
+Also load `cad-generation.md` when geometry is scripted, rebuilt from a drawing, or revised parametrically.
+
 ## Common STEP rules
 
 - Model at 1:1 scale in explicit inch or millimeter units.
@@ -10,6 +12,7 @@ Use for neutral 3D CAD files intended for formed sheet or plate, CNC machining, 
 - Remove hidden bodies, construction surfaces, leftover faces, reference components, and unrelated assembly geometry.
 - Orient the part deliberately. Keep a stable face aligned to a principal plane when the vendor requires it.
 - Preserve a native or parametric source file so manufacturing revisions do not depend on editing the neutral export.
+- Require the source model to regenerate without warnings and to retain the expected sketch profiles, bodies, features, and named controlling parameters.
 
 ## Sheet and plate parts
 
@@ -18,6 +21,7 @@ Use for neutral 3D CAD files intended for formed sheet or plate, CNC machining, 
 - Keep thickness uniform and ensure full faces exist at sheet edges.
 - For full-depth sheet cutting, use through-holes and cutouts. Do not model countersinks, counterbores, partial-depth pockets, tapered edges, or other dimensional features unless the service is CNC machining or the vendor explicitly supports them in the selected workflow.
 - Model bent flanges in their intended formed state for a STEP bending workflow.
+- Reconcile the folded model, flat pattern, bend-line order, and material direction. Verify slot and hole clearance from bend zones rather than checking only the final folded view.
 - Use the vendor's current material- and thickness-specific bend radius, K factor, relief, minimum flange, and deformation rules. Do not substitute generic rules.
 - Confirm bend angle, direction, stationary face, cosmetic face, and grain direction in the vendor preview when applicable.
 
