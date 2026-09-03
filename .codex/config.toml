@@ -21,6 +21,9 @@ memories = true
 prevent_idle_sleep = true
 js_repl = false
 
+[features.context_management]
+experimental_mode = true
+
 [model_providers.cloudflare-ai-gateway]
 name = "Cloudflare AI Gateway"
 base_url = "http://127.0.0.1:41417/v1"
