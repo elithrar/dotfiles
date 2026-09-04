@@ -74,6 +74,13 @@ Use a compact, high-contrast palette. A reliable starting system:
 - Keep overlays sparse and aligned. One target box and three credible labels are stronger than a screen full of fake readouts.
 - Never fabricate factual telemetry. When values are illustrative, label the context as a visual study, concept, or simulated display.
 
+## Subject voice
+
+- Match the writing to the subject's period and technical culture. For historical work, research primary brochures, advertisements, manuals, and contemporary road tests before naming features or choosing idiom.
+- Prefer the nouns, units, and distinctions the period used. A 1970s competition-car story might speak of induction, compression, homologation, works specification, or the private entrant—not platforms, signals, experiences, or modern product language.
+- Paraphrase the era's cadence and priorities without copying a publication, impersonating a living writer, or reproducing advertising copy. Keep the prose precise enough to survive outside the visual treatment.
+- Let authentic mechanisms carry the story. A specific pump, linkage, material, dimension, or service constraint is stronger than a generic claim about performance.
+
 ## Graphic language
 
 Use a small motif set repeatedly:
