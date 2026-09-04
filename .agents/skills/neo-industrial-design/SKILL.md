@@ -1,47 +1,47 @@
 ---
 name: neo-industrial-design
-description: Build or restyle web pages as precise neo-industrial and editorial-brutalist experiences. Use for sites, landing pages, portfolios, product stories, and interface surfaces that need oversized grotesk typography, strict grid logic, technical mono notation, signal color, hard-edged image treatment, or instrument-panel graphics. Do not use for generic dashboard styling or merely dark themes.
+description: "Design or restyle web interfaces with a neo-industrial and editorial-brutalist visual system: oversized grotesk typography, strict grids, high-contrast neutral fields, signal accents, technical notation, hard image crops, and instrument-like interaction. Use when the user requests this visual direction for a site, landing page, portfolio, product page, or interface. Do not use for copywriting, subject research, generic dark themes, or ordinary dashboards without this visual brief."
 ---
 
 # Neo-Industrial Design
 
-Translate the content into a working visual system rather than decorating a conventional page with orange lines. The result should feel engineered, editorial, and physically composed: large type carries the story; a visible grid creates tension; technical notation adds precision; one signal color marks state and action.
+Apply a coherent visual system to web content. The result should feel engineered, editorial, and physically composed: typography carries the hierarchy, a disciplined grid controls tension, imagery behaves as evidence, and technical graphics clarify structure or state.
 
-## Establish the direction
+The user's instructions and existing product requirements take precedence. Treat supplied copy, facts, information architecture, and imagery as content inputs. Do not research, fact-check, or rewrite substantive content unless the user explicitly asks. When required content is missing, use neutral placeholders or leave the region open rather than inventing subject matter.
 
-Before editing source, decide four things in one sentence each:
+## Set the visual thesis
 
-1. **Mode:** editorial, instrumental, or a hybrid. Editorial mode is type-led and poster-like. Instrumental mode is image/data-led and resembles an observation system. Hybrid mode alternates the two.
-2. **Hero move:** choose one dominant gesture—an edge-cropped title, a full-bleed image under a grid, a bracketed word, or a giant index. Do not stack several competing tricks.
-3. **Grid:** define the page columns, outer gutter, and one recurring alignment axis. Let some elements span or violate the grid deliberately, but keep their edges accountable to it.
-4. **Signal:** assign the accent color a meaning such as active, locked, selected, or actionable. Do not spread it evenly as decoration.
+Choose the following before implementation:
 
-For detailed type, color, layout, image, and graphic rules, read [references/visual-system.md](references/visual-system.md) before building or restyling a web experience.
+1. **Mode:** editorial, instrumental, or hybrid. Editorial mode is type-led and poster-like. Instrumental mode is image- or interface-led. Hybrid mode alternates them.
+2. **Dominant gesture:** one primary move, such as an edge-cropped title, a full-bleed image under a grid, a bracketed word, or a giant index.
+3. **Grid:** columns, outer gutter, and recurring alignment axes. Deliberate violations should remain accountable to those axes.
+4. **Signal:** one accent color with a consistent visual role such as action, selection, position, or emphasis.
 
-## Build the page
+Read [references/visual-system.md](references/visual-system.md) before designing or restyling the interface. Use it as a system of relationships, not as a checklist of effects.
 
-- Start with hierarchy and silhouette. At thumbnail size, the oversized headline, principal image or field, and sectional rhythm should still be obvious.
-- Use one neutral grotesk family for display and body, plus one compact monospaced family for telemetry, labels, coordinates, and state. Use weight, width, scale, and case before introducing another family.
-- Make display type genuinely large and tightly spaced. Let it touch or crop against the viewport or section boundary when that strengthens the composition. Keep paragraphs comfortable and relatively compact.
-- Prefer square corners, hairline rules, solid blocks, brackets, registration marks, numbered modules, rulers, grids, scanlines, and crosshairs. Each motif should reinforce alignment, state, measurement, navigation, or the subject—not simulate arbitrary machinery.
-- Use photography or product imagery as evidence. Crop decisively, darken or desaturate when needed, and place annotations in quiet regions. Do not cover the subject's critical details with labels.
-- Alternate density. Follow a compressed, information-rich section with a quieter field of oversized type, image, or negative space.
-- Keep navigation terse and structural. Buttons should read as labels or controls: solid rectangular fields, outlined brackets, or text with a directional mark. Avoid pills, soft shadows, frosted panels, and rounded card grids unless the product already requires them.
-- Use motion like a calibrated instrument: brief reveals, tracking-line sweeps, counter changes, or state-color transitions. Respect reduced-motion settings. Avoid ambient floating, bounce, or decorative parallax.
-- Preserve semantic HTML, keyboard access, visible focus, alt text, contrast, and readable body sizes. Technical styling is not permission to make essential text tiny.
+## Build from macro to micro
 
-## Make it responsive
+1. Establish section proportions, dominant fields, reading order, and the type/image silhouette.
+2. Lock the display, body, and annotation type roles and their scale contrast.
+3. Apply the grid to content edges, rules, images, navigation, and repeated modules.
+4. Introduce only the graphic motifs that reinforce an alignment, boundary, state, measurement, or interaction.
+5. Add responsive compositions and interaction states without weakening the desktop hierarchy.
 
-- Preserve hierarchy rather than shrinking the desktop composition uniformly.
-- Recompose wide grids into fewer columns and allow headline line breaks to change intentionally.
-- Keep touch targets usable; move nonessential telemetry after the main content or hide only redundant decoration.
-- Prevent horizontal clipping of interactive elements. Deliberate title cropping may remain when the full title is still available to assistive technology and understandable on screen.
-- Check both a narrow phone viewport and a wide desktop viewport. The page should feel authored in each, not merely unbroken.
+Preserve semantic HTML, source-order clarity, keyboard access, visible focus, alt text, useful contrast, and readable body sizes. Technical styling does not justify inaccessible text or controls.
 
-## Self-review
+## Make responsiveness compositional
 
-Before presenting or publishing, read and perform [references/review.md](references/review.md). Review the rendered page, not only the source. Fix failures that weaken hierarchy, legibility, or intent; do not add more motifs to compensate for a weak composition.
+- Recompose wide grids into fewer columns instead of shrinking the desktop canvas uniformly.
+- Set intentional mobile headline breaks and preserve the primary reading path.
+- Move secondary rails after main content; remove only redundant decoration.
+- Prevent interactive content from clipping or causing horizontal scrolling.
+- Retain deliberate display-type cropping only when the title remains understandable and fully available to assistive technology.
 
-## Output expectation
+## Review the rendered result
 
-Deliver a complete, usable web experience with a coherent visual thesis, responsive layout, and clear content hierarchy. Briefly state the chosen mode and the most important review correction when handing off the work.
+Before presenting or publishing, perform [references/review.md](references/review.md) against the rendered page at wide desktop and narrow phone widths. Fix failures in hierarchy, alignment, legibility, responsiveness, or interaction. Do not add motifs to compensate for a weak composition.
+
+## Output
+
+Deliver a usable, responsive web interface with one legible visual thesis and a consistent design system. In the handoff, state the chosen mode and the most important visual correction made during rendered review.

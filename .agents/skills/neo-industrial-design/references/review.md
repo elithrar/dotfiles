@@ -36,7 +36,7 @@ Remove elements that cannot justify their placement.
 - Are neutral fields doing most of the visual work?
 - Does image grading support legibility without erasing the subject?
 - Are overlays placed in quiet regions and kept sparse?
-- Is illustrative data presented honestly rather than as a factual claim?
+- Do annotations use supplied content or unmistakably neutral placeholders rather than invented subject data?
 
 ## 5. Responsive behavior
 

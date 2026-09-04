@@ -71,15 +71,8 @@ Use a compact, high-contrast palette. A reliable starting system:
 - Favor documentary, industrial, aerial, thermal, technical, or product-detail imagery with real texture.
 - Apply a restrained grade: high contrast, desaturation, a cold green/blue cast, monochrome, or blown-out thermal color. Preserve meaningful subject detail.
 - Add annotations in HTML/CSS so they stay sharp and responsive. Use simple lines, reticles, boxes, percentages, coordinates, and short labels.
-- Keep overlays sparse and aligned. One target box and three credible labels are stronger than a screen full of fake readouts.
-- Never fabricate factual telemetry. When values are illustrative, label the context as a visual study, concept, or simulated display.
-
-## Subject voice
-
-- Match the writing to the subject's period and technical culture. For historical work, research primary brochures, advertisements, manuals, and contemporary road tests before naming features or choosing idiom.
-- Prefer the nouns, units, and distinctions the period used. A 1970s competition-car story might speak of induction, compression, homologation, works specification, or the private entrant—not platforms, signals, experiences, or modern product language.
-- Paraphrase the era's cadence and priorities without copying a publication, impersonating a living writer, or reproducing advertising copy. Keep the prose precise enough to survive outside the visual treatment.
-- Let authentic mechanisms carry the story. A specific pump, linkage, material, dimension, or service constraint is stronger than a generic claim about performance.
+- Keep overlays sparse and aligned. One target box and three purposeful labels are stronger than a screen full of readouts.
+- Use supplied labels and values. When no annotation content is provided, omit it or use an unmistakably neutral placeholder rather than inventing subject data.
 
 ## Graphic language
 
@@ -107,7 +100,7 @@ Prefer CSS gradients and borders for non-representational grids and calibration 
 ## Common failure modes
 
 - **Template in costume:** rounded cards and centered hero remain underneath a dark palette and mono labels. Rebuild the silhouette and grid.
-- **HUD cosplay:** invented data crowds the subject. Delete most overlays and keep only meaningful or clearly illustrative notation.
+- **HUD cosplay:** arbitrary data-like decoration crowds the subject. Delete most overlays and keep only notation that supports structure or state.
 - **Everything shouts:** every heading is huge and every rule is orange. Establish one primary moment and quieter supporting sections.
 - **Tiny-type theater:** critical information is reduced to illegible telemetry. Promote important content to body size.
 - **Accidental chaos:** offsets and overlaps do not share alignment anchors. Return elements to the grid, then break it once with intent.

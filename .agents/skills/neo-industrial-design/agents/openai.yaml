@@ -1,5 +1,5 @@
 interface:
   display_name: "Neo-Industrial Design"
-  short_description: "Build precise neo-industrial web experiences"
+  short_description: "Design neo-industrial, brutalist web interfaces"
   brand_color: "#FF4F00"
-  default_prompt: "Use $neo-industrial-design to design and build this web experience."
+  default_prompt: "Use $neo-industrial-design to apply a rigorous neo-industrial visual system to this web interface."
