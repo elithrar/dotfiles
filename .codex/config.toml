@@ -1,4 +1,4 @@
-model = "gpt-5.6-sol"
+model = "gpt-6-astra"
 model_context_window = 200000
 
 # Workspace permissions with explicit secret-file protections.
