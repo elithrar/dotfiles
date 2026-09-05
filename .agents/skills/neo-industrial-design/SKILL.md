@@ -1,6 +1,6 @@
 ---
 name: neo-industrial-design
-description: "Design or restyle web interfaces with a neo-industrial and editorial-brutalist visual system: oversized grotesk typography, strict grids, high-contrast neutral fields, signal accents, technical notation, hard image crops, and instrument-like interaction. Use when the user requests this visual direction for a site, landing page, portfolio, product page, or interface. Do not use for copywriting, subject research, generic dark themes, or ordinary dashboards without this visual brief."
+description: Design or restyle web interfaces in the user's neo-industrial or editorial-brutalist style. Use when that visual direction is requested; not for generic dashboards, dark themes, or copywriting.
 ---
 
 # Neo-Industrial Design
@@ -11,7 +11,7 @@ The user's instructions and existing product requirements take precedence. Treat
 
 ## Set the visual thesis
 
-Choose the following before implementation:
+Infer these choices from the supplied brief and existing interface; make routine design decisions without a separate approval round:
 
 1. **Mode:** editorial, instrumental, or hybrid. Editorial mode is type-led and poster-like. Instrumental mode is image- or interface-led. Hybrid mode alternates them.
 2. **Dominant gesture:** one primary move, such as an edge-cropped title, a full-bleed image under a grid, a bracketed word, or a giant index.
@@ -26,7 +26,7 @@ Read [references/visual-system.md](references/visual-system.md) before designing
 2. Lock the display, body, and annotation type roles and their scale contrast.
 3. Apply the grid to content edges, rules, images, navigation, and repeated modules.
 4. Introduce only the graphic motifs that reinforce an alignment, boundary, state, measurement, or interaction.
-5. Add responsive compositions and interaction states without weakening the desktop hierarchy.
+5. Compose both mobile and desktop around the primary task. In an instrumental interface, keep the map, data, or working surface dominant; oversized titles and decoration must not displace it.
 
 Preserve semantic HTML, source-order clarity, keyboard access, visible focus, alt text, useful contrast, and readable body sizes. Technical styling does not justify inaccessible text or controls.
 
@@ -40,7 +40,7 @@ Preserve semantic HTML, source-order clarity, keyboard access, visible focus, al
 
 ## Review the rendered result
 
-Before presenting or publishing, perform [references/review.md](references/review.md) against the rendered page at wide desktop and narrow phone widths. Fix failures in hierarchy, alignment, legibility, responsiveness, or interaction. Do not add motifs to compensate for a weak composition.
+For implemented changes, use [references/review.md](references/review.md) to inspect the affected page at wide desktop and narrow phone widths. Fix failures in hierarchy, alignment, legibility, responsiveness, or interaction within the requested implementation. For review-only requests, report findings without changing or publishing the interface. Do not add motifs to compensate for a weak composition.
 
 ## Output
 

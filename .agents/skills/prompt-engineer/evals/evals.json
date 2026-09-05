@@ -37,10 +37,10 @@
     {
       "id": "route-skill-authoring",
       "prompt": "Rewrite this SKILL.md description so it triggers for GitLab pipeline failures but not ordinary Git questions.",
-      "expected_output": "Routes the skill-authoring workflow to add-skill while applying prompt analysis only to the trigger behavior.",
+      "expected_output": "Uses available host skill-authoring guidance or the specification, with prompt analysis scoped to trigger behavior.",
       "files": [],
       "assertions": [
-        "Uses add-skill as the primary workflow.",
+        "Does not require an uninstalled skill.",
         "Preserves prompt-engineer only as supporting analysis.",
         "Includes positive and near-miss activation cases."
       ]
@@ -79,6 +79,17 @@
         "Prefers schema enforcement over repeated prose.",
         "States each surviving instruction once.",
         "Includes malformed and edge-value eval cases."
+      ]
+    },
+    {
+      "id": "astra-authorized-edit",
+      "prompt": "Update this Astra developer prompt: Always ask permission before every file edit. Run the entire test suite three times after any change. I want authorized edits to finish autonomously with focused verification.",
+      "expected_output": "Edits the requested prompt using current Astra guidance, retaining meaningful scope boundaries.",
+      "files": [],
+      "assertions": [
+        "Does not pause for routine edit approval.",
+        "Removes blanket repeated tests.",
+        "Does not change API/model settings or mandate subagents."
       ]
     }
   ]

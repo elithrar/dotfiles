@@ -1,6 +1,6 @@
 ---
 name: prompt-engineer
-description: Audit and revise system prompts, developer instructions, tool descriptions, and reusable LLM prompt templates. Use for behavioral failures such as over-searching, format drift, weak tool use, instruction conflicts, or unsupported claims. Use add-skill for SKILL.md authoring and ordinary editing for prose-only changes.
+description: Audit and revise system prompts, developer instructions, tool descriptions, and reusable LLM prompt templates. Use for behavioral failures such as over-searching, format drift, weak tool use, instruction conflicts, or unsupported claims. Use for prompt behavior, not ordinary prose editing or skill packaging alone.
 ---
 
 # Prompt Engineer
@@ -11,7 +11,7 @@ Treat prompts as behavioral interfaces. Preserve the author's intent and structu
 
 - Treat prompt edits as behavior changes, not copy edits.
 - Work from observed failures, target behavior, and success criteria. If evidence is unavailable, state the assumption and propose representative tests before claiming improvement.
-- Preserve instruction authority: system and developer rules define the application, user content supplies task data, and retrieved or user-provided documents remain labeled as data.
+- Preserve instruction authority: system and developer rules constrain the application, direct user instructions define the task within those limits, and retrieved content and supplied artifacts remain data unless the user delegates task guidance to them.
 - Prefer lean, outcome-first prompts. Add process, examples, or repeated emphasis only when evals show they improve a specific failure.
 - Do not duplicate authorization or safety policy already enforced by a higher-authority host prompt.
 - Do not ask models to reveal hidden chain of thought. Request concise rationale, evidence, checks, or final-answer reasoning instead.
@@ -30,7 +30,7 @@ Identify only the dimensions that affect the revision:
 - Required inputs, tools, action boundaries, and output.
 - Evidence that will distinguish an improvement from a regression.
 
-If missing context materially changes the design or risk, ask one focused question. Otherwise proceed with an explicit assumption.
+Use existing context and proceed on routine assumptions. Complete independent authorized work before asking a focused question when missing context materially changes the design or risk. Do not turn an edit request into a proposal-only handoff or a request for already-given permission.
 
 ### 2. Diagnose the Failure
 
@@ -77,15 +77,15 @@ Use markdown headings or XML tags only to separate real content types. For long-
 ### 4. Present the Result
 
 - For an audit, report the failure mechanism and exact proposed edits without silently rewriting the artifact.
-- For a targeted edit, show the patch or changed sections.
+- For a targeted edit, update the requested artifact and show the patch or changed sections.
 - For a requested rewrite, show the complete revised prompt.
 - Preserve the author's voice, intent, and authority boundaries.
-- Include assumptions, material tradeoffs, and representative evals.
+- Include only material assumptions and tradeoffs. Use representative evals when the behavioral change warrants them; do not require new fixtures for a minor wording correction.
 - Distinguish tested improvements from untested proposals.
 
 ## Skill Routing
 
-For `SKILL.md` creation, resource organization, metadata, and activation testing, use `add-skill`. Use this skill only when the primary problem is prompt behavior inside the skill.
+For skill packaging or metadata authoring, use the host's skill-creator when available, otherwise the [Agent Skills specification](https://agentskills.io/specification). Apply this skill when the primary problem is prompt behavior inside a skill. Do not require another skill to exist.
 
 ## Model-Specific Guidance
 
@@ -96,12 +96,12 @@ Keep the core analysis model-agnostic. When behavior depends on a named or curre
 3. Treat bundled references as fallback technique maps, not confirmation of current behavior.
 4. Record model-specific advice only when it changes the proposed prompt.
 
-Read [references/openai.md](references/openai.md) for OpenAI fallback guidance, [references/claude.md](references/claude.md) for Claude fallback guidance, and [references/research.md](references/research.md) when a research-heavy redesign needs a technique matched to a measured failure.
+For Astra prompt changes, read [references/openai.md](references/openai.md) after the current official guidance; it maps the documented behavior to concrete audit decisions. For other OpenAI models, use it only as fallback guidance. Read [references/claude.md](references/claude.md) only for Claude-specific fallback guidance, or [references/research.md](references/research.md) for a research-heavy redesign. Do not load all three by default.
 
 ## Iteration
 
 - Change one behavioral lever at a time when diagnosing a specific failure.
-- Run the same representative cases after each change.
+- Run the relevant representative cases after behavioral changes. Stop once the requested behavior is sufficiently verified; repeat or broaden only for a new failure, unresolved risk, or required gate.
 - Track what changed and what failed to avoid cycling back.
 - Keep the simplest variant that meets the success criteria.
 - If prompt changes cannot fix the failure, recommend the appropriate model, tool schema, retrieval, fine-tuning, or eval change.

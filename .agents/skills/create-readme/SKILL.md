@@ -17,7 +17,7 @@ Write a README that tells prospective users what the project does, why it is use
 
 ## House Style
 
-Follow the patterns in [elithrar/ask-bonk](https://github.com/elithrar/ask-bonk), [elithrar/simple-scrypt](https://github.com/elithrar/simple-scrypt), [elithrar/fuse-on-r2](https://github.com/elithrar/fuse-on-r2), and especially [gorilla/csrf](https://github.com/gorilla/csrf):
+Use the house-style principles below. Consult these examples only when a requested style match needs more context: [elithrar/ask-bonk](https://github.com/elithrar/ask-bonk), [elithrar/simple-scrypt](https://github.com/elithrar/simple-scrypt), [elithrar/fuse-on-r2](https://github.com/elithrar/fuse-on-r2), and especially [gorilla/csrf](https://github.com/gorilla/csrf).
 
 - Explain usefulness before setup. Name concrete outcomes and use cases instead of calling the project powerful, robust, or easy.
 - Move quickly from context to installation and a working example.

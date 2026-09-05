@@ -1,24 +1,24 @@
 ---
 name: cut-ready
-description: Create, revise, audit, or package production-ready CAD and physical vector artwork for stickers, decals, masks, technical diagrams, laser, waterjet, router, drag-knife, print-and-cut, sheet-metal bending, or CNC. Use for SVG, PDF, AI, EPS, DXF, DWG, STEP, or STP outputs and decisions about scale, contours, bleed, typography, material, thickness, bends, fit, vendor preparation, or tightly scoped revisions. Do not use for digital-only mockups, 3D-print meshes, or CAD instruction without a production artifact.
+description: Prepare or review CAD and vector artwork for physical fabrication, cutting, printing, or machining. Use for production files, scale, contours, fit, bends, and vendor handoff; not digital-only graphics, 3D-print meshes, or CAD explanation without a production artifact.
 ---
 
 # Cut-ready fabrication
 
-Treat `cut-ready` as a verified status, not a synonym for "file created." Do not claim it until the applicable evidence, geometry, readback, visual, and vendor gates pass.
+Treat `cut-ready` as a verified status, not a synonym for "file created." Do not claim it until the applicable evidence, geometry, readback, visual, and vendor gates pass. For an audit-only request, report findings and readiness without modifying or uploading files.
 
 ## Load the required references
 
 | Work | Reference |
 |---|---|
-| Establish dimensions, source confidence, and a revision contract | `references/intake-and-revision.md` |
-| Create or review 2D cut geometry | `references/2d-preflight.md` |
-| Create stickers, decals, masks, gauge faces, or annotated vector drawings | `references/graphics-and-diagrams.md` |
-| Generate CAD or vector geometry programmatically | `references/cad-generation.md` |
-| Create or review STEP/STP geometry | `references/3d-preflight.md` |
-| Prepare a vendor handoff or SendCutSend upload | `references/vendor-handoff.md` |
+| Establish dimensions, source confidence, and a revision contract | [intake-and-revision](references/intake-and-revision.md) |
+| Create or review 2D cut geometry | [2d-preflight](references/2d-preflight.md) |
+| Create stickers, decals, masks, gauge faces, or annotated vector drawings | [graphics-and-diagrams](references/graphics-and-diagrams.md) |
+| Generate CAD or vector geometry programmatically | [cad-generation](references/cad-generation.md) |
+| Create or review STEP/STP geometry | [3d-preflight](references/3d-preflight.md) |
+| Prepare a vendor handoff or SendCutSend upload | [vendor-handoff](references/vendor-handoff.md) |
 
-Load every reference that applies. Re-check the named vendor's current official requirements when material, thickness, minimum-feature, tolerance, bend, or file-format rules could have changed.
+Read a reference when its manufacturing decision or validation step is needed; do not load every file for a narrow revision. Re-check the named vendor's current official requirements when material, thickness, minimum-feature, tolerance, bend, or file-format rules could have changed.
 
 ## Workflow
 
@@ -29,11 +29,11 @@ Load every reference that applies. Re-check the named vendor's current official 
 5. **Run technical preflight.** Apply every relevant reference. Open the exported file in a second compatible tool or independent import path. Compare units, physical bounds, layers, bodies, contours, features, orientation, and critical dimensions with the source. Treat unexpected counts or importer healing as failures to diagnose.
 6. **Run visual and semantic review.** Render the actual production export at actual size and useful magnifications. Inventory every visible object and inspect negative space, alignment, z-order, occlusion, overlaps, arrow and leader termination, mirrored text, cut direction, feature placement, and installed orientation. Compare with source references and, for revisions, the accepted baseline. A parser-only check is insufficient.
 7. **Verify the manufacturing handoff.** When the vendor is named, use its current official design rules. If authorized and available, upload the file without ordering and inspect the vendor preview. Confirm displayed size, material, thickness, services, bend directions, and feature count. Never place an order or approve production without explicit authorization.
-8. **Package the result.** Include production files, editable source or generator, a rendered preview, a short README, and a validation report. State assumptions, reconstruction uncertainty, material and process, stock thickness, units, revision scope, checks passed, and checks not completed.
+8. **Package the result.** Return the requested production files with the source and preview needed to use or verify them. Summarize relevant process, units, assumptions, checks, and gaps in the handoff. Add a separate README or validation report only for a requested package or when manufacturing details would otherwise be lost.
 
 ## Guardrails
 
-- Stop before geometry generation when process, material, thickness, finished size, application orientation, or a critical dimension is unknown and the missing value can materially change the result.
+- Resolve missing inputs before the geometry decision they control. Complete independent edits and checks first; a color-only revision of accepted artwork need not re-open unchanged material or dimensional decisions. Preserve prior authorization and the user's requested scope. Explain any actual blocking instruction and the affected decision.
 - Do not invent vendor limits, tolerances, bend radii, K factors, kerf values, historical dimensions, or missing geometry. Retrieve current primary-source rules or report the blocker.
 - Do not compensate for kerf, bend allowance, or finishing unless the manufacturing workflow explicitly requires it.
 - Do not describe ordinary PVC or automotive vinyl as laser-safe. Default to a drag-knife or plotter unless the exact material manufacturer and machine operator explicitly approve laser processing.

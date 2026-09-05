@@ -1,11 +1,11 @@
 ---
 name: code-reviewer
-description: Perform a read-only, defect-first review of a specified code change and return actionable findings. Use for uncommitted changes, base-branch diffs, commits, PRs or MRs, or named changed files. Use differential-review for security-focused audits and simplify for complexity-only reviews.
+description: Review a specified code change for actionable defects. Use for uncommitted changes, base-branch diffs, commits, PRs or MRs; review alone is read-only, and requested fixes follow the review. Not a repository-wide security or complexity audit.
 ---
 
 # Code Reviewer
 
-Review the requested change without modifying files, creating commits, pushing branches, posting comments, or resolving threads.
+Keep review-only requests read-only. When the user also requests fixes, a PR, or posted findings, complete the review and then perform the authorized follow-up. The skill does not authorize additional external actions.
 
 Use the target named by the user. If no target is given, review uncommitted changes. If the working tree is clean, report that no uncommitted target exists rather than silently reviewing the last commit.
 
@@ -15,7 +15,7 @@ Review behavior introduced or materially affected by the change. Mention a pre-e
 
 1. Read the applicable `AGENTS.md` and repository review instructions.
 2. Resolve the exact review target and inspect the complete diff.
-3. For a base-branch review, find the merge base and review the changes that would actually merge. Prefer the branch upstream when it exists and is ahead of the local ref.
+3. For a base-branch review, resolve the requested base and compute its merge base with the review head. Prefer the remote-tracking ref of that base when it is ahead of its local ref; the feature branch's own upstream is not the base.
 4. Read enough surrounding implementation, tests, callers, and configuration to understand each changed path.
 5. Identify the intended behavior, preserved invariants, externally reachable paths, and highest-risk changes.
 6. Verify each candidate finding from code, relevant history, or the smallest diagnostic check that can confirm or disprove it.

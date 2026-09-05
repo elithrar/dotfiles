@@ -14,6 +14,16 @@
       "expected_output": "Queries global sessions and groups by project/theme",
       "files": [],
       "assertions": []
+    },
+    {
+      "id": "short-session-material-fix",
+      "prompt": "Summarize these two messages: I asked to fix token expiry; the tool result and git diff show the expiry check was corrected.",
+      "expected_output": "Includes the material fix despite the short session.",
+      "files": [],
+      "assertions": [
+        "Does not exclude the session because it has fewer than three messages.",
+        "Does not query the server when all necessary evidence is supplied."
+      ]
     }
   ]
 }

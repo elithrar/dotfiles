@@ -1,6 +1,6 @@
 # Intake, evidence, and revision control
 
-Use this reference before generating geometry and before every revision.
+Use for new geometry, reconstruction, or a revision whose scope or controlling dimensions need clarification. Reuse the accepted manufacturing packet for narrow revisions.
 
 ## Minimum manufacturing packet
 
@@ -35,7 +35,7 @@ For reconstruction-derived work, prepare a 1:1 paper, cardboard, or inexpensive-
 
 ## Revision contract
 
-Write this short contract before editing:
+For a substantial or ambiguous revision, record this contract. For a narrow change, identify the baseline, requested delta, and relevant invariants without requiring a separate document:
 
 ```markdown
 Baseline: <file or revision>
