@@ -1,6 +1,6 @@
 # Rendered self-review
 
-Use this review after the implementation is coherent and before presenting or publishing it. Inspect the rendered page at wide desktop and narrow phone widths. Interact with every control and use keyboard navigation where applicable.
+Use this review for the changed surface once implementation is coherent. Inspect wide desktop and narrow phone widths and the affected controls, including keyboard behavior. For a full redesign, cover all controls; for a narrow change, expand the review only for a concrete regression risk. If rendering is unavailable, complete source-level checks and state the visual verification gap.
 
 ## 1. Thumbnail test
 
@@ -67,7 +67,7 @@ Do not claim the work is complete while any of these remain:
 - body or functional text is illegible;
 - interactive content clips or scrolls sideways on mobile;
 - decorative instrumentation overwhelms the subject;
-- the page relies on generic cards, pills, soft shadows, or default component styling;
+- default styling on the changed surface undermines the requested visual direction;
 - the accent color has no consistent meaning;
 - essential keyboard, focus, contrast, or reduced-motion behavior is missing.
 

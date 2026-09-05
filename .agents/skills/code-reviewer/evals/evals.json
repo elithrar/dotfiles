@@ -91,6 +91,16 @@
         "Returns No findings for the unrelated safe change.",
         "Does not broaden a scoped invariant into a generic naming rule."
       ]
+    },
+    {
+      "id": "review-and-fix",
+      "prompt": "Review my uncommitted change and fix any genuine bug you find.",
+      "expected_output": "Reviews first, then implements the authorized fix and runs the relevant check.",
+      "files": [],
+      "assertions": [
+        "Does not treat the review-only default as a prohibition on the requested fix.",
+        "Does not push or post a review unless requested."
+      ]
     }
   ]
 }

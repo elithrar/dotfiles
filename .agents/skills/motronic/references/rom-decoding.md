@@ -4,7 +4,7 @@ Use this reference for Porsche 911 Carrera 3.2 28-pin Bosch Motronic EPROM decod
 
 ## Preferred Tooling
 
-For the local Motronic repository, use:
+These commands refer to a separate local Motronic repository, not files bundled with this skill. Locate and inspect its decoder and supported flags before use; if unavailable, report the tooling gap and analyze supplied bytes only where the format is proven. For that repository, examples are:
 
 ```bash
 uv run scripts/decode-motronic.py "911 chip 89 911 28pin 3.bin"
@@ -130,7 +130,7 @@ Distinguish the validated limiter scalar at `7000 rpm` from the highest WOT map 
 
 ## Verification Checklist
 
-- Verify ROM size is exactly `8192` bytes for a 28-pin image.
+- Verify the image size and hash against the intended ROM family. The documented reference image is `8192` bytes; 28-pin packaging alone does not establish binary size or map layout.
 - Record SHA1 and SHA256.
 - Parse candidate structures from known offsets or directory pointers.
 - Confirm expected shapes: 12x12 part-throttle fuel/ignition, 1x20 WOT fuel, 1x16 WOT ignition, 1x10 idle fuel/ignition.

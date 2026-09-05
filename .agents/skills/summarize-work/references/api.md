@@ -1,148 +1,50 @@
-# API Reference
+# OpenCode history retrieval
 
-All endpoints target the OpenCode server. Default base URL: `http://localhost:4096`.
+Use for session history outside the current conversation. Verify the running version through its [server documentation](https://opencode.ai/docs/server/) and exposed `/doc` schema when an endpoint or response differs. Bundled examples are starting points, not a complete versioned API contract.
 
-## Session Discovery
+## Discover and scope
 
-**List sessions across all projects (cross-repo requests):**
-
-```bash
-curl -sf "$OPENCODE_URL/global/session?roots=true&limit=20"
-```
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `directory` | string | Filter by project directory path |
-| `roots` | boolean | Only root sessions (exclude subagent sessions) |
-| `start` | number | Filter sessions updated on or after this timestamp (ms since epoch) |
-| `search` | string | Filter by title (case-insensitive) |
-| `limit` | number | Max results (default 100) |
-| `archived` | boolean | Include archived sessions (default false) |
-
-Response includes project metadata on each session:
-
-```json
-[{
-  "id": "session_abc123",
-  "title": "fix auth token handling",
-  "projectID": "proj_xyz",
-  "parentID": null,
-  "time": { "created": 1739836800000, "updated": 1739840400000 },
-  "project": { "id": "proj_xyz", "name": "my-app", "worktree": "/home/user/my-app" }
-}]
-```
-
-**List sessions for the current project:**
+Use the configured server URL. `http://localhost:4096` is the default for `opencode serve`; a TUI session can use a randomly assigned port. Do not treat failure at port 4096 as proof that OpenCode is stopped.
 
 ```bash
-curl -sf "$OPENCODE_URL/session?roots=true&limit=20"
+curl --fail --silent --show-error --max-time 5 "$OPENCODE_URL/global/health"
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `directory` | string | Filter by project directory path |
-| `roots` | boolean | Only root sessions (exclude subagent sessions) |
-| `start` | number | Filter sessions updated on or after this timestamp (ms since epoch) |
-| `search` | string | Filter by title (case-insensitive) |
-| `limit` | number | Max results |
+Check the returned health/version. Use existing connection configuration or process arguments to locate a different port; do not print credentials or sweep unrelated ports. Read `/doc` for supported query parameters and response shapes.
 
-**Filter by time:**
+| Need | Read path |
+|---|---|
+| Identify the current project | `GET /project/current` |
+| List projects when cross-project work is requested | `GET /project` |
+| List sessions for a known directory | `GET /session` with the supported directory selector |
+| Read a session | `GET /session/{id}/message` |
+| Clarify task intent | `GET /session/{id}/todo` |
+
+Use `/global/session` only if the running version advertises it. Otherwise enumerate requested projects and query sessions by directory. A global server's current project is not necessarily the repository the user requested.
+
+For directory-scoped requests, encode the directory rather than interpolating it into a URL:
 
 ```bash
-# Today only (compute start-of-day in ms)
-START=$(date -d "today 00:00" +%s)000
-curl -sf "$OPENCODE_URL/global/session?roots=true&start=$START"
-
-# This week
-START=$(date -d "last monday" +%s)000
-curl -sf "$OPENCODE_URL/global/session?roots=true&start=$START"
+curl --fail --silent --show-error --max-time 15 --get \
+  --data-urlencode "directory=$PROJECT_DIR" "$OPENCODE_URL/session"
 ```
 
-**Search sessions by title:**
+Confirm filtering, root/child session behavior, limits, archives, and pagination against the running schema. Read additional result pages when needed for the requested period, or state the coverage limit. Include relevant child-session work when it is not represented in the parent.
+
+## Time and content
+
+Compute boundaries in the user's timezone using available timezone-aware tooling. Avoid GNU-only `date -d` commands in these macOS/Linux dotfiles. OpenCode time fields use epoch milliseconds; verify their meaning before filtering. Session update time is a discovery hint, not proof that every message occurred in the requested interval. Filter actual message times for the summary.
+
+Retrieve full relevant messages, including tool results when they substantiate completed work. Text previews can help triage but are not complete evidence. If fetching a bounded message list, inspect pagination and report truncation rather than claiming a full recap.
+
+## Read-only SQLite fallback
+
+If server retrieval fails and local database access fits the request, inspect the actual database schema before selecting columns. Do not assume table or timestamp names mirror API objects. The usual location is `~/.local/share/opencode/opencode.db`; resolve any configured data-directory override first.
 
 ```bash
-curl -sf "$OPENCODE_URL/global/session?search=auth&roots=true"
+sqlite3 -readonly "$OPENCODE_DB" '.tables'
+sqlite3 -readonly "$OPENCODE_DB" '.schema session'
+sqlite3 -readonly "$OPENCODE_DB" '.schema message'
 ```
 
-## Session Content
-
-**Messages (primary query for understanding a session):**
-
-```bash
-curl -sf "$OPENCODE_URL/session/<SESSION_ID>/message"
-```
-
-Returns an array of `{ info, parts }` objects. Each message has:
-
-- `info.role`: `"user"` or `"assistant"`
-- `info.cost`, `info.tokens`: usage data (assistant messages)
-- `parts[]`: array of content parts, each with a `type` field
-
-Extract text content:
-
-```bash
-curl -sf "$OPENCODE_URL/session/<SESSION_ID>/message" | \
-  jq '[.[] | {role: .info.role, text: [.parts[] | select(.type == "text") | .text[:1000]] | join(" ")}]'
-```
-
-Extract tool calls (what the agent did):
-
-```bash
-curl -sf "$OPENCODE_URL/session/<SESSION_ID>/message" | \
-  jq '[.[] | .parts[] | select(.type == "tool") | {tool, status: .state.status, title: .state.title}]'
-```
-
-**Limit messages** (useful for large sessions):
-
-```bash
-curl -sf "$OPENCODE_URL/session/<SESSION_ID>/message?limit=50"
-```
-
-## Todos
-
-```bash
-curl -sf "$OPENCODE_URL/session/<SESSION_ID>/todo"
-```
-
-Returns:
-
-```json
-[{
-  "content": "Fix validation logic",
-  "status": "completed",
-  "priority": "high"
-}]
-```
-
-## Projects
-
-**List all projects:**
-
-```bash
-curl -sf "$OPENCODE_URL/project"
-```
-
-**Get current project:**
-
-```bash
-curl -sf "$OPENCODE_URL/project/current"
-```
-
-Returns `{ id, name, worktree }` -- use `worktree` to scope session queries by directory.
-
-## Fallback: Direct SQLite
-
-If the API server is unreachable, query `~/.local/share/opencode/opencode.db` directly. Tables mirror the API: `session`, `message`, `todo`. JSON columns use SQLite `json_extract()`.
-
-```bash
-sqlite3 ~/.local/share/opencode/opencode.db "SELECT id, title FROM session ORDER BY updated_at DESC LIMIT 10"
-```
-
-## Cost and Usage
-
-Token usage is embedded in assistant message metadata:
-
-```bash
-curl -sf "$OPENCODE_URL/session/<SESSION_ID>/message" | \
-  jq '[.[] | select(.info.role == "assistant") | {model: .info.modelID, cost: .info.cost, tokens: .info.tokens}]'
-```
+Use only read queries and bind or correctly quote filter values. If the database is missing, locked, or incompatible, report the gap and use available conversation/git evidence. Do not create, migrate, repair, or copy live database state as a side effect of writing a summary.

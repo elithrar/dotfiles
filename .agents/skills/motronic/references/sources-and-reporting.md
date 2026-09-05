@@ -63,46 +63,11 @@ Use these labels consistently:
 | Assumption | Needed to reason, but not provided or proven |
 | Unknown | Cannot be concluded from available evidence |
 
-## Diagnostic Answer Format
+## Report detail
 
-```markdown
-## Summary
-## Evidence
-## Missing Data
-## Analysis
-## Risks
-## Next Checks
-```
+Match the user's requested depth and format. For diagnosis, give the supported fault path, decisive measurements, and next test with its interpretation. For a full ROM report, include file identity, formulas, raw values, offsets, map family, and verification gaps. Separate the rev-limit scalar from the map-axis endpoint. For calibration advice, explain the proposed change and the evidence needed to validate it.
 
-Keep `Next Checks` short and ordered. Prefer three high-yield tests over a long checklist.
-
-## ROM Decode Report Format
-
-```markdown
-## Summary
-## File Identity
-## Constants And Assumptions
-## Map Offsets
-## Fuel Maps
-## Ignition Maps
-## Verification Notes
-## Safety Notes
-```
-
-For ignition tables, state the exact conversion formula. For fuel tables, show raw values and `raw / 128` multipliers when applicable.
-
-## Calibration Answer Format
-
-```markdown
-## Recommendation
-## Known Data
-## Assumptions
-## Calibration Impact
-## Validation Plan
-## Safety Risks
-```
-
-Do not present a calibration as safe without validation evidence.
+Use headings only when they improve a substantial report. Do not require six-section answers for a single factual question. Fuel bytes expressed as `raw / 128` are multipliers where that conversion is verified, not measured AFR.
 
 ## Good Answer Boundaries
 

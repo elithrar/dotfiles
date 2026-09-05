@@ -1,6 +1,6 @@
 # Vendor handoff and SendCutSend
 
-Use this reference whenever a named vendor will manufacture the result. Vendor requirements change. Browse the vendor's current official guidance and material catalog before finalizing geometry.
+Use when a named vendor's process requirements affect geometry, export, or a manufacturing handoff. Vendor requirements change; check the current official rules relevant to the task. A local color-only edit does not require refreshing unrelated material data or uploading the file again.
 
 ## SendCutSend routing snapshot
 

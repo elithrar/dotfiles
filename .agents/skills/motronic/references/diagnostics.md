@@ -179,13 +179,28 @@ Prefer evidence in this order:
 - Use wire bend memory only as supporting evidence. Confirm with the wiring diagram or a known connector map.
 - Inspect and resolder or replace fatigued terminal pins when strands are cracked, green, loose, or vibration-damaged.
 
-## Report Template
 
-```markdown
-## Symptom
-## Car/DME Identity
-## Measurements Already Taken
-## Most Likely Fault Path
-## Next Three Tests
-## Risks
-```
+## Minimum Triage Packet
+
+When evidence is thin, request only the high-yield details needed for the next branch:
+
+| Case | Ask for |
+|---|---|
+| No-start | Year, DME part number if known, spark yes/no, injector pulse yes/no, fuel pressure, DME relay status, speed/reference sensor evidence |
+| Hot-start | Restarts cold or hot only, residual fuel pressure, CHT reading, speed/reference behavior hot, relay age/status |
+| Rich/lean | Wideband or plug evidence, CHT reading, fuel pressure, AFM sweep, vacuum leaks, chip identity |
+| Misfire/cutout | RPM/load/temperature pattern, tach behavior, AFR trace, spark quality, fuel pressure under load, recent ignition work |
+| Chip/ROM issue | Binary file or hash, chip size, 24/28-pin DME, adapter/orientation, baseline chip behavior |
+| Forum-backed answer | Thread URL, poster names, post dates, final outcome, and whether advice matches factory/Bentley/measurement evidence |
+
+## Diagnostic Workflow
+
+Use this order unless the user's evidence points strongly elsewhere:
+
+1. Identify the car and DME: model year, DME Bosch/Porsche number, 24-pin vs 28-pin chip, stock or modified harness, engine build, chip source, and recent work.
+2. Define the symptom precisely: no-start, hot-start, starts-then-dies, single-bank issue, misfire, rich/lean, idle hunt, WOT breakup, cutout, or ROM/tune concern.
+3. Check basics before calibration: battery voltage, DME relay behavior, power and ground voltage drop, fuel pressure, injector pulse, spark, speed/reference sensor signal, compression/leakdown if relevant.
+4. Prove inputs: CHT, AFM, idle/WOT switch, speed/reference sensors, O2 sensor where applicable, and harness continuity.
+5. Prove outputs: injectors, ignition coil/driver path, idle control valve, fuel pump control, and DME relay control.
+6. Interpret the branch: no spark plus no injector pulse points upstream; spark with no injector pulse points injector power/driver/control; injector pulse with no spark points ignition output/coil/distributor; both present points fuel pressure, mixture, mechanical, or timing.
+7. Only then analyze maps, fuel multipliers, ignition timing, rev limit, and checksum implications.

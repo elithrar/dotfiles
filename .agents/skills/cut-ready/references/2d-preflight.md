@@ -50,7 +50,7 @@ Use for DXF, DWG, SVG, PDF, AI, EPS, and other physically produced vectors. Also
 3. Compare the export bounds and critical dimensions with the source values.
 4. Render the production export and inspect it visually.
 5. For a revision, overlay or compare it with the accepted baseline and identify only the intended delta.
-6. If a vendor is named, run the vendor preview checks in `vendor-handoff.md`.
+6. If a vendor is named, apply its current rules. Run preview checks when upload access and authorization are available; otherwise identify that unverified gate without blocking local delivery.
 7. Verify that every production entity maps to one intended physical action and that proof-only graphics cannot be mistaken for cut geometry.
 
 Do not claim that mapped contours, visible layers, or a successful render prove the raw file has no extra entities. Report the exact scope of every validator used.

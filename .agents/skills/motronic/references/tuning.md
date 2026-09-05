@@ -16,7 +16,7 @@ Ask for the smallest missing set that changes the recommendation:
 
 ## Build-Advice Discipline
 
-- Start by asking what problem the build is solving: power target, RPM range, drivability, budget, emissions, track/street use, and tolerance for shorter service life.
+- Use the supplied build goal; ask only about missing factors that change the recommendation: power target, RPM range, drivability, budget, emissions, track/street use, and tolerance for shorter service life.
 - Do not recommend tearing down a healthy 3.2 solely for a small power bump without compression, leakdown, oil pressure, oil consumption, head-stud, and use-case evidence.
 - Treat forum build recipes as combinations, not isolated parts. Pistons, cams, exhaust, head flow, intake, AFM/MAF/ITB, gearing, compression, fuel, and chip strategy must match.
 - Consider gearing and vehicle weight before assuming the engine needs more peak horsepower.

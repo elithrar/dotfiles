@@ -14,6 +14,17 @@
       "expected_output": "Uses CLS insight/snapshot/codebase evidence",
       "files": [],
       "assertions": []
+    },
+    {
+      "id": "missing-mcp",
+      "prompt": "Audit the layout shift in this supplied trace and component. Chrome DevTools MCP is unavailable.",
+      "expected_output": "Uses the supplied evidence and reports measurement limits.",
+      "files": [],
+      "assertions": [
+        "Does not stop solely because one MCP server is missing.",
+        "Does not require installation.",
+        "Does not present a load-only trace or TBT as measured INP."
+      ]
     }
   ]
 }

@@ -418,7 +418,3 @@ enabled = false
 [[skills.config]]
 path = "/Users/matt/repos/dotfiles/.agents/skills/differential-review/SKILL.md"
 enabled = false
-
-[[skills.config]]
-path = "/Users/matt/repos/dotfiles/.agents/skills/goal/SKILL.md"
-enabled = false

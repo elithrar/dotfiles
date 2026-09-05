@@ -14,6 +14,16 @@
       "expected_output": "Flags string interpolation, missing context, secrets/noise",
       "files": [],
       "assertions": []
+    },
+    {
+      "id": "bounded-existing-schema",
+      "prompt": "Review an existing structured logger that uses camelCase, logs seven useful fields, and samples successful requests at 10%. No secrets or context leaks are present.",
+      "expected_output": "Evaluates actual diagnostic coverage and cost without imposing a different schema or quotas.",
+      "files": [],
+      "assertions": [
+        "Does not flag field count, camelCase, or sample rate alone as a defect.",
+        "Does not require personal identifiers or a logger replacement."
+      ]
     }
   ]
 }
