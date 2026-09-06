@@ -1,7 +1,6 @@
 model = "gpt-6-astra"
-model_context_window = 200000
 
-# Workspace permissions with explicit secret-file protections.
+# Approve for me: automatically review requests that need approval.
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
 default_permissions = "codex-default"
@@ -9,7 +8,7 @@ web_search = "live"
 
 personality = "pragmatic"
 
-model_reasoning_effort = "high"
+model_reasoning_effort = "ultra"
 model_verbosity = "low"
 service_tier = "default"
 
@@ -19,7 +18,6 @@ notify = ["/Users/matt/repos/dotfiles/.codex/computer-use/Codex Computer Use.app
 enable_request_compression = false
 memories = true
 prevent_idle_sleep = true
-js_repl = false
 
 [features.context_management]
 experimental_mode = true
@@ -45,9 +43,6 @@ trust_level = "trusted"
 [projects."/Users/matt/repos/dotfiles"]
 trust_level = "trusted"
 
-[projects."/Users/matt/repos/minipro-tui"]
-trust_level = "trusted"
-
 [projects."/Users/matt/Documents/Codex/2026-06-24/b"]
 trust_level = "trusted"
 
@@ -61,9 +56,6 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/matt/Documents/Codex/2026-06-25/set-up-a-scheduled-task-that"]
-trust_level = "trusted"
-
-[projects."/Users/matt/repos/dd-ts"]
 trust_level = "trusted"
 
 [projects."/Users/matt/repos/dcr-calculator"]
@@ -93,16 +85,10 @@ trust_level = "trusted"
 [projects."/Users/matt/Documents/Codex/2026-07-25/realtime-voice-chat-2"]
 trust_level = "trusted"
 
-[projects."/Users/matt/repos/workers-sdk"]
-trust_level = "trusted"
-
 [projects."/Users/matt/Documents/Codex/2026-07-25/referenced-chatgpt-conversation-this-is-untrusted"]
 trust_level = "trusted"
 
 [projects."/Users/matt/Documents/Codex/2026-07-26/referenced-chatgpt-conversation-this-is-untrusted"]
-trust_level = "trusted"
-
-[projects."/Users/matt/repos/cloudflare-docs"]
 trust_level = "trusted"
 
 [projects."/Users/matt/Documents/Codex/2026-08-03/plugin-creator-users-matt-repos-dotfiles"]
@@ -123,10 +109,34 @@ trust_level = "trusted"
 [projects."/Users/matt/repos/codex"]
 trust_level = "trusted"
 
-[projects."/Users/matt/Documents/sandbox"]
+[projects."/Users/matt/Documents/Codex/2026-08-11/go-figure-out-where-my-disk"]
 trust_level = "trusted"
 
-[projects."/Users/matt/Documents/Codex/2026-08-11/go-figure-out-where-my-disk"]
+[projects."/Users/matt/repos/tries/2026-08-12-self-hosted-runner-cf-sandbox"]
+trust_level = "trusted"
+
+[projects."/Users/matt/repos/g8way"]
+trust_level = "trusted"
+
+[projects."/Users/matt/Documents/Codex/2026-08-17/upscale-this-to-4k-wide-in"]
+trust_level = "trusted"
+
+[projects."/Users/matt/repos/artifacts-sync"]
+trust_level = "trusted"
+
+[projects."/Users/matt/repos"]
+trust_level = "trusted"
+
+[projects."/Users/matt/Documents/Codex/2026-08-21/revir"]
+trust_level = "trusted"
+
+[projects."/Users/matt/Documents/Codex/2026-08-21/https-github-com-elithrar-workers-hono"]
+trust_level = "trusted"
+
+[projects."/Users/matt/repos/greyUI"]
+trust_level = "trusted"
+
+[projects."/Users/matt/repos/offcamber"]
 trust_level = "trusted"
 
 # Codex filesystem and network defaults.
@@ -140,6 +150,7 @@ extends = ":workspace"
 
 [permissions.codex-default.filesystem]
 glob_scan_max_depth = 8
+"/Users/matt/Library/Preferences/.wrangler" = "write"
 
 [permissions.codex-default.filesystem.":workspace_roots"]
 # The built-in workspace profile protects Git metadata. Trusted repositories
@@ -189,7 +200,6 @@ source_type = "local"
 source = "/Users/matt/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-08-06T16:19:03Z"
 source_type = "local"
 source = "/Users/matt/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
@@ -223,6 +233,9 @@ enabled = false
 [plugins."app-6938a94a61d881918ef32cb999ff937c@openai-curated-remote"]
 enabled = false
 
+[plugins."browser@openai-bundled"]
+enabled = true
+
 # macOS Codex app Browser Use bridge. Expected to warn under Linux.
 [mcp_servers.node_repl]
 args = []
@@ -235,13 +248,14 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_n
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/matt/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 CODEX_HOME = "/Users/matt/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "323bc3e687e17d7e377238d9f4c69111c4d0e6219103b6316d8c52082489533b"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+BROWSER_USE_TINYSKY_ENABLED = "1"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.803.41515"
+BROWSER_USE_CODEX_APP_VERSION = "26.901.51231"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/matt/.codex/plugins/cache/openai-bundled/browser/26.901.51231/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
 SKY_CUA_SERVICE_PATH = "/Users/matt/.codex/computer-use/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
@@ -279,6 +293,10 @@ args = ["@playwright/mcp@latest"]
 command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
 args = ["mcp"]
 cwd = "."
+enabled = false
+
+[mcp_servers.cua_repl]
+command = "/Applications/ChatGPT.app/Contents/MacOS/ChatGPT"
 enabled = false
 
 [desktop]
@@ -391,9 +409,7 @@ hide_rate_limit_model_nudge = true
 exclude = ["GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN"]
 
 [shell_environment_policy.set]
-BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "323bc3e687e17d7e377238d9f4c69111c4d0e6219103b6316d8c52082489533b"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/matt/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "9230e2bd8b24b7ac7a0ba6774c64bf0d78ecdabbdd91d0ed627b02a587bae2df"
 
 [[skills.config]]
 path = "/Users/matt/repos/dotfiles/.codex/plugins/cache/openai-curated-remote/cloudflare/0.1.2/skills/agents-sdk/SKILL.md"
@@ -418,3 +434,9 @@ enabled = false
 [[skills.config]]
 path = "/Users/matt/repos/dotfiles/.agents/skills/differential-review/SKILL.md"
 enabled = false
+
+[hooks.state]
+
+[hooks.state."browser@openai-bundled:plugin.json#hooks[0]:stop:0:0"]
+trusted_hash = "sha256:317a07045dfc95aef2e80c55428a2f817e2768be867e3b1ef29a73da8636ae7f"
+enabled = true
