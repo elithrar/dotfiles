@@ -1,0 +1,59 @@
+{
+  "skill_name": "wow-addon-development",
+  "method": "Use a fresh Luna or Terra context and the selected 50-200 word product prompt, with explicit skill/output paths and runtime availability. Follow the complete skill workflow, including independent review and repair. Keep assertions out of initial builder context. Validate actual packaged Lua and user handlers independently. Client checks are a separate evidence level.",
+  "evals": [
+    {
+      "id": "packing-checklist",
+      "models": [
+        "gpt-5.6-luna",
+        "gpt-5.6-terra"
+      ],
+      "prompt": "Build PackNotes, a small Midnight and Forever add-on for keeping a personal packing checklist. Provide a movable minimap button: left-click opens the window, right-click offers show/hide and reset-position actions. Use a sidebar with Checklist and Appearance panels. Let me add, check, and delete up to 100 Unicode notes, change window scale, and retain my data and placement through reloads. The UI must remain usable on a small screen and after resizing. Include a clean installable add-on folder, concise installation/client notes, and meaningful offline tests. Keep the implementation small and responsive.",
+      "assertions": [
+        "Packaged Lua loads in declared TOC order with declared dependencies only.",
+        "Required product interactions work through actual registered handlers.",
+        "Notes and checked state survive reload; a 101st note is handled without data loss.",
+        "Drag release does not trigger unintended click; hidden launcher is recoverable.",
+        "Repeated open/close, resize and navigation reach a bounded frame/callback high-water mark.",
+        "Long text, fractional scales and small viewport produce reachable layout; client-only claims remain unverified.",
+        "Unknown methods fail in the mock; tests execute actual addon implementation."
+      ],
+      "expected_output": "An installable add-on for the declared clients, concise installation and evidence notes, and behavioral checks that exercise the actual implementation. Every requested user path must be reachable; independent review must find no material blocker within the exercised offline boundary.",
+      "files": []
+    },
+    {
+      "id": "context-profiles",
+      "models": [
+        "gpt-5.6-terra",
+        "gpt-5.6-luna"
+      ],
+      "prompt": "Build ContextNotes, a Midnight and Forever add-on with a compact resizable notes window and a sidebar for Notes, Profiles, and Sharing. Support named profiles, a shared default, optional class/spec-or-talent-group/instance-type assignments, and a manual selection that persists until automatic mode resumes. Each profile holds a title, multiline note, and enabled checkbox. Provide portable import/export strings and retain settings through reloads. Switching context or importing must refresh the visible controls. Keep the implementation small and responsive. Include an installable add-on folder, concise client/installation notes, and meaningful offline tests.",
+      "assertions": [
+        "Profile management and mappings are operable through the delivered UI or documented commands.",
+        "Retail specs and Forever talent groups have distinct verified adapter paths.",
+        "Manual mode persists and automatic selection has deterministic precedence.",
+        "Import/export round-trips false, Unicode and delimiter/newline text.",
+        "Malformed/truncated/newer schema imports leave all existing state unchanged.",
+        "Invalid saved nested state cannot crash startup or contaminate defaults.",
+        "Switching while controls are visible updates values without programmatic callbacks rewriting settings.",
+        "After deferred context changes, the latest state applies; stale work does not apply old profile data.",
+        "Repeated navigation/switching/import reaches bounded frame/work counts."
+      ],
+      "expected_output": "An installable add-on for the declared clients, concise installation and evidence notes, and behavioral checks that exercise the actual implementation. Every requested user path must be reachable; independent review must find no material blocker within the exercised offline boundary.",
+      "files": []
+    }
+  ],
+  "activation_checks": {
+    "positive": [
+      "Fix the memory leak when my WoW addon switches profiles.",
+      "Port this Midnight settings panel to official Forever."
+    ],
+    "negative": [
+      "Which professions should my Forever priest choose?",
+      "Recommend a raid-frame addon.",
+      "Build a WoW-themed website.",
+      "Explain Lua tables."
+    ]
+  },
+  "activation_check_status": "Description reviewed manually; no automated routing benchmark was run."
+}

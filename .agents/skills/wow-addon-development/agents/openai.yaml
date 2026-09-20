@@ -1,0 +1,4 @@
+interface:
+  display_name: "WoW Add-on Development"
+  short_description: "Build, improve, and review WoW add-ons"
+  default_prompt: "Use $wow-addon-development for the requested WoW add-on development or review task."

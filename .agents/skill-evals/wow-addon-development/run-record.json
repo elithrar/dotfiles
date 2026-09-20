@@ -1,0 +1,35 @@
+{
+  "checked_date": "2026-09-19",
+  "guidance_source_ref": "f326647ef8b89fe0652bbbd1d9b79c0230109174",
+  "rounds": 3,
+  "fresh_builders": 6,
+  "models": [
+    "gpt-5.6-luna",
+    "gpt-5.6-terra"
+  ],
+  "final_outcome": "Passed exercised offline acceptance after independent review and repairs; not an unaided-generation or in-client pass.",
+  "addon_file_sha256": {
+    "luna": {
+      "PackNotes.toc": "9e2f571be4cb42b37a9597a6d32e6ce6f02b566ff13f6a826a5f82f21604cd04",
+      "PackNotes.lua": "93f2fa3f6d6fe05e12949ad986c5bf7af11e6b25e9474069eb504da5bf32a33f"
+    },
+    "terra": {
+      "ContextNotes.lua": "5634699f527570689c4c57404b13fd73142749d1295f304b53f5b48932e322f3",
+      "Model.lua": "6c078cf2bfe0bd284446ff9a7a66396536a35dbb3c75eea2eff177dc00c644da",
+      "ContextNotes.toc": "1cd4d6464c9b3d6bfe7cb4ecd617194814a7378f1d76ebf0000bb57ffd83e018",
+      "UI.lua": "4d062c6654cd84364ebcd2a9ff797fc73a896518d9066e26bc7c992351e9fdf8"
+    }
+  },
+  "skill_file_sha256": {
+    "SKILL.md": "fb8ce6b27ca7899785b8edec5fd1fa904ad9e5938de9fe89c61b1ccb7f6e26c5",
+    "agents/openai.yaml": "05a4b7587c20a0245ed6a4ed2e02d6c79894fde646fc14be27269103fb78cb65",
+    "references/verified-fixes.md": "d8e12b1be8a1549fc229b56f89d204ea8ae0a0d659e52cc80077578bb0850df5",
+    "references/profiles-and-transfer.md": "233e00e0f2757f8ca48afe1d599ffe3a1f779a05e3cdafe6aa9fcd453f182ee7",
+    "references/performance-and-ownership.md": "8bcf2c02575e5386f292eaa4e9d667cb8441b9de288f0fa08801e59f9cac3d46",
+    "references/validation.md": "e8f2fbbaaafa233ad49822b4f5dafc21c04aed9b8dbd93a91cc76b36879ae32d",
+    "references/layout.md": "5aeb47b3f7d3e8e2fdacf79d59a79a9c90ad779fbf2656bb1d3c33a63c20af15",
+    "references/ui-and-settings.md": "059e10157d688fb2c4b4960093fb1b33bd4b51b5a5fc5b615714e64296a5a79c",
+    "references/clients-and-sources.md": "602fbe00c20a1d85a531593cae6909c219863da2ba58d119259c57ae1f4eb8a5"
+  },
+  "completed_unix": 1789838910.0534804
+}
