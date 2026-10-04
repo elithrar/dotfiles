@@ -1,11 +1,11 @@
 ---
 name: wow-addon-development
-description: Build, improve, debug, port, or review World of Warcraft Midnight/Retail and official Forever add-ons. Use for addon Lua/XML, packaging, settings, profiles, performance, and UI layout. Not for gameplay advice, addon recommendations, or WoW-themed websites.
+description: Build, improve, debug, port, or review World of Warcraft Retail and official Forever add-ons. Use for addon Lua/XML, packaging, settings, persistence, performance, and in-game UI. Not for gameplay advice, addon recommendations, or WoW-themed websites.
 ---
 
 # WoW Add-on Development
 
-Develop the requested behavior within the add-on's supported clients and repository conventions. Preserve planning or review-only scope.
+Develop the requested behavior within the add-on's supported clients and repository conventions. Use the current checkout and latest accepted requirements as the baseline; older plans and screenshots may be superseded. Preserve planning or review-only scope; for implementation, continue from accepted decisions through verification.
 
 ## Read what the task needs
 
@@ -13,9 +13,9 @@ Develop the requested behavior within the add-on's supported clients and reposit
 | --- | --- |
 | Choose or change clients, APIs, events, or templates | [Clients and sources](references/clients-and-sources.md) |
 | Create/change a manifest or release package | [Manifest and packaging](references/manifest-and-packaging.md) |
-| Build or improve minimap launchers, menus, settings | [UI and settings](references/ui-and-settings.md) |
-| Persist, migrate, switch, or share configuration | [Profiles and transfer](references/profiles-and-transfer.md) |
-| Diagnose CPU/memory growth, scheduling, or caching | [Performance and ownership](references/performance-and-ownership.md) |
+| Build or improve visual design, copy, controls, menus | [UI and settings](references/ui-and-settings.md) |
+| Persist or migrate settings/session state; switch or share profiles | [Profiles and transfer](references/profiles-and-transfer.md) |
+| Change animation, scheduling, caching, or CPU/memory use | [Performance and ownership](references/performance-and-ownership.md) |
 | Change anchors, scaling, resizing, or scrolling | [Layout](references/layout.md) |
 | Diagnose errors, check changed behavior, or investigate a regression | [Debugging and validation](references/validation.md) |
 
@@ -32,7 +32,7 @@ Read the matching references before changing those areas. Load only the guidance
 
 Verify unfamiliar or changed client contracts from matching documentation, reusing evidence checked for the same build. For implementation work, complete one behavior through its entry point, state change, and visible result before expanding it. Include persistence and recovery where the feature requires them.
 
-Use the relevant validation checks to establish the requested outcome. Re-run the original scenario after a fix and check nearby behavior. For a port, account for each affected contract on each supported client. A review finding should identify its location, trigger, and consequence.
+Use the relevant validation checks to establish the requested outcome. Re-run the original scenario after a fix and check nearby behavior. Re-review the complete affected interaction against current requirements, including its settled appearance and transitional states; passing isolated checks is not acceptance of the whole feature. For a port, account for each affected contract on each supported client. A review finding should identify its location, trigger, and consequence.
 
 Finish with the result, checks actually performed, and specific unresolved client checks. Distinguish inspected source, offline execution, and observed in-game behavior; identify any requested behavior still incomplete.
 
