@@ -12,11 +12,17 @@ On profile changes, reconcile mappings and runtime objects, rebind controls and 
 
 ## Schema and migration
 
-Version the saved schema and use idempotent migrations. Validate login data, inactive profiles when activated, and imports through equivalent rules. Record migration completion explicitly; equality with an old default does not prove the value was never customized.
+Version the saved schema and use idempotent migrations. Validate login data, inactive profiles when activated, and imports through equivalent rules. Record migration completion explicitly; equality with an old default does not prove the value was never customized. Track explicit choices when future default changes need that distinction. Preserve valid fonts, sizes, positions, colors, and false values across migration and profile copies. If an older schema lacks choice provenance, state the ambiguity and choose a conservative migration instead of silently treating every matching value as untouched.
 
 Validate nested types, finite numbers, ranges, strings, and collection bounds before use. Backfill defaults without sharing mutable tables. Repair individual invalid fields where possible, preserving unrelated valid data. Preserve unsupported future schemas and prevent incompatible writes before normalization can erase them.
 
 Use consistent limits across UI edits, loading, copying, and imports. Apply UTF-8-safe text limits or reject overlong input without destroying the previous value. Check collection limits on creation while allowing valid replacement at capacity.
+
+## Durable session state
+
+Separate session/accounting state from appearance profiles. Define which elapsed time counts for the feature: ordinary idle, loading/zone transitions, reload, and disconnect are distinct cases. A delayed timer callback or world-entry event alone does not establish a disconnect or lost data. Separate clock advancement from evidence that observations are missing; apply an incomplete-data state only when the accounting contract supports it.
+
+Use an appropriate monotonic clock for elapsed intervals within a runtime, and validated wall/server timestamps for cross-runtime recovery policy. Do not carry an old runtime's clock origin into a new one or silently add offline time. Define restoration, intentional reset/logout, and expiry behavior; verify available lifecycle signals on the target client. SavedVariables persistence is controlled by the client: an in-memory checkpoint is not proof it reached disk. Test normal long delays and loading as well as reload/reconnect before changing a gap threshold.
 
 ## Import and export
 

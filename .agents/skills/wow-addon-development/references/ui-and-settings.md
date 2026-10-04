@@ -1,5 +1,13 @@
 # UI and settings
 
+## Visual design and information
+
+Inspect supplied references as pixels before changing styling. Identify the current accepted reference and the specific differences in type, spacing, hierarchy, and control density. Prefer readable game font objects or the runtime font of the relevant native UI as defaults, allowing explicit overrides and locale-appropriate fallback. Do not shrink chosen text to hide a layout defect or modify shared font objects to style one add-on.
+
+Use familiar controls with restrained sizing and emphasis appropriate to the panel. Native templates provide behavior, not a guarantee of balanced composition; avoid both unrelated web-app styling and oversized decorative buttons unless requested. Inspect inherited font-string anchors, height, justification, and arrow clearance when resizing a dropdown. Increasing text height alone can leave template TOP anchors clipping the selection. Verify disabled, long-label, and open-menu states on the actual client.
+
+Write functional labels and concise explanations. Remove taglines, placeholder option names, repeated hints, and implementation commentary. Compact numbers may save space, but tooltips should expose precise values, units, and denominators. Distinguish no activity, collecting enough samples, expired/stale data, and incomplete data when they require different explanations; do not use one unexplained dash or a false zero for all of them.
+
 ## Minimap launcher and menus
 
 Use existing launcher infrastructure when available: a LibDataBroker launcher object with icon, click, and tooltip callbacks, registered once with [LibDBIcon](https://www.wowace.com/projects/libdbicon-1-0). Bundle its dependencies in load order. Persist visibility, position, and lock state; keep the library's current DB binding synchronized when profiles replace configuration tables. Verify whether library show/hide calls update persistence or only runtime visibility.
@@ -18,7 +26,7 @@ Separate three responsibilities:
 - Pages construct controls once, refresh bindings, and relayout within available content space.
 - The configuration model owns validation, persistence, profile selection, and runtime application.
 
-This structure supports Danders/Ellesmere-style settings without depending on their internal frameworks. Reuse the project's widget constructors for spacing, labels, disabled states, and focus behavior. Add search or load-on-demand options only when the settings volume warrants them.
+Reuse the project's widget constructors for spacing, labels, disabled states, and focus behavior. Add search or load-on-demand options only when the settings volume warrants them.
 
 ## Bindings and lifecycle
 

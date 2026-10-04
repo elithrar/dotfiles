@@ -10,7 +10,7 @@ Read usable dimensions before clearing valid anchors. Hidden or newly constructe
 
 ## Responsive content
 
-Derive minimum dimensions from the sidebar, insets, scrollbars, labels, and usable controls. If the viewport cannot accommodate those dimensions, adapt the arrangement or provide scrolling. Clamping position cannot fix an oversized window.
+Use content-driven minimums and a useful maximum width, so a panel fits a small viewport without stretching across an ultrawide screen. Derive minimum dimensions from the sidebar, insets, scrollbars, labels, and usable controls. For compact stat grids, balance outer padding and row gaps using measured text blocks; center comparable labels/values when the accepted design calls for it. If the viewport cannot accommodate those dimensions, adapt the arrangement or provide scrolling. Clamping position cannot fix an oversized window.
 
 Resize and restyle existing controls. Do not reconstruct a page tree because its width changed. Coalesce resize updates where useful and always apply the final layout at drag completion. Provide a real resize interaction when requested, using the target client's supported bounds and sizing APIs.
 
@@ -21,6 +21,10 @@ Measure wrapped/localized text rather than estimating height from byte counts. G
 ## Placement and recovery
 
 Store independent placement records for independently movable frames. Choose whether scaling preserves screen position, an anchor relationship, or logical offsets, then use that convention for both saving and restoring. Validate anchor names and finite coordinates; choose deliberate defaults before clamping.
+
+For expanding panels, preserve the collapsed anchor and choose expansion direction from the requested placement and available viewport. Fit the full expanded footprint, including while collapsed. Use the client's usable UIParent bounds and verify safe-area behavior in the matching [UIParent implementation](https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_UIParentUtil/UIParentUtil.lua) before adding a notch inset; do not apply an offset already supplied by the client or change the user's global display settings.
+
+Choose strata and frame levels relative to the surfaces the panel must clear, leaving system dialogs, menus, and tooltips usable. Check inherited child ordering, overlapping hit regions, and click-through behavior. Disable invisible transitional content's hit targets; raising the entire UI indefinitely is not a layering policy.
 
 Refit size and position after restoration, resizing, scale changes, and display changes. Keep the drag handle reachable and provide a reset-position path. Apply the same fitting rules regardless of the order of resize and scale operations, and keep persisted dimensions consistent with the applied result.
 
