@@ -1,3 +1,4 @@
+#:schema https://developers.openai.com/codex/config-schema.json
 model = "gpt-6-astra"
 
 # Approve for me: automatically review requests that need approval.
@@ -15,7 +16,8 @@ service_tier = "default"
 notify = ["/Users/matt/repos/dotfiles/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [features]
-enable_request_compression = false
+analytics_plan_history = true
+enable_request_compression = true
 memories = true
 prevent_idle_sleep = true
 
