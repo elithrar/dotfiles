@@ -197,7 +197,7 @@ interrupt_turn = "f12"
 [marketplaces.openai-bundled]
 last_updated = "2026-06-23T18:37:35Z"
 source_type = "local"
-source = "/Users/matt/.codex/.tmp/bundled-marketplaces/openai-bundled"
+source = "/Users/matt/repos/dotfiles/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
 source_type = "local"
