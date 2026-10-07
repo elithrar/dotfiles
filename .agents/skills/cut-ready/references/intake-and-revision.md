@@ -28,8 +28,13 @@ Classify every controlling dimension or shape:
 - **Derived:** Calculated from measured or specified inputs. Show the calculation.
 - **Reconstructed:** Estimated from photographs or secondary sources. Record the scale anchor, perspective assumptions, range, and confidence.
 - **Stylistic:** Chosen for appearance rather than fit or manufacturing necessity.
+- **Assumed / unverified:** A provisional design input with no confirming measurement or specification. State its basis and the check needed to resolve it; do not relabel it as measured after modeling it.
 
 Do not write false precision. Prefer `nominal 550 mm, estimated ±20 mm` over `551 mm` when photographs support only the former. Distinguish the physical surface that controls fit from a larger shell, envelope, or bounding box.
+
+Keep one shared dimensional specification with stable feature names, values, units, datums, tolerances where known, and evidence sources/status. Define each variant's dimension meanings: radius versus diameter, body versus projection versus overall length, and nominal versus finished size. Derive model parameters, variant tables, drawing dimensions, and labels from it. Record discrepancies between sources instead of averaging them or choosing whichever matches the current export. Sanity-check ambiguous inputs against proportions, wall thickness, interference, and tool access before modeling them. A readback proves what was modeled, not what fits the physical part.
+
+For threaded features, track nominal diameter, pitch, thread standard, engagement/thread depth, bore diameter, and drill depth separately. An external measurement or overall part length does not establish an internal thread or usable depth. Carry unresolved assumptions into drawings and the handoff; if they control fit or machining, resolve them before claiming readiness.
 
 For reconstruction-derived work, prepare a 1:1 paper, cardboard, or inexpensive-material proof against the actual surface before production.
 
@@ -48,12 +53,14 @@ Checks: <how the requested delta and non-delta will be proven>
 Apply these rules:
 
 - Preserve accepted elements directly. Do not redraw them from memory.
+- Identify the exact base model and revision before editing or adding a format. If unavailable, locate it or report the missing source; do not silently substitute a reconstruction from a preview or dimensions.
 - Reuse canonical components such as glyph alphabets, logos, stripe or tick geometry, hole patterns, bend rules, and generator functions.
 - Define percentage changes with an explicit anchor and axis. "10% larger" is incomplete without the center, fixed edge, or reference frame.
 - For a color-only revision, change only the declared color values and prove geometry is unchanged.
 - For a localized geometry revision, compare unchanged component counts, bounds, and hashes where byte stability is expected. Use overlays or geometry diffs when serialization can change.
 - Keep the previous revision available. Do not overwrite it unless asked.
 - Regenerate previews and validation reports from the production export, not from an earlier source view.
+- Turn critical feedback into an observable acceptance check before revising. Fix its cause in the base model or shared specification, then rebuild all affected variants, labels, and exports. Record the check's result so the same finding does not recur on the next turn.
 - Preserve deliberate occlusion as a layer relationship. Do not shorten, reradius, or move canonical background geometry merely to clear foreground labels when a mask or underprint is the accepted construction.
 
 ## Visual review

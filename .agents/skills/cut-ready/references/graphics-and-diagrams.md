@@ -53,6 +53,8 @@ Do not allow a visible proof stroke to become an unintended cut. Do not let a fi
 - Use one consistent arrowhead convention. Make arrowheads fully visible, terminate them at the intended feature, and keep them clear of text, dimensions, outlines, and other arrows.
 - Establish keep-out regions around text, arrowheads, important features, and other leaders. Avoid crossings, near tangencies, ambiguous endpoints, and accidental occlusion; reposition labels or reroute leaders instead of accepting them.
 - Keep annotation typography, line weight, spacing, capitalization, and alignment consistent with the selected drawing system. Convert final production lettering to paths while retaining an editable text master.
+- Generate dimensional labels and variant names from the shared specification, then reconcile their values and witness/leader endpoints with the current exported geometry. Audit every affected label after a revision, including copied views and tables.
+- Keep drawing text to the requested dimensions and necessary manufacturing notes. Remove obsolete identifiers and editorial explanation; put provenance, assumptions, and validation detail in the handoff unless the drawing needs a short qualification to avoid implying verified fit or production readiness.
 - Do not add a border, bezel, circle, label, symbol, or decorative element absent from the accepted reference or requested scope.
 
 ## Run object-level visual QA
