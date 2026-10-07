@@ -1,0 +1,4 @@
+interface:
+  display_name: "Animated Sprites"
+  short_description: "Create and refine characters, sprite sheets, and pets"
+  default_prompt: "Use $animated-sprites to create or refine this character animation with consistent identity and timing-faithful previews."
