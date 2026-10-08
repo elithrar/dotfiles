@@ -17,6 +17,7 @@ Use one chain: accepted base model + shared specification → parameterized vari
 - Express variants as named parameter overrides with fixed datums and unchanged-feature assertions. Distinguish overall length from a segment length; derive dependent shoulder positions and dimension endpoints. Preserve physical knurl/texture pitch when body dimensions change unless pitch is explicitly editable; do not stretch the whole part.
 - If an export route cannot consume the base model, use a traceable conversion and verify equivalence. If none is available, report that limitation before creating a replacement model.
 - Record the base revision, specification/variant, output files, and export settings in the existing handoff or a small manifest. Hashes identify the tested files; they do not prove geometric equivalence.
+- For Library-backed work, retain existing source and derivative Library IDs and their revision relationships. Use the current Library workflow to read or update those records; do not create competing copies merely because a local filename changed. Verify materialized bytes and the uploaded revision before reporting synchronization.
 - Regenerate filenames, variant lengths, dimension lines, labels, tables, and previews together. Do not update a dimension's displayed number while leaving its witness points or geometry stale.
 
 ## Assert topology and dimensions
@@ -48,5 +49,7 @@ Before looping over exported features, assert that every expected feature is pre
 For multiple outputs, compare each imported variant against the same source revision using agreed units, datums, and process-appropriate tolerances. Check critical feature dimensions and positions, not just bounding boxes; for solids, compare sections or surfaces and volume where useful. Account explicitly for tessellation or projection loss. A view-only mesh derived from the base does not establish print readiness.
 
 After any geometry or annotation fix, invalidate affected downstream checks and rerun them on the regenerated files. Identify the final tested revision in the handoff; do not reuse a successful report from an earlier export.
+
+Do not hide a geometry defect with an undisclosed cap, fake floor, fill, or render-only surface. Repair the authoritative geometry when the feature is physically required. If a presentation-only occluder is requested, identify it explicitly and keep it separate. Exclude it from manufacturing exports, confirm no presentation-only bodies remain, and validate the unobscured geometry. A clean-looking render cannot establish a bore's actual depth or closure.
 
 For fit-sensitive work, pair computational validation with a 1:1 paper, cardboard, or inexpensive-material proof against the actual assembly.

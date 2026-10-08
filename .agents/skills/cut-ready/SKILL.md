@@ -14,6 +14,7 @@ Treat `cut-ready` as a verified status, not a synonym for "file created." Do not
 | Establish dimensions, source confidence, and a revision contract | [intake-and-revision](references/intake-and-revision.md) |
 | Create or review 2D cut geometry | [2d-preflight](references/2d-preflight.md) |
 | Create stickers, decals, masks, gauge faces, or annotated vector drawings | [graphics-and-diagrams](references/graphics-and-diagrams.md) |
+| Lay out engineering sheets, dimensioned views, or fabrication lettering | [engineering-drawings](references/engineering-drawings.md) |
 | Generate CAD, revise a base model, or add an output format | [cad-generation](references/cad-generation.md) |
 | Create or review STEP/STP geometry | [3d-preflight](references/3d-preflight.md) |
 | Prepare a vendor handoff or SendCutSend upload | [vendor-handoff](references/vendor-handoff.md) |

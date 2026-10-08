@@ -36,6 +36,8 @@ Keep one shared dimensional specification with stable feature names, values, uni
 
 For threaded features, track nominal diameter, pitch, thread standard, engagement/thread depth, bore diameter, and drill depth separately. An external measurement or overall part length does not establish an internal thread or usable depth. Carry unresolved assumptions into drawings and the handoff; if they control fit or machining, resolve them before claiming readiness.
 
+Separate known physical features from proposed design changes. Label a proposed fillet, recess, closure, or surface treatment as a proposal until accepted; do not add one merely to improve the picture. For a drawing-only revision, freeze the model and change sheet layout and annotations without altering the part.
+
 For reconstruction-derived work, prepare a 1:1 paper, cardboard, or inexpensive-material proof against the actual surface before production.
 
 ## Revision contract
