@@ -14,6 +14,7 @@ Use for stickers, decals, vinyl masks, gauge faces, print-and-cut files, and ann
 - Reuse accepted vector glyphs, logos, tick marks, stripe arcs, icons, and other canonical geometry. Do not reconstruct a production master from a similar font or from memory.
 - Treat source imagery as evidence. Calibrate it with defensible physical anchors and separate measured geometry from perspective-derived reconstruction.
 - Keep canonical repeated geometry mathematically consistent. For example, preserve radii, centers, stroke spacing, angular sweeps, and tick cadence; do not locally distort the system to hide a collision.
+- Distinguish repeating the same physical symbol from preserving a ratio: an identical-size mark retains its dimensions across differently sized parts; a proportional mark follows an explicit ratio and anchor. Compare in source coordinates. Perspective or oblique projection can change apparent ratios, so do not stretch canonical geometry to match screen pixels.
 - Resolve foreground collisions with an explicit layer or occlusion rule when that matches the source. Preserve the continuous canonical geometry beneath the mask or underprint.
 
 ## Build a reusable diagram system
@@ -47,13 +48,7 @@ Do not allow a visible proof stroke to become an unintended cut. Do not let a fi
 
 ## Draw technical annotations
 
-- Choose a documented drawing standard or an accepted source drawing and apply it consistently. ISO 128-2:2020 covers line, leader, and reference-line conventions; ASME Y14.2 covers engineering-drawing line and lettering practices, including CAD.
-- Declare the coordinate system, viewing direction, workpiece orientation, and meaning of spatial terms before placing labels. Distinguish page-left from object-left, and validate every directional note and leader endpoint against the real assembly and intended working viewpoint.
-- Route leaders and callouts with straight segments, deliberate angled or orthogonal turns, and sharp corners. Do not introduce curves or radiused elbows unless the source convention requires them.
-- Use one consistent arrowhead convention. Make arrowheads fully visible, terminate them at the intended feature, and keep them clear of text, dimensions, outlines, and other arrows.
-- Establish keep-out regions around text, arrowheads, important features, and other leaders. Avoid crossings, near tangencies, ambiguous endpoints, and accidental occlusion; reposition labels or reroute leaders instead of accepting them.
-- Keep annotation typography, line weight, spacing, capitalization, and alignment consistent with the selected drawing system. Convert final production lettering to paths while retaining an editable text master.
-- Do not add a border, bezel, circle, label, symbol, or decorative element absent from the accepted reference or requested scope.
+Use [engineering-drawings](engineering-drawings.md) for sheet size, font verification, physical lettering, dimensions, and leader layout. Keep annotation typography and reusable components consistent with the selected drawing system. Do not add a border, bezel, label, or decorative element absent from the accepted reference or requested scope.
 
 ## Run object-level visual QA
 

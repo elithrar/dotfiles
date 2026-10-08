@@ -47,6 +47,23 @@ Open the exported STEP/STP with an independent CAD kernel or a second CAD applic
 
 Compare the readback measurements with the native source. Render multiple views of the imported production file, including a view that exposes holes, pockets, and bend direction. A thumbnail or successful vendor upload alone is not sufficient.
 
+## Verify small features by shape, not name
+
+A feature named `chamfer` and a plausible silhouette do not prove the requested edge treatment exists. First reconcile the expected feature inventory with the export; do not validate only the features that happen to be present. For each changed or fit-critical feature, pair a numeric check with a view or section that exposes it:
+
+| Feature | Numeric / geometric check | Visible check |
+|---|---|---|
+| Chamfer or bevel | Axial and radial extent, angle, location, and intended face coverage | Enlarged edge and section views; check both ends when both are specified |
+| Knurl or repeated relief | Peak and root envelopes, pitch, depth, coverage, and termination at adjacent features | Side and end views revealing valleys as well as peaks |
+| Bore, thread, or blind pocket | Diameter, axis, start datum, usable depth, remaining wall/floor; distinguish modeled from specified threads | Section exposing the bottom, entry, and any interference |
+| Length variant | Overall and segment lengths, shoulder locations, and unchanged feature dimensions | Variant drawing with dimension endpoints and labels reconciled to readback |
+
+For a knurled round part that requires a continuous conical edge band, merely clipping the knurl peaks is a failure even if bounds and volume pass. Construct the intended revolved/conical envelope in the base model and reconcile the knurl termination with it. Inspect the actual exported faces and sections through peaks and valleys around the circumference to establish continuous coverage. Do not require a single face ID: kernels may split a geometrically continuous band into several faces. Use the requested surface shape and coverage as the invariant.
+
+For a tessellated preview of that band, inspect actual transformed vertex positions, triangle sections, and normals, not declared bounds or feature metadata. In the part's axial frame, compare section radii with `r(z) = r0 + (r1 - r0) * (z - z0) / (z1 - z0)` over the intended band, allowing the declared tessellation tolerance. Check axial/radial extents, angular coverage, and surface-normal direction as well; isolated vertices on a cone do not prove a continuous face. This checks fidelity to the base model, not printability or physical fit.
+
+Inspect the final visible drawing or PDF as well as the solid: dimensions, units, variant names, leader endpoints, and assumption notes must match the same revision. Text extraction and numeric checks cannot establish visibility or correct label placement. If a kernel, independent importer, or renderer is unavailable, state the specific unchecked gate rather than claiming it passed.
+
 ## Acceptance checklist
 
 - [ ] Valid STEP/STP structure imports through an independent path.
