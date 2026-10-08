@@ -21,7 +21,9 @@ Treat `cut-ready` as a verified status, not a synonym for "file created." Do not
 
 Read a reference when its manufacturing decision or validation step is needed; do not load every file for a narrow revision. Re-check the named vendor's current official requirements when material, thickness, minimum-feature, tolerance, bend, or file-format rules could have changed.
 
-## Workflow
+## Required outcomes
+
+Satisfy each outcome that applies to the requested job. Adapt the working order while preserving dependencies: resolve controlling inputs before modeling, and validate exports before claiming readiness.
 
 1. **Classify the production job.** Identify flat profile cutting, cut vinyl or stencil, printed contour-cut artwork, production vector drawing, formed sheet material, or machined 3D solid. Record the process, physical substrate or stock, thickness when relevant, units, finished size, quantity, finish, critical dimensions, tolerances, application face, handed or mirrored variants, and target vendor when known. Ask one focused question only when a missing answer changes geometry, output, fit, or safety.
 2. **Build an evidence ledger.** Classify controlling dimensions using the intake reference, keeping measured and specified values separate from assumptions. Never turn a photo estimate into an exact historical or physical dimension. State the scale anchor, perspective limits, and uncertainty for reconstructions.
@@ -52,4 +54,4 @@ Use exactly one status in the final handoff:
 - **Draft / reconstruction:** Geometry depends on unconfirmed dimensions, photo inference, or unresolved aesthetic approval.
 - **Blocked:** A missing manufacturing input or failed check can materially change the part.
 
-Report the status first, followed by the production files, intended process and material, exact passed checks, remaining proof step, and any uncertainty.
+Complete authorized corrections and affected checks before the final handoff. Report the status first, followed by the production files, intended process and material, exact passed checks, remaining proof step, and any uncertainty.

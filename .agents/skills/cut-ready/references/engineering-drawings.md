@@ -28,7 +28,7 @@ Use the font's cap metrics or outline bounds to set an initial size, then measur
 
 ## Review the delivered sheets
 
-1. Reopen the actual PDF/SVG or other drawing export independently. Measure page dimensions, view scales, glyph heights, and critical geometry; compare them with the source contract. Recheck each derivative after any fix.
+1. Reopen the actual PDF/SVG or other drawing export independently. Measure page dimensions, view scales, glyph heights, and critical geometry; compare them with the source contract. After a fix, regenerate affected derivatives and repeat the checks the change can invalidate. Repeat other passed checks only if new evidence calls them into question.
 2. Inspect rendered sheets at the viewer's 100% setting and fit view, plus enlarged details for symbols and leader endpoints. Inspect every sheet, not just a thumbnail or extracted text. A mobile fit view may make correct full-size lettering unreadable; provide a useful detail preview or zoomable vector file without silently enlarging all text or changing the part.
 3. Treat 100% as a viewer setting, not proof of physical size. PPI metadata, CSS pixels, and device-pixel ratio do not calibrate a display. Use a measured screen reference or a print at actual size with scaling disabled when physical true-size proof is required; report it as unverified until checked.
 4. Have an independent reviewer inspect the raw exports against the brief, accepted base, and dimensional specification. Do not supply only the generator's success report or seeded expected findings. Include missing-feature, wrong-scale, font/glyph, and collision cases when testing a reusable checker; keep development fixtures out of the production package. If independent review is unavailable, state that limit.
