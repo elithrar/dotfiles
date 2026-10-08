@@ -2,6 +2,19 @@
 
 Use this reference for Porsche 911 Carrera 3.2 28-pin Bosch Motronic EPROM decoding. Treat offsets as ROM-image offsets unless disassembly proves processor address-space remapping.
 
+## Contents
+
+- [Preferred Tooling](#preferred-tooling)
+- [Verified 1989 28-Pin ROM Identity](#verified-1989-28-pin-rom-identity)
+- [Bosch Map Structure Pattern](#bosch-map-structure-pattern)
+- [Axis Decoding](#axis-decoding)
+- [Primary Map Offsets](#primary-map-offsets)
+- [Alternate Map Offsets](#alternate-map-offsets)
+- [Conversions](#conversions)
+- [Rev Limiter Evidence](#rev-limiter-evidence)
+- [Verification Checklist](#verification-checklist)
+- [Hard Rules](#hard-rules)
+
 ## Preferred Tooling
 
 These commands refer to a separate local Motronic repository, not files bundled with this skill. Locate and inspect its decoder and supported flags before use; if unavailable, report the tooling gap and analyze supplied bytes only where the format is proven. For that repository, examples are:

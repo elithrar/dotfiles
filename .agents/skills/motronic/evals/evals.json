@@ -4,16 +4,24 @@
     {
       "id": "no-start",
       "prompt": "My 1987 Carrera 3.2 cranks with no injector pulse; fuel pump runs when jumpered",
-      "expected_output": "Asks for high-yield measurements and diagnoses speed/reference/DME power path",
+      "expected_output": "Identifies plausible speed/reference or DME power paths and requests the next decisive measurement without declaring a confirmed fault.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Does not treat a jumpered fuel pump as proof of DME power or engine-speed input.",
+        "Asks for the next decisive missing measurement, such as spark during cranking, without claiming a confirmed fault.",
+        "Does not invent pin numbers or prescribe parts replacement from the stated evidence."
+      ]
     },
     {
-      "id": "rom",
-      "prompt": "Decode this 8KB 3.2 Motronic ROM and tell me if timing looks safe",
-      "expected_output": "Loads ROM/tuning references and flags uncertainty/safety",
+      "id": "missing-rom",
+      "prompt": "Decode my 8KB 3.2 Motronic ROM and tell me whether timing is safe. I have not attached the binary or supplied its hash.",
+      "expected_output": "Identifies that bytes/image identity are missing, asks for the ROM, and does not invent a decode or a safety conclusion.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Does not apply the documented 1989 offsets based on the 8KB size alone.",
+        "Does not invent a hash, map contents, timing values, or checksum result.",
+        "Explains that a future map decode still would not establish actual engine timing or safe operation."
+      ]
     }
   ]
 }

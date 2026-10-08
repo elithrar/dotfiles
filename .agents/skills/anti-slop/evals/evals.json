@@ -1,0 +1,34 @@
+{
+  "skill_name": "anti-slop",
+  "evals": [
+    {
+      "id": "filler-pass",
+      "prompt": "Remove AI-sounding filler from this paragraph while preserving its facts: It is worth noting that the cache expires after 60 seconds. This is an important point to understand.",
+      "expected_output": "Keeps the 60-second fact and removes empty framing.",
+      "files": [],
+      "assertions": [
+        "Activates anti-slop.",
+        "Preserves the expiry duration without adding claims."
+      ]
+    },
+    {
+      "id": "readme-fact-review",
+      "prompt": "Verify only whether the README install command matches the supplied manifest. README: npm install trail-notes. Manifest: {\"name\":\"trail-notes\"}. Do not review prose style.",
+      "expected_output": "Confirms the matching package name without an anti-slop editing pass.",
+      "files": [],
+      "assertions": [
+        "Does not activate anti-slop merely because this is a README review.",
+        "Does not rewrite the supplied prose."
+      ]
+    },
+    {
+      "id": "deliberate-parallelism",
+      "prompt": "Give this sentence an anti-slop pass, but preserve my deliberate parallelism: You can have either. You cannot have both.",
+      "expected_output": "Leaves the intentional parallelism intact.",
+      "files": [],
+      "assertions": [
+        "Does not rewrite the sentence solely to remove repetition."
+      ]
+    }
+  ]
+}

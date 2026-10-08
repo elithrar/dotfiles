@@ -44,4 +44,4 @@ For implemented changes, use [references/review.md](references/review.md) to ins
 
 ## Output
 
-Deliver a usable, responsive web interface with one legible visual thesis and a consistent design system. In the handoff, state the chosen mode and the most important visual correction made during rendered review.
+For implementation, deliver a usable, responsive web interface with one legible visual thesis and a consistent design system. State the chosen mode and the main correction, if any. If review passed unchanged, say so; if rendering was unavailable, state the verification gap. For review-only work, return findings without implying changes were made.

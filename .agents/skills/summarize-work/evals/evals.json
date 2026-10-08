@@ -3,17 +3,28 @@
   "evals": [
     {
       "id": "commit-msg",
-      "prompt": "Summarize this session into a commit message",
+      "prompt": "Summarize this session into a commit message: the user requested a token-expiry fix; the visible diff changes `expiresAt < now` to `expiresAt <= now`, and the equal-time regression test passed. All relevant evidence is in this message.",
       "expected_output": "Uses current conversation/git diff, concise commit message",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Does not require summarize-work activation for this current-context-only request.",
+        "Does not query OpenCode.",
+        "Describes the expiry-boundary fix without claiming it was merged."
+      ]
     },
     {
       "id": "today",
-      "prompt": "What did I do today across repos?",
-      "expected_output": "Queries global sessions and groups by project/theme",
-      "files": [],
-      "assertions": []
+      "prompt": "What did I do on October 8, 2026 across the projects in history.json, using America/Los_Angeles time? The file is a synthetic recording of available history and advertised paths; use it instead of contacting a live server.",
+      "expected_output": "Uses only advertised history paths: a global session endpoint only if advertised, otherwise directory-scoped project queries. Groups verified work by project and separates proposals from completed work.",
+      "files": [
+        "fixtures/history.json"
+      ],
+      "assertions": [
+        "Does not assume /global/session is supported when the recorded schema omits it.",
+        "Uses message times and the requested timezone, not session update time, to select the period.",
+        "Includes the one-message expiry fix and its recorded test, without claiming a merge.",
+        "Excludes the prior-day cache proposal and labels the header change as proposed, not implemented."
+      ]
     },
     {
       "id": "short-session-material-fix",

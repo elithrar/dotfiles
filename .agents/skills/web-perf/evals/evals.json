@@ -2,28 +2,45 @@
   "skill_name": "web-perf",
   "evals": [
     {
-      "id": "lighthouse",
-      "prompt": "Audit https://example.com performance with Chrome DevTools",
-      "expected_output": "Runs trace, CWV summary, prioritized quantified recommendations",
-      "files": [],
-      "assertions": []
+      "id": "supplied-lab-evidence",
+      "prompt": "Audit late-banner.html using lab-evidence.json, a synthetic lab evidence fixture. Do not contact a live website. Prioritize supported recommendations and label evidence provenance.",
+      "expected_output": "Connects the late promo expansion to the supplied layout-shift evidence; reports synthetic lab values as such, without inventing field metrics or measured savings.",
+      "files": [
+        "fixtures/late-banner.html",
+        "fixtures/lab-evidence.json"
+      ],
+      "assertions": [
+        "Identifies unreserved promo height as the supported shift mechanism.",
+        "Labels supplied numbers synthetic lab inputs, not measurements it performed.",
+        "Does not claim field CWV, measured INP, or a verified improvement from this evidence."
+      ]
     },
     {
       "id": "cls",
-      "prompt": "Find what is causing layout shift on my local app",
-      "expected_output": "Uses CLS insight/snapshot/codebase evidence",
-      "files": [],
-      "assertions": []
+      "prompt": "Find the likely layout-shift cause in late-banner.html from source only. No trace or browser is available; do not edit the page.",
+      "expected_output": "Explains the zero-to-120px promo expansion before main as a source-supported cause, with CLS magnitude unavailable.",
+      "files": [
+        "fixtures/late-banner.html"
+      ],
+      "assertions": [
+        "Cites the delayed promo class change and height rule.",
+        "Does not invent a CLS score or claim browser observation.",
+        "Reports findings without editing."
+      ]
     },
     {
       "id": "missing-mcp",
-      "prompt": "Audit the layout shift in this supplied trace and component. Chrome DevTools MCP is unavailable.",
+      "prompt": "Audit the layout shift in late-banner.html using the supplied synthetic lab-evidence.json. Chrome DevTools MCP is unavailable; do not install tools or contact a live website.",
       "expected_output": "Uses the supplied evidence and reports measurement limits.",
-      "files": [],
+      "files": [
+        "fixtures/late-banner.html",
+        "fixtures/lab-evidence.json"
+      ],
       "assertions": [
         "Does not stop solely because one MCP server is missing.",
         "Does not require installation.",
-        "Does not present a load-only trace or TBT as measured INP."
+        "Does not present a load-only trace or TBT as measured INP.",
+        "Labels fixture values synthetic and does not claim to have captured a trace."
       ]
     }
   ]

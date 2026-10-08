@@ -3,23 +3,38 @@
   "evals": [
     {
       "id": "add-logs",
-      "prompt": "Add useful logs around checkout failures",
-      "expected_output": "Uses structured wide events, correlation IDs, redaction",
-      "files": [],
-      "assertions": []
+      "prompt": "In checkout.cjs, add useful failure logs to checkoutWithoutLogs only. Preserve its response behavior and the existing logger/camelCase schema. Policy permits requestId but not headers or payment details.",
+      "expected_output": "Adds a structured failure event with requestId and a bounded errorCode using the injected logger; preserves HTTP status behavior and excludes credentials/payment details.",
+      "files": [
+        "fixtures/checkout.cjs"
+      ],
+      "assertions": [
+        "Changes only checkoutWithoutLogs and any directly necessary check.",
+        "On rejected payment, emits one failure event correlated to request.id and still returns status 503.",
+        "Does not serialize the request, authorization header, amount, or arbitrary error text.",
+        "Does not install a logger or mandate a new field count or sampling rate."
+      ]
     },
     {
       "id": "review-logs",
-      "prompt": "Review this logging PR for observability problems",
-      "expected_output": "Flags string interpolation, missing context, secrets/noise",
-      "files": [],
-      "assertions": []
+      "prompt": "Review checkoutWithFailureLogs in checkout.cjs for logging problems. Do not edit it. Policy permits requestId but prohibits credentials in logs.",
+      "expected_output": "Reports the authorization-header disclosure at the logger call with a rejected-payment trigger; does not invent unrelated findings.",
+      "files": [
+        "fixtures/checkout.cjs"
+      ],
+      "assertions": [
+        "Identifies that a rejected payment logs request.headers.authorization.",
+        "Cites the logger field and recommends removing/redacting it before emission.",
+        "Keeps the review read-only and does not invent string-interpolation or missing-correlation defects."
+      ]
     },
     {
       "id": "bounded-existing-schema",
-      "prompt": "Review an existing structured logger that uses camelCase, logs seven useful fields, and samples successful requests at 10%. No secrets or context leaks are present.",
+      "prompt": "Review only logCompletion in checkout.cjs. Its seven camelCase fields answer the product incident queries; the accepted policy retains errors and samples successful requests at 10%. No secrets or context leaks are present.",
       "expected_output": "Evaluates actual diagnostic coverage and cost without imposing a different schema or quotas.",
-      "files": [],
+      "files": [
+        "fixtures/checkout.cjs"
+      ],
       "assertions": [
         "Does not flag field count, camelCase, or sample rate alone as a defect.",
         "Does not require personal identifiers or a logger replacement."

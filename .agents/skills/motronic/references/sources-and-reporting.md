@@ -2,6 +2,16 @@
 
 Use this reference to keep Motronic answers grounded and readable.
 
+## Contents
+
+- [Source Quality](#source-quality)
+- [Pelican Forum Weighting](#pelican-forum-weighting)
+- [Retrieval Bias](#retrieval-bias)
+- [Uncertainty Labels](#uncertainty-labels)
+- [Report detail](#report-detail)
+- [Good Answer Boundaries](#good-answer-boundaries)
+- [Safety Notes](#safety-notes)
+
 ## Source Quality
 
 Prefer primary or measurable evidence:

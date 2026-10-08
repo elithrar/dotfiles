@@ -1,0 +1,35 @@
+{
+  "skill_name": "neo-industrial-design",
+  "evals": [
+    {
+      "id": "unchanged-pass",
+      "prompt": "Use neo-industrial-design to write only the handoff for this completed implementation. Review record: editorial mode; desktop and phone renders and affected keyboard controls passed; no correction was necessary. Do not repeat implementation or review.",
+      "expected_output": "States the mode and that review passed unchanged.",
+      "files": [],
+      "assertions": [
+        "Does not invent a visual correction.",
+        "Does not change a passing interface to manufacture a correction."
+      ]
+    },
+    {
+      "id": "rendering-unavailable",
+      "prompt": "Use neo-industrial-design to write only the handoff. Implementation record: instrumental mode; source checks completed; no browser/rendering tool was available. Do not perform further implementation or review.",
+      "expected_output": "Reports the source checks and pending visual verification.",
+      "files": [],
+      "assertions": [
+        "Does not claim rendered review passed or that a visual correction was observed.",
+        "Clearly states the rendering verification gap."
+      ]
+    },
+    {
+      "id": "review-only",
+      "prompt": "Use neo-industrial-design to summarize this review-only result: at phone width, a telemetry rail overlaps the main button. No changes were authorized or made. Return the finding and recommendation only.",
+      "expected_output": "Reports the overlap and a recommendation without implying a fix was applied.",
+      "files": [],
+      "assertions": [
+        "Does not edit or publish the interface.",
+        "Does not claim a correction was made."
+      ]
+    }
+  ]
+}

@@ -59,15 +59,19 @@
     },
     {
       "id": "base-branch-merge-base",
-      "prompt": "Review this branch against main. The local main ref is behind origin/main, and the branch has an upstream.",
+      "prompt": "Review this branch against main. Local main is behind origin/main, and the feature branch tracks origin/feature. Keep the review read-only.",
       "expected_output": "Resolves the appropriate comparison ref, computes the merge base, and reviews the changes that would actually merge.",
-      "files": [],
+      "files": [
+        "fixtures/base_branch.py"
+      ],
       "assertions": [
         "Activates code-reviewer.",
-        "Uses the upstream comparison ref when it is ahead and available.",
-        "Does not diff HEAD directly against the branch tip.",
+        "Uses origin/main when it is ahead of local main, computes its merge base with HEAD, and does not substitute origin/feature (the feature branch upstream).",
+        "Reports the changed guard in account.js:2: null now falls through and is dereferenced.",
+        "Does not report main-only.txt as a feature-branch change or use a direct origin/main-to-HEAD diff as the review target.",
         "Keeps the workflow read-only."
-      ]
+      ],
+      "setup": "Run python3 fixtures/base_branch.py <new-nonexistent-path> before the trial, then use that generated repository as the working directory. Resolve fixture paths relative to this evals directory. Do not show grading assertions to the reviewer."
     },
     {
       "id": "clean-working-tree-no-target",

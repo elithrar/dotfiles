@@ -71,4 +71,4 @@ Do not claim the work is complete while any of these remain:
 - the accent color has no consistent meaning;
 - essential keyboard, focus, contrast, or reduced-motion behavior is missing.
 
-Record the most important correction made during review. A useful correction names the observed failure and the concrete change, for example: “The telemetry rail competed with the title at phone width, so it now follows the hero image and loses two redundant labels.”
+Record the most important correction, if any, made during implementation review. A useful correction names the observed failure and the concrete change, for example: “The telemetry rail competed with the title at phone width, so it now follows the hero image and loses two redundant labels.” If review passed unchanged, say so; if rendering was unavailable, state the verification gap. For review-only work, report findings and recommendations without claiming a correction was applied.

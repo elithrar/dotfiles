@@ -1,6 +1,6 @@
 ---
 name: anti-slop
-description: Edit formulaic or AI-sounding prose while preserving the author's voice. Use for an anti-slop pass, editorial review, or requests to make writing sound more human; ordinary drafting does not require this skill.
+description: Edit formulaic or AI-sounding prose while preserving the author's voice. Use for an anti-slop pass, prose style review for filler or formulaic phrasing, or requests to make writing sound more human; ordinary drafting does not require this skill.
 ---
 
 # Anti-slop editing

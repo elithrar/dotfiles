@@ -2,6 +2,30 @@
 
 Use this reference for 1984-1989 Porsche 911 Carrera 3.2 Bosch Motronic DME fault isolation. Verify year-specific pin numbers and specifications against the Porsche workshop manual, Bentley manual, or wiring diagram before directing invasive probing.
 
+## Contents
+
+- [Diagnostic Discipline](#diagnostic-discipline)
+- [Evidence Hierarchy](#evidence-hierarchy)
+- [Fast Symptom Split](#fast-symptom-split)
+- [No-Start Workflow](#no-start-workflow)
+- [No-Start Interpretation Matrix](#no-start-interpretation-matrix)
+- [Motronic Power Logic](#motronic-power-logic)
+- [Harness And Electrical Checks](#harness-and-electrical-checks)
+- [Connector And Harness Failure Modes](#connector-and-harness-failure-modes)
+- [Sensor Connector Tips From Field Threads](#sensor-connector-tips-from-field-threads)
+- [Sensor Notes](#sensor-notes)
+- [Sensor Result Interpretation](#sensor-result-interpretation)
+- [Fueling Checks](#fueling-checks)
+- [Fueling Fault Patterns](#fueling-fault-patterns)
+- [Ignition Checks](#ignition-checks)
+- [Ignition Fault Patterns](#ignition-fault-patterns)
+- [High-RPM Cutout And False Rev-Limit Checks](#high-rpm-cutout-and-false-rev-limit-checks)
+- [DME And Relay Notes](#dme-and-relay-notes)
+- [Chip-Swap Debugging](#chip-swap-debugging)
+- [Harness Repair Practice](#harness-repair-practice)
+- [Minimum Triage Packet](#minimum-triage-packet)
+- [Diagnostic Workflow](#diagnostic-workflow)
+
 ## Diagnostic Discipline
 
 - Diagnose from the symptom state. A car that fails only hot, only under load, or only after chip work needs a different first test than a cold no-start.

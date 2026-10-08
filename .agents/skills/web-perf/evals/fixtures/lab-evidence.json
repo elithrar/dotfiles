@@ -1,0 +1,31 @@
+{
+  "kind": "synthetic lab evidence for evaluation; not a measured Chrome trace or real site result",
+  "page": "late-banner.html",
+  "build": "fixture-v1",
+  "viewport": {
+    "width": 800,
+    "height": 800
+  },
+  "conditions": {
+    "device": "desktop",
+    "network_throttling": "none",
+    "cpu_throttling": "none",
+    "cache_state": "not established",
+    "interactions": []
+  },
+  "synthetic_observations": {
+    "layout_shift": {
+      "time_ms": 1000,
+      "had_recent_input": false,
+      "shifted_element": "main",
+      "previous_top_px": 0,
+      "current_top_px": 120
+    },
+    "lab_cls": 0.15,
+    "lcp_ms": 900,
+    "tbt_ms": 0
+  },
+  "field_data": null,
+  "inp": null,
+  "note": "Values are scenario inputs, not measurements from the reviewer. A suggested fix requires an equivalent-condition rerun before claiming improvement."
+}

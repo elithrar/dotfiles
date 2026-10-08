@@ -1,0 +1,54 @@
+{
+  "kind": "synthetic normalized history; not an OpenCode wire-format contract",
+  "requested_date": "2026-10-08",
+  "timezone": "America/Los_Angeles",
+  "advertised_read_paths": [
+    "/project",
+    "/session?directory={directory}",
+    "/session/{id}/message"
+  ],
+  "projects": [
+    {
+      "directory": "/fixtures/api",
+      "sessions": [
+        {
+          "id": "one-message-fix",
+          "messages": [
+            {
+              "at": "2026-10-08T07:15:00Z",
+              "text": "Token-expiry change and targeted test evidence; no merge evidence.",
+              "evidence": {
+                "diff": "-if (expiresAt < now) reject();\n+if (expiresAt <= now) reject();",
+                "test_output": "PASS: rejects a token when expiresAt equals now"
+              }
+            }
+          ]
+        },
+        {
+          "id": "older-session",
+          "updated_at": "2026-10-08T08:00:00Z",
+          "messages": [
+            {
+              "at": "2026-10-08T06:59:00Z",
+              "text": "Yesterday: planned a cache rewrite; no implementation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "directory": "/fixtures/ui",
+      "sessions": [
+        {
+          "id": "proposal",
+          "messages": [
+            {
+              "at": "2026-10-08T09:00:00Z",
+              "text": "Proposed a smaller header; no files changed."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

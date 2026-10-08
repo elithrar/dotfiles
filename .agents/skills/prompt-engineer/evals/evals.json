@@ -3,14 +3,16 @@
   "evals": [
     {
       "id": "minimal-oversearch-fix",
-      "prompt": "Improve this system prompt so the agent stops over-searching. Preserve its structure and change only what is needed.",
-      "expected_output": "Diagnoses the missing evidence budget or stop condition and proposes a targeted change with representative evals.",
-      "files": [],
+      "prompt": "Improve oversearch.md so the agent stops over-searching. Preserve its structure and change only what is needed. No model trial results are available.",
+      "expected_output": "Applies a targeted search-stop change and proposes representative tests, while labeling behavioral improvement unverified.",
+      "files": [
+        "fixtures/oversearch.md"
+      ],
       "assertions": [
         "Activates prompt-engineer.",
         "Preserves the existing prompt structure.",
         "Changes only the behavioral lever tied to over-searching.",
-        "Does not claim improvement without an eval proposal or observed evidence."
+        "Labels the change untested unless observed results establish improvement; a proposed eval is not a passing result."
       ]
     },
     {
