@@ -11,6 +11,8 @@ Do not infer a global preference from one action. “Softer idle” does not mea
 
 For unchanged approved cells, store decoded RGBA hashes and their cell mapping before edits. Compare the same pixels in the final encoded output after all shared assembly, normalization, resampling and cleanup, even for rows untouched by targeted generation. An encoded whole-file hash changes when any row changes; use per-cell decoded hashes to prove approved cells stayed identical. If shared processing unexpectedly changes protected cells, restore their original decoded pixels and recheck the final output. If a requested global transformation must alter approved pixels, identify that scope change rather than silently weakening the check.
 
+Review rows individually with frame/transition evidence, then inspect the whole sheet for shared causes such as scale, facial construction, lighting, registration or pacing. Apply a proven root-cause fix to all affected rows, but do not blanket-regenerate passed rows. If a global correction must change protected artwork, make that scope explicit and obtain any needed approval.
+
 For each revision, name the correction hypothesis and inspect whether it worked. When it did not, retain the evidence and change strategy as described in the generation reference. Avoid repeated “fixed” claims based solely on a successful tool call or a new-looking still.
 
 ## Keep traceable evidence
@@ -22,6 +24,8 @@ Use a small manifest or existing project records; no particular serialization is
 - Extraction, scale and registration choices, including intentional motion kept intact.
 - Final filename/version/hash, current target contract, duration vectors and preview derivation.
 - Structural output, visual review scope, tested transitions, protected-cell checks, remaining warnings and untested runtime behavior.
+
+Use a stable, descriptive versioned filename such as `character-name-spritesheet-vN.png` for review/source copies, with the extension matching the actual encoding. Increment the version for changed deliverable bytes and retain the prior version for comparison. Preserve any filename/path required by the target runtime; record its mapping to the versioned copy and hash. Do not confuse the filename with the target asset ID or create a duplicate asset merely to version a file.
 
 Keep only useful provenance. Do not duplicate private chat history or unrelated user information into a portable skill or public deliverable. A saved reviewer report is evidence of that review's claims; it is not an independent rerun. If a source snapshot or validation record is missing, say which claim cannot be reproduced.
 

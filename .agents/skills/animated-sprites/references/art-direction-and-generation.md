@@ -4,14 +4,22 @@
 
 Lock only the features needed to preserve the requested character: silhouette and proportions, face/eye construction, palette/materials, anatomical side of asymmetric accessories, grip/attachment, and the approved rendering style. Refer to the authoritative base image; a pose guide specifies movement/layout, not a competing character design. Check native and intended display sizes before multiplying a weak base into an atlas.
 
+Inspect the actual reference pixels and provenance before defining anatomy. Prefer authoritative art and distinct useful views; label crops, upscales, alternate encodings and reposts of the same image as derivatives, not independent confirmation. Resolve conflicting designs by choosing the relevant approved version rather than averaging incompatible anatomy. Separate features visible in references from inferred hidden construction.
+
 Assign each reference an explicit role: character identity, rendering style, prop construction, expression or layout. Borrowing another character's painterly style should not import its costume or anatomy. Freeze an accepted canonical base and important prop detail; if either changes materially, re-review dependent rows rather than treating the old approvals as current.
 
+Stage each state around one readable intention. Design clear key poses and negative space at display size before adding detail or in-betweens. Use a line of action and silhouette that expose the important hand, tool or support relationship; extra motion cannot rescue a hidden action.
+
 Write a compact frame plan tied to the available timing:
-- **Sustained states:** maintain a readable pose with small continuous movement. Avoid rebuilding a full arm lift/drop or full blink every short cycle. Calm breathing should not inflate the whole body or change head scale.
+- **Sustained states:** distinguish quiet intentions through posture, gaze and one restrained secondary action. Idle can be neutral rest, waiting expectant readiness, review attentive inspection, and work purposeful contact; adapt these cues to the actual state meanings and character. Maintain a readable pose with small continuous movement. Avoid rebuilding a full arm lift/drop or full blink every short cycle. Calm breathing should not inflate the whole body or change head scale.
 - **Event actions:** plan anticipation, action, contact and recovery. If runtime cannot play once or pause, adapt the artwork for repetition rather than promising a control the format does not expose.
 - **Locomotion:** distinguish walking, jogging and running through contact, compression, passing, flight, alternating support and arm-leg opposition. A slower-looking gait is not automatically a better calm animation. Account for uneven per-frame durations, especially a long final hold.
 - **Work/tool actions:** define each hand's role and the full contact cycle. Keep grip, fulcrum/contact point, object support and tool trajectory intelligible. A tool merely moving nearby can fail to communicate useful work. Separate the work pose from waiting and inspection.
 - **Grounded actions:** select the actual support points. A toe tap can keep the heel planted; a lean can move the head without moving the feet. Do not judge floor contact from a prop's lowest pixel.
+
+Place breakdowns where they explain direction changes, passing poses and contact. Follow curved anatomical arcs when appropriate; do not linearly interpolate a hand through a body or let a foot teleport between extremes. Allocate spacing, and durations where the runtime permits changes, to express acceleration, ease into a hold, and weight at impact. With fixed timing, fit the poses to the supplied duration vector. More frames alone do not make motion smoother.
+
+Let soft appendages, clothing or tools settle with restrained overlap and follow-through after the primary action. Preserve attachments and volume. Squash/stretch or exaggeration may strengthen a pose when the approved style supports it; do not introduce accidental head-size changes, facial reconstruction or material flicker. Keep light direction and rendering treatment consistent across the sequence; shading and highlights may change coherently with the pose, without unrelated flicker.
 
 These are design choices, not mandatory gestures. Preserve the user's chosen personality, intensity, props and style. A new prop is justified by the requested action, not by a generic state label.
 

@@ -18,6 +18,8 @@ Treat character identity, animation behavior, and the target's technical contrac
 
 For character design, new choreography, directional poses, or repeated generation failures, read [Art direction and generation](references/art-direction-and-generation.md).
 
+Stage the action for the intended display size: approve readable key poses and silhouettes before filling the timing budget. Use anticipation, arcs, spacing, easing and follow-through where they clarify the action; keep secondary motion subordinate to its meaning.
+
 Define the identity lock and a short frame plan before generating: what communicates each state, what moves, what stays anchored, and how the motion returns. Generate coherent pose families using the approved character reference. Register with a shared scale; never independently fit every pose into its cell. Intentional jump lift and gait bounce must survive assembly.
 
 Use the required image-generation/editing tool for artwork changes. Deterministic crop, translation, assembly and alpha processing are production operations, not substitutes for drawing a missing pose or faking anatomy. Apply cleanup only when the source needs it.
@@ -33,6 +35,6 @@ Read [Motion review and preview harness](references/motion-review.md) when revie
 
 For feedback-driven repairs, approved-cell protection, evidence records, or final delivery, read [Repair, evidence and delivery](references/repair-and-delivery.md).
 
-Translate criticism into a specific correction hypothesis and preserve accepted rows. If repeated full-row generations fail for the same reason, change the representation or staging rather than adding more prohibitions to the same prompt. Recheck repairs in the final assembled output, including neighboring frames and protected cells.
+Critique each row before accepting the full sheet. Translate criticism into a specific correction hypothesis, check whether its root cause affects other rows, and preserve accepted rows. If repeated full-row generations fail for the same reason, change the representation or staging rather than adding more prohibitions to the same prompt. Recheck repairs in the final assembled output, including neighboring frames and protected cells.
 
 Report measured facts, visual judgments, and untested behavior separately. Disclose remaining gaps. Show the requested previews and apply the result only within the user's authorization; successful upload is not proof of stored-byte identity or live-runtime behavior.

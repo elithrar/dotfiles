@@ -6,6 +6,8 @@ Extract review frames from the actual encoded atlas or animation that will be de
 
 For new-sheet or full-sheet acceptance, inspect every required frame. A focused repair/review can cover the changed rows, adjoining transitions and protected-cell checks; name unreviewed areas instead of implying exhaustive acceptance. Review at native and intended display sizes, enlarging suspicious anatomy/alpha details. If actual display size is unknown, call the reduced-size check a proxy. Include light and dark backgrounds where edge quality matters.
 
+Keep four claims independent: structural validity, perceptual animation quality, published-byte identity, and observed runtime cadence/trigger frequency. Evidence for one does not establish the others. A preview can reproduce frame timing while still differing from how often the app triggers or repeats an action.
+
 Separate:
 - **Measured:** dimensions, populated cells, alpha bounds, durations, order, baseline offsets, content hashes and unchanged protected pixels.
 - **Visual:** silhouette/face consistency, lawful occlusion, natural weight transfer, readable action, distracting repetition and visible snaps.
@@ -49,6 +51,8 @@ Do not invent renderer interpolation to make hard state switches appear smooth. 
 
 ## Perceptual acceptance questions
 
+- Does staging expose the primary action, with clear silhouettes and secondary motion that supports rather than competes with it?
+- Do anticipation, action and recovery read as one intention, with coherent arcs, spacing and volume through the in-betweens?
 - Does the state remain recognizable without its label? Similar quiet states may need a blind classification check at display size.
 - Do calm states remain alive without repeated attention-seeking resets, excessive blinking or full-body puffing?
 - Does the gait show alternating support and purposeful weight transfer? Are genuine flight phases preserved when a run is intended?
