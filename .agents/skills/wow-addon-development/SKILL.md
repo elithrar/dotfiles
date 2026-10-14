@@ -24,7 +24,7 @@ Read the matching references before changing those areas. Load only the guidance
 ## Choose the starting point
 
 - **Existing feature or fix:** Read the TOC, affected module, and nearest working example. Identify the state owner and actual user/event entry point. Preserve working conventions; establish the expected result or reported failure before editing.
-- **New add-on:** Start with clients and packaging. Define the first complete interaction and persistence needs; separate model logic, client adapters, and UI construction as those responsibilities arise.
+- **New add-on:** Establish the supported client, packaging needs, and the user's named reference or nearest working project convention. Reuse its applicable construction patterns for the first complete interaction; separate model logic, client adapters, and UI construction as those responsibilities arise.
 - **Client port:** Start with clients. Compare the affected APIs, events, templates, and saved-data meaning across targets. Isolate semantic differences in adapters; update packaging where needed.
 - **Review:** Read the changed paths and relevant references. Check requested behavior and repository conventions separately; report defects with evidence instead of applying unrequested edits.
 
@@ -32,7 +32,7 @@ Read the matching references before changing those areas. Load only the guidance
 
 Verify unfamiliar or changed client contracts from matching documentation, reusing evidence checked for the same build. For implementation work, complete one behavior through its entry point, state change, and visible result before expanding it. Include persistence and recovery where the feature requires them.
 
-Use the relevant validation checks to establish the requested outcome. Re-run the original scenario after a fix and check nearby behavior. Re-review the complete affected interaction against current requirements, including its settled appearance and transitional states; passing isolated checks is not acceptance of the whole feature. For a port, account for each affected contract on each supported client. A review finding should identify its location, trigger, and consequence.
+Choose evidence for the behavior at risk: source and working references for construction, focused execution for logic and lifecycle, and in-client checks for unresolved engine behavior or requested visual acceptance. Fix source-identifiable defects without waiting for live access. Use the relevant validation checks to establish the requested outcome. Re-run the original scenario after a fix and check nearby behavior. Re-review the complete affected interaction against current requirements, including its settled appearance and transitional states; passing isolated checks is not acceptance of the whole feature. For a port, account for each affected contract on each supported client. A review finding should identify its location, trigger, and consequence.
 
 Finish with the result, checks actually performed, and specific unresolved client checks. Distinguish inspected source, offline execution, and observed in-game behavior; identify any requested behavior still incomplete.
 
