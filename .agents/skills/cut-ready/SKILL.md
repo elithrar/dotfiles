@@ -1,57 +1,48 @@
 ---
 name: cut-ready
-description: Prepare or review CAD and vector artwork for physical fabrication, cutting, printing, or machining. Use for production files, scale, contours, fit, bends, and vendor handoff; not digital-only graphics, 3D-print meshes, or CAD explanation without a production artifact.
+description: Create, revise, or preflight fabrication files for 2D cutting, physical graphics, formed parts, CNC machining, and 3D printing. Use for CAD solids, cut paths, print meshes, slicer handoffs, fit, and production requirements; not standalone technical documentation, digital-only graphics, NC-program qualification, or machine operation.
 ---
 
 # Cut-ready fabrication
 
-Treat `cut-ready` as a verified status, not a synonym for "file created." Do not claim it until the applicable evidence, geometry, readback, visual, and vendor gates pass. For an audit-only request, report findings and readiness without modifying or uploading files.
+Deliver physical-part geometry that preserves design intent and is verified for its stated production stage. File validity, downstream interpretation, and physical qualification are separate claims. For audit-only work, report findings without changing or uploading artifacts.
 
-## Load the required references
+## Route by deliverable
 
-| Work | Reference |
-|---|---|
-| Establish dimensions, source confidence, and a revision contract | [intake-and-revision](references/intake-and-revision.md) |
-| Create or review 2D cut geometry | [2d-preflight](references/2d-preflight.md) |
-| Create stickers, decals, masks, gauge faces, or annotated vector drawings | [graphics-and-diagrams](references/graphics-and-diagrams.md) |
-| Lay out engineering sheets, dimensioned views, or fabrication lettering | [engineering-drawings](references/engineering-drawings.md) |
-| Generate CAD, revise a base model, or add an output format | [cad-generation](references/cad-generation.md) |
-| Create or review STEP/STP geometry | [3d-preflight](references/3d-preflight.md) |
-| Prepare a vendor handoff or SendCutSend upload | [vendor-handoff](references/vendor-handoff.md) |
+Load only the references needed for the next decision:
 
-Read a reference when its manufacturing decision or validation step is needed; do not load every file for a narrow revision. Re-check the named vendor's current official requirements when material, thickness, minimum-feature, tolerance, bend, or file-format rules could have changed.
+- Missing controlling inputs, reconstruction, or revision scope: [intake and revision](references/intake-and-revision.md).
+- Parametric/scripted geometry, variants, or new export formats: [CAD generation](references/cad-generation.md).
+- Profile cutting, vinyl, stencils, or operation paths: [2D preflight](references/2d-preflight.md).
+- Printed physical artwork and contour-cut products: [production graphics](references/production-graphics.md).
+- Solid CAD, formed sheet, or CNC parts: [3D preflight](references/3d-preflight.md).
+- Print meshes, configured slicer projects, or inspected slices: [additive preflight](references/additive-preflight.md).
+- Producer requirements, finishing, upload previews, or physical proofs: [vendor handoff](references/vendor-handoff.md).
 
 ## Required outcomes
 
-Satisfy each outcome that applies to the requested job. Adapt the working order while preserving dependencies: resolve controlling inputs before modeling, and validate exports before claiming readiness.
+1. **Define the part and production stage.** Establish process, material/stock, units, critical geometry, interfaces, tolerances, finish, and target producer as relevant. Distinguish CAD bodies from separate physical parts and intended joins. Reuse accepted inputs; ask only when an unknown controls the next geometry, fit, output, or safety decision. Continue independent work with clearly bounded assumptions.
+2. **Preserve design authority.** Identify the accepted base and controlling specification. Derive variants and exports from them; freeze everything outside the requested revision. Declare process-specific transformations rather than silently rebuilding or changing the part. Keep measured, specified, calculated, reconstructed, and assumed inputs distinguishable.
+3. **Prove the final geometry.** Independently import/read the actual exported bytes. Compare units, transforms, bounds, topology, expected feature inventory, critical dimensions, orientation, and operation assignments with the specification. Measure features rather than copying nominal values into a report. Diagnose missing features, unexplained healing, or changed geometry before accepting the file.
+4. **Inspect the actual result.** Render the imported export from views or sections that expose its critical shapes, coverage, openings, and clearances. Compare reference-derived work in comparable views, including adjacency, axes, silhouette, and negative space. Separate geometry defects from tessellation, normals, or display artifacts; a convincing preview does not prove the part is correct.
+5. **Verify the requested downstream stage.** Apply the selected process checks. Use current official requirements for the exact producer, material, and service where they affect the result. Inspect actual vendor/slicer interpretation when that stage is requested and available. Never infer printability, machining simulation, or physical fit from a successful import.
+6. **Release the exact checked revision.** After corrections, regenerate derivatives and repeat affected checks. For substantial or consequential geometry changes, obtain an independent review of the brief, source evidence, and raw exports without seeding expected findings; report if unavailable. Deliver the requested files, editable source when needed, useful preview, and concise evidence/gaps. Verify a hosted preview or uploaded artifact identifies the same part, variant, and revision.
 
-1. **Classify the production job.** Identify flat profile cutting, cut vinyl or stencil, printed contour-cut artwork, production vector drawing, formed sheet material, or machined 3D solid. Record the process, physical substrate or stock, thickness when relevant, units, finished size, quantity, finish, critical dimensions, tolerances, application face, handed or mirrored variants, and target vendor when known. Ask one focused question only when a missing answer changes geometry, output, fit, or safety.
-2. **Build an evidence ledger.** Classify controlling dimensions using the intake reference, keeping measured and specified values separate from assumptions. Never turn a photo estimate into an exact historical or physical dimension. State the scale anchor, perspective limits, and uncertainty for reconstructions.
-3. **Freeze accepted work.** Before a revision, record the baseline, frozen elements, editable elements, invariants, and acceptance checks. Create a new revision unless the user explicitly asks to replace the baseline. Treat "change nothing else" literally.
-4. **Maintain one authoritative model.** For new work, establish a base model and shared dimensional specification; for accepted work, reuse them. Derive every revision, variant, drawing, preview, and new format from that source. Prefer native CAD, a parametric model, or a checked-in generator over hand-edited exports. Reuse accepted components and canonical assets; encode controlling dimensions and expected features as assertions. Follow the CAD-generation reference for lineage and cross-format checks.
-5. **Run technical preflight.** Apply every relevant reference. Open the exported file in a second compatible tool or independent import path. Compare units, physical bounds, layers, bodies, contours, features, orientation, and critical dimensions with the source. Treat unexpected counts or importer healing as failures to diagnose.
-6. **Run visual and semantic review.** Render the actual production export at actual size and useful magnifications. Inventory every visible object and inspect negative space, alignment, z-order, occlusion, overlaps, arrow and leader termination, mirrored text, cut direction, feature placement, and installed orientation. Reconcile labels with measured geometry and the current variant. Compare with source references and the accepted baseline. After a correction, regenerate dependent outputs and repeat affected numeric and visible checks; a parser-only check is insufficient.
-7. **Verify the manufacturing handoff.** When the vendor is named, use its current official design rules. If authorized and available, upload the file without ordering and inspect the vendor preview. Confirm displayed size, material, thickness, services, bend directions, and feature count. Never place an order or approve production without explicit authorization.
-8. **Package the result.** Return the requested production files with the source and preview needed to use or verify them. Summarize relevant process, units, assumptions, checks, and gaps in the handoff. Add a separate README or validation report only for a requested package or when manufacturing details would otherwise be lost.
+## Boundaries
 
-## Guardrails
+- Preserve the original and explain any manufacturing change outside scope before making it. A format conversion is not permission to redesign.
+- Use source-backed process limits. Do not invent tolerances, clearances, bend rules, tooling limits, or printer settings. Do not apply kerf, shrink, bend, or finish compensation unless the workflow explicitly requires it; prevent double compensation.
+- Do not laser-process ordinary PVC/vinyl. Use a suitable non-laser route unless the exact material and machine operator explicitly establish laser compatibility.
+- Keep production geometry free of proof-only overlays and render-only repairs. Do not conceal missing physical features with caps, shading, or hidden bodies.
+- Upload, order, proof approval, and machine execution are separate actions. Stay within the user's authorization; this skill does not authorize them.
 
-- Resolve missing inputs before the geometry decision they control. Complete independent edits and checks first; a color-only revision of accepted artwork need not re-open unchanged material or dimensional decisions. Preserve prior authorization and the user's requested scope. Explain any actual blocking instruction and the affected decision.
-- Do not invent vendor limits, tolerances, bend radii, K factors, kerf values, historical dimensions, or missing geometry. Retrieve current primary-source rules or report the blocker.
-- Do not compensate for kerf, bend allowance, or finishing unless the manufacturing workflow explicitly requires it.
-- Do not describe ordinary PVC or automotive vinyl as laser-safe. Default to a drag-knife or plotter unless the exact material manufacturer and machine operator explicitly approve laser processing.
-- Do not silently simplify, redraw, rescale, mirror, repair, or convert accepted geometry. Explain any required manufacturing change and preserve the original.
-- Do not use a vendor-specific cutline name, spot color, bleed, safe area, resolution, or color mode as a universal rule. Retrieve the named vendor's current specification.
-- Do not call a STEP file valid merely because it has a `.step` extension, or a DXF valid merely because it opens. Require geometry and readback checks.
-- Do not treat a vendor's successful upload as proof that scale, bend direction, or design intent is correct. Inspect the preview and configuration.
+## Handoff status
 
-## Readiness labels
+Give a concise status for each materially different artifact/process, followed by passed checks and material gaps:
 
-Use exactly one status in the final handoff:
+- **Ready for the stated stage:** All applicable digital and downstream checks for that named stage passed. Name the stage, such as cut-file handoff or inspected slice; do not imply physical qualification.
+- **Locally preflighted:** Geometry/export checks passed; required vendor, slicer, or other downstream interpretation remains unverified.
+- **Draft / reconstruction:** Intent or controlling inputs remain provisional.
+- **Blocked for the stated stage:** A missing input or failed check can materially change the part or make that stage unsafe.
 
-- **Cut-ready:** All applicable local preflight, independent readback, visual review, and named-vendor preview checks passed.
-- **Locally preflighted:** Local and independent checks passed, but vendor import or physical proof remains unverified.
-- **Draft / reconstruction:** Geometry depends on unconfirmed dimensions, photo inference, or unresolved aesthetic approval.
-- **Blocked:** A missing manufacturing input or failed check can materially change the part.
-
-Complete authorized corrections and affected checks before the final handoff. Report the status first, followed by the production files, intended process and material, exact passed checks, remaining proof step, and any uncertainty.
+Report fit/performance proof separately as performed, unperformed, or not applicable with a reason. Where uncertainty or failure consequence warrants a physical proof, identify the relevant coupon, prototype, or first-article check. A digital pass cannot stand in for it; honest limited-stage delivery may still proceed.

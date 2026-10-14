@@ -1,4 +1,14 @@
 interface:
-  display_name: "Cut Ready"
-  short_description: "Prepare and verify production-ready CAD and artwork"
-  default_prompt: "Use $cut-ready to create or revise production-ready CAD, sticker, decal, or vector artwork."
+  display_name: Cut Ready
+  short_description: Build and verify physical fabrication files
+  default_prompt: Use $cut-ready to create or preflight a physical part for cutting,
+    CNC machining, or 3D printing.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
