@@ -1,0 +1,14 @@
+interface:
+  display_name: Engineering Drawings
+  short_description: Build and review clear engineering drawing packages
+  default_prompt: Use $engineering-drawings to create or review a precise, buildable
+    engineering drawing package.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

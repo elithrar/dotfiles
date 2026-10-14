@@ -3,73 +3,200 @@
   "evals": [
     {
       "id": "missing-geometry-input",
-      "prompt": "Create a production-ready formed sheet part from this sketch. Material and stock thickness are still undecided.",
-      "expected_output": "Activates cut-ready and asks one focused question before creating geometry.",
+      "prompt": "Create a formed sheet part from this sketch. Material and thickness are undecided.",
+      "expected_output": "Resolve inputs before the features they control; continue independent or clearly provisional work.",
       "files": [],
       "assertions": [
-        "Does not invent material, thickness, or bend rules.",
-        "Does not claim readiness before geometry-changing inputs are known."
+        "Do not invent thickness or bend rules.",
+        "Do not claim a production-stage pass for unconfirmed geometry."
       ]
     },
     {
-      "id": "print-and-cut-artwork",
-      "prompt": "Prepare this illustration as a physically produced contour-cut sticker. I have not selected a printer yet.",
-      "expected_output": "Activates cut-ready, separates artwork from the cut contour, and leaves vendor-specific production values unresolved.",
+      "id": "print-and-cut",
+      "prompt": "Prepare this illustration as a contour-cut sticker; I have not chosen a printer.",
+      "expected_output": "Prepare a bounded physical-artwork handoff.",
       "files": [],
       "assertions": [
-        "Distinguishes printed artwork from cut vinyl or a stencil.",
-        "Does not present one vendor's bleed, cutline, or color rules as universal."
+        "Separate artwork from cut contour.",
+        "Do not use universal vendor bleed, spot-color, or color-profile rules."
       ]
     },
     {
-      "id": "reference-derived-reconstruction",
-      "prompt": "Recreate this physical marking from photographs at its original size and provide a production vector.",
-      "expected_output": "Activates cut-ready and treats unsupported dimensions as reconstruction rather than fact.",
+      "id": "reconstruction",
+      "prompt": "Recreate this physical marking from photographs at its original size.",
+      "expected_output": "Record scale evidence and reconstruction uncertainty.",
       "files": [],
       "assertions": [
-        "Records the scale anchor and uncertainty.",
-        "Requires a physical-size proof before production readiness."
+        "Do not label estimated dimensions as measured.",
+        "Match the physical proof to fit uncertainty and distinguish it from digital preflight."
       ]
     },
     {
-      "id": "scoped-production-revision",
-      "prompt": "Change only the two specified colors in this accepted production file and return a new revision.",
-      "expected_output": "Activates cut-ready, freezes unrelated work, and verifies the requested delta and non-delta.",
+      "id": "narrow-color-revision",
+      "prompt": "Change only two colors in this accepted production file.",
+      "expected_output": "Preserve geometry and unrelated work.",
       "files": [],
       "assertions": [
-        "Preserves the accepted baseline and unrelated geometry.",
-        "Does not imply unsupported color semantics in a cut-only format."
+        "Verify the requested delta and unchanged geometry.",
+        "Do not require unrelated process intake or a new physical prototype."
       ]
     },
     {
-      "id": "unsafe-material-process",
-      "prompt": "Make this ordinary vinyl graphic ready for laser cutting.",
-      "expected_output": "Activates cut-ready and corrects the unsafe process assumption while preserving the fabrication goal.",
+      "id": "vinyl-laser",
+      "prompt": "Prepare this ordinary PVC vinyl graphic for laser cutting.",
+      "expected_output": "Preserve the fabrication goal while correcting the unsafe process.",
       "files": [],
       "assertions": [
-        "Does not describe ordinary vinyl or PVC as laser-safe.",
-        "Routes to an appropriate cutting process unless the exact material and machine are approved."
+        "Do not call ordinary PVC/vinyl laser-safe.",
+        "Use a suitable non-laser route absent exact material and operator evidence."
       ]
     },
     {
-      "id": "unverified-production-export",
-      "prompt": "The export exists, but I cannot reopen or independently parse it. Is it production-ready?",
-      "expected_output": "Activates cut-ready and reports the exact unverified validation gate instead of claiming readiness.",
+      "id": "unverified-export",
+      "prompt": "The file exists, but I cannot independently reopen or parse it. Is it production-ready?",
+      "expected_output": "Identify the missing readback gate.",
       "files": [],
       "assertions": [
-        "Does not treat file existence or extension as validation.",
-        "Uses a readiness label consistent with the checks actually completed."
+        "Do not treat extension or existence as validation.",
+        "Use an evidence-bounded readiness status."
       ]
     },
     {
-      "id": "near-miss-digital-only",
+      "id": "print-geometry-only",
+      "prompt": "Preflight an STL for a print service. I only need checked geometry; the service chooses its printer.",
+      "expected_output": "Verify mesh, physical size, and functional geometry.",
+      "files": [],
+      "assertions": [
+        "Do not demand printer/nozzle details unnecessarily.",
+        "Do not claim slicer or physical validation."
+      ]
+    },
+    {
+      "id": "configured-3mf",
+      "prompt": "This generic 3MF contains a model but no machine settings. Deliver a configured Bambu project.",
+      "expected_output": "Distinguish geometry from a target-application project.",
+      "files": [],
+      "assertions": [
+        "Verify effective machine/material/process settings in the actual application.",
+        "If unavailable, report the specific unverified stage rather than inventing settings."
+      ]
+    },
+    {
+      "id": "slice-feature",
+      "prompt": "A valid manifold mesh has a thin wall absent from the slicer preview. Can it pass?",
+      "expected_output": "Judge the requested print stage from actual interpretation.",
+      "files": [],
+      "assertions": [
+        "Do not equate mesh integrity with feature realization.",
+        "Resolve missing wall or block that stage."
+      ]
+    },
+    {
+      "id": "cnc-access",
+      "prompt": "Preflight a CNC solid with deep narrow pockets, an undercut, and thin unsupported walls.",
+      "expected_output": "Review the actual machining route and accessible geometry.",
+      "files": [],
+      "assertions": [
+        "Inspect tool approach/reach, corners, setup and support risks.",
+        "Do not claim simulated CAM or machine-ready code from a solid."
+      ]
+    },
+    {
+      "id": "thread-derivatives",
+      "prompt": "The same functional thread needs a simple service-configured hole for one vendor and explicit geometry for printing.",
+      "expected_output": "Maintain shared intent with declared process derivatives.",
+      "files": [],
+      "assertions": [
+        "Verify each destination rule without a universal thread-representation recipe.",
+        "Preserve engagement, position, walls, and installation constraints."
+      ]
+    },
+    {
+      "id": "feature-coverage",
+      "prompt": "The specified edge treatment is continuous around a relieved surface, but only the peaks were clipped. Bounds and volume pass.",
+      "expected_output": "Verify physical shape across its full required coverage.",
+      "files": [],
+      "assertions": [
+        "Inspect sections through surface extremes and termination.",
+        "Do not accept isolated matching points or feature names as proof."
+      ]
+    },
+    {
+      "id": "reference-relationships",
+      "prompt": "A watertight reconstruction has the wrong opening planes and joint arrangement compared with the reference.",
+      "expected_output": "Separate geometry validity from reference fidelity.",
+      "files": [],
+      "assertions": [
+        "Compare adjacency, axes, openings, silhouette and negative space.",
+        "Do not pass merely because the solid is valid."
+      ]
+    },
+    {
+      "id": "delivered-identity",
+      "prompt": "The checked CAD is correct, but the delivered viewer loads another variant.",
+      "expected_output": "Verify artifact identity and separate the defect scope.",
+      "files": [],
+      "assertions": [
+        "Fail the viewer handoff identity.",
+        "Do not claim the underlying CAD is defective without evidence."
+      ]
+    },
+    {
+      "id": "near-miss-document",
+      "prompt": "Create a monochrome termination diagram and engineering BOM for this harness.",
+      "expected_output": "Recognize standalone technical documentation as outside fabrication-file scope.",
+      "files": [],
+      "assertions": [
+        "Do not activate this skill solely for drawing or BOM communication.",
+        "Do not add vendor or slicer gates."
+      ]
+    },
+    {
+      "id": "near-miss-digital",
       "prompt": "Create a responsive SVG logo for a website.",
-      "expected_output": "Treats this as digital graphics work because no physical production artifact is requested.",
+      "expected_output": "Recognize digital-only graphics as outside physical production scope.",
       "files": [],
       "assertions": [
-        "Does not activate cut-ready.",
-        "Does not impose physical manufacturing or vendor checks."
+        "Do not activate this skill.",
+        "Do not impose manufacturing checks."
+      ]
+    },
+    {
+      "id": "raw-solid-r",
+      "prompt": "Review only: the supplied candidate must be one solid, 20 mm outside diameter and 20 mm tall, with a centered 6 mm diameter blind bore 12 mm deep from the upper face, a continuous 1 mm x 45 degree chamfer around the entire outer upper edge, and a square lower outer edge. No producer is selected. Use the actual STEP file and return local geometry findings without modification or upload.",
+      "files": [
+        "evals/synthetic-fixtures/item-r.step"
+      ],
+      "expected_output": "Accept the specified local geometry without claiming vendor or physical validation.",
+      "assertions": [
+        "Measure one valid solid, 20 mm outer diameter/height and 6 mm bore with 12 mm depth.",
+        "Verify full 360-degree 1 mm chamfer coverage and square lower edge."
+      ]
+    },
+    {
+      "id": "raw-solid-k",
+      "prompt": "Review only: the supplied candidate must be one solid, 20 mm outside diameter and 20 mm tall, with a centered 6 mm diameter blind bore 12 mm deep from the upper face, a continuous 1 mm x 45 degree chamfer around the entire outer upper edge, and a square lower outer edge. No producer is selected. Use the actual STEP file and return local geometry findings without modification or upload.",
+      "files": [
+        "evals/synthetic-fixtures/item-k.step"
+      ],
+      "expected_output": "Reject the specification-compliant geometry handoff because the upper chamfer is incomplete.",
+      "assertions": [
+        "Identify a 180-degree chamfer covering only the positive-Y half.",
+        "Do not reject the valid body/bore merely because another feature fails, or pass from overall bounds."
+      ]
+    },
+    {
+      "id": "raw-project-h",
+      "prompt": "Review only: the supplied 3MF is submitted as a configured Bambu Studio project containing a 20 mm cube for a P1S, 0.4 mm nozzle, PLA and 0.2 mm layer height. Check the actual stored geometry and configuration claim. Do not print or upload.",
+      "files": [
+        "evals/synthetic-fixtures/item-h.3mf"
+      ],
+      "expected_output": "Accept locally valid cube geometry and reject the configured-project claim; report target-application and slice checks as unperformed.",
+      "assertions": [
+        "Measure a 20 mm cube with one shell, 8 vertices, 12 triangles, outward orientation and 8000 cubic millimeters volume.",
+        "Identify the absence of stored machine, nozzle, material and process settings."
       ]
     }
-  ]
+  ],
+  "fixture_notes": "The files under evals/synthetic-fixtures are self-contained synthetic evaluation inputs, not production parts or manufacturing recommendations. Give an evaluator only the prompt, listed artifact, and skill instructions; keep expected_output and assertions hidden during a blinded run."
 }

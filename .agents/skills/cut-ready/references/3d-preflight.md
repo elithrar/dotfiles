@@ -1,78 +1,27 @@
-# STEP and STP preflight
+# Solid CAD, formed parts, and CNC
 
-Use for neutral 3D CAD files intended for formed sheet or plate, CNC machining, or another subtractive manufacturing process. This skill does not cover STL or 3MF print-mesh preparation.
+## Validate the actual solid
 
-Also load `cad-generation.md` when geometry is scripted, rebuilt from a drawing, or revised parametrically.
+Use explicit units and 1:1 scale. Preserve intentional part/body relationships and only the geometry needed for the selected service. A surface-only or mesh model must not be passed off as a valid B-rep solid.
 
-## Common STEP rules
+Independently import STEP or the requested solid format. Verify parse/schema, units, transforms, bounds, expected bodies/solids, closure, positive volume, and critical feature dimensions and locations. Diagnose healing and tolerance warnings. Render imported views/sections that expose bores, pockets, floors, joins, relief, and orientation.
 
-- Model at 1:1 scale in explicit inch or millimeter units.
-- Export valid B-rep solid geometry. Do not pass a mesh, surface-only model, or empty export as a solid.
-- Include the body count the vendor expects. Default to one part and one solid body per file, with no assembly context, unless the vendor explicitly supports assemblies for the requested service.
-- Remove hidden bodies, construction surfaces, leftover faces, reference components, and unrelated assembly geometry.
-- Orient the part deliberately. Keep a stable face aligned to a principal plane when the vendor requires it.
-- Preserve a native or parametric source file so manufacturing revisions do not depend on editing the neutral export.
-- Require the source model to regenerate without warnings and to retain the expected sketch profiles, bodies, features, and named controlling parameters.
+Verify expected features before checking those present. For each changed or fit-critical feature, measure shape, size, location, depth, coverage, and termination at adjacent features. A named chamfer or plausible silhouette does not prove it exists. Inspect the full required extent and transitions to neighboring surfaces, using sections that expose incomplete or occluded geometry. Allow legitimate kernel face splitting and stated tessellation error; isolated matching vertices or bounds do not prove a continuous surface.
 
-## Sheet and plate parts
+Distinguish functional lead-ins, stress-relief radii, specified cosmetic bands, and deburring. Preserve required sharp edges and mating surfaces. A shading bevel is not manufactured geometry; add no unrequested fillets or compensation.
 
-- Use a true sheet-metal body for formed work when the target vendor requires it.
-- Model the exact stock thickness offered for the selected material.
-- Keep thickness uniform and ensure full faces exist at sheet edges.
-- For full-depth sheet cutting, use through-holes and cutouts. Do not model countersinks, counterbores, partial-depth pockets, tapered edges, or other dimensional features unless the service is CNC machining or the vendor explicitly supports them in the selected workflow.
-- Model bent flanges in their intended formed state for a STEP bending workflow.
-- Reconcile the folded model, flat pattern, bend-line order, and material direction. Verify slot and hole clearance from bend zones rather than checking only the final folded view.
-- Use the vendor's current material- and thickness-specific bend radius, K factor, relief, minimum flange, and deformation rules. Do not substitute generic rules.
-- Confirm bend angle, direction, stationary face, cosmetic face, and grain direction in the vendor preview when applicable.
+## Formed sheet and plate
 
-## CNC-machined parts
+Verify exact stock thickness and uniform sheet geometry where required. Reconcile folded shape, flat pattern, bend order/direction, stationary/cosmetic faces, and grain orientation. Check holes, slots, and relief near bend zones in both states.
 
-- Check internal corners, pockets, slots, bores, and tool access against current vendor tooling rules.
-- Do not model cosmetic threads when the vendor expects simple holes plus a configured tapping service.
-- Identify critical tolerances and fits. Do not assume the neutral model communicates a tighter tolerance than the vendor's standard capability.
-- Confirm whether edge breaks, deburring, finishing, and inspection requirements require separate configuration or documentation.
+Use the producer's current material/thickness-specific bend definitions, relief, flange, and deformation limits. Do not invent a K factor or substitute generic values. Confirm whether the selected service accepts formed STEP, flat patterns, or service-line data. Full-depth sheet cutting does not imply support for pockets, countersinks, or partial-depth features; request them only through a supported process.
 
-## Required validation
+## CNC feasibility and feature representation
 
-Open the exported STEP/STP with an independent CAD kernel or a second CAD application and report:
+Match the actual route: milling, turning, or another specified process. Check tool approach/reach, pocket and slot depth/width, bore access, internal corner radii, undercuts, thin/unsupported features, stock, and plausible setup/fixture access. Do not judge a turned part solely by a three-axis milling checklist. Propose changes to inaccessible features without silently modifying accepted geometry.
 
-- File schema and successful parse.
-- Units and overall bounding box.
-- Body and solid counts.
-- Closed or manifold status and positive volume.
-- Surface or face count when useful for detecting missing or extra features.
-- Uniform sheet thickness for sheet parts.
-- Critical dimensions, hole diameters, feature locations, bend angles, and flange orientation.
-- Any geometry healing, tolerance warnings, or import changes.
+Keep functional thread/fastener requirements separate from producer-specific representation. A producer may require simple holes plus service configuration, modeled threads, or another representation. Verify the current rule for internal/external threads and the exact operation; do not impose a universal pilot/major diameter. Check usable engagement, runout/drill space, wall/floor, bottom-out, and hardware installation access against actual requirements.
 
-Compare the readback measurements with the native source. Render multiple views of the imported production file, including a view that exposes holes, pockets, and bend direction. A thumbnail or successful vendor upload alone is not sufficient.
+Identify fit-critical dimensions and finishing requirements in a channel the producer accepts; a neutral solid alone may not communicate tolerance, tapping, edge treatment, or finish. Confirm standard capability versus special inspection. Review available producer DFM findings and resolve unexplained inaccessible-material or thin-feature warnings.
 
-## Verify small features by shape, not name
-
-A feature named `chamfer` and a plausible silhouette do not prove the requested edge treatment exists. First reconcile the expected feature inventory with the export; do not validate only the features that happen to be present. For each changed or fit-critical feature, pair a numeric check with a view or section that exposes it:
-
-| Feature | Numeric / geometric check | Visible check |
-|---|---|---|
-| Chamfer or bevel | Axial and radial extent, angle, location, and intended face coverage | Enlarged edge and section views; check both ends when both are specified |
-| Knurl or repeated relief | Peak and root envelopes, pitch, depth, coverage, and termination at adjacent features | Side and end views revealing valleys as well as peaks |
-| Bore, thread, or blind pocket | Diameter, axis, start datum, usable depth, remaining wall/floor; distinguish modeled from specified threads | Section exposing the bottom, entry, and any interference |
-| Length variant | Overall and segment lengths, shoulder locations, and unchanged feature dimensions | Variant drawing with dimension endpoints and labels reconciled to readback |
-
-For a knurled round part that requires a continuous conical edge band, merely clipping the knurl peaks is a failure even if bounds and volume pass. Construct the intended revolved/conical envelope in the base model and reconcile the knurl termination with it. Inspect the actual exported faces and sections through peaks and valleys around the circumference to establish continuous coverage. Do not require a single face ID: kernels may split a geometrically continuous band into several faces. Use the requested surface shape and coverage as the invariant.
-
-For a tessellated preview of that band, inspect actual transformed vertex positions, triangle sections, and normals, not declared bounds or feature metadata. In the part's axial frame, compare section radii with `r(z) = r0 + (r1 - r0) * (z - z0) / (z1 - z0)` over the intended band, allowing the declared tessellation tolerance. Check axial/radial extents, angular coverage, and surface-normal direction as well; isolated vertices on a cone do not prove a continuous face. This checks fidelity to the base model, not printability or physical fit.
-
-Inspect the final visible drawing or PDF as well as the solid: dimensions, units, variant names, leader endpoints, and assumption notes must match the same revision. Text extraction and numeric checks cannot establish visibility or correct label placement. If a kernel, independent importer, or renderer is unavailable, state the specific unchecked gate rather than claiming it passed.
-
-## Acceptance checklist
-
-- [ ] Valid STEP/STP structure imports through an independent path.
-- [ ] Units, 1:1 scale, and bounding box are correct.
-- [ ] Expected solid and body counts match.
-- [ ] Geometry is closed, manifold where applicable, and has positive volume.
-- [ ] No mesh, surface-only, hidden, empty, or assembly geometry remains.
-- [ ] Material stock thickness and manufacturing process match the model.
-- [ ] Critical dimensions and feature locations match the manufacturing packet.
-- [ ] Sheet-metal and bend rules match the vendor's current values when applicable.
-- [ ] Imported production geometry renders correctly from multiple views.
-- [ ] Vendor configuration and preview pass, or the handoff is labeled locally preflighted.
+Limit this route to CAD and producer handoff. A valid solid and plausible DFM assessment are not simulated CAM or machine-ready NC code; NC-program qualification and machine execution are outside scope.

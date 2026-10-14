@@ -1,80 +1,29 @@
-# Intake, evidence, and revision control
+# Production intent and revision control
 
-Use for new geometry, reconstruction, or a revision whose scope or controlling dimensions need clarification. Reuse the accepted manufacturing packet for narrow revisions.
+## Establish controlling inputs
 
-## Minimum manufacturing packet
+Record only what changes the part or requested output:
 
-Record only facts that affect the result:
+- Process and stage: cut geometry, formed solid, CNC handoff, print geometry, configured project, or inspected slice.
+- Material and exact stock thickness where relevant; finished size, units, quantity, handedness, orientation, and producer.
+- Mating interfaces, required fit and tolerances, relevant load direction/environment/failure consequence, assembly and service access.
+- Intended physical pieces, CAD-body relationships, permanent joins, removable parts, and usable openings.
+- Required finish and edge treatment; whether critical sizes apply before or after finishing and who performs secondary operations.
 
-| Job | Required inputs |
-|---|---|
-| 2D profile or graphic | Process, material, thickness when relevant, units, finished dimensions, inside and outside cut intent, quantity, handed variants, target vendor |
-| Printed sticker or decal | Product type, substrate and finish, finished size, die-cut or kiss-cut intent, bleed and safe area from the named vendor, artwork color profile, white-ink or transparency intent, application surface, target vendor |
-| Cut vinyl or mask | Vinyl or mask stock, positive graphic or stencil intent, finished size, face-cut or reverse-cut orientation, transfer method, weeding constraints, registration strategy, target cutter or vendor |
-| Production vector drawing | Physical output process, page or face size, units, authoritative geometry and glyph sources, viewing direction and object orientation, text hierarchy, shared component and arrow conventions, minimum reproducible feature, required editable and outlined outputs |
-| Formed sheet part | Material, exact stock thickness, units, formed dimensions, bend angles and directions, grain or cosmetic face when relevant, target vendor |
-| Machined STEP part | Material, units, critical dimensions and tolerances, inaccessible or sharp internal features, threads or finishing services, target vendor |
-| Reference-derived replica | Source images, at least one defensible scale anchor, intended physical surface, perspective limits, target size or fit check |
+Reuse known answers. Resolve a geometry-changing unknown before committing that feature; allow labeled reversible exploration. Do not impose a full engineering intake on a cosmetic revision or decorative part.
 
-Ask one question when a missing value changes the geometry. Otherwise proceed with a clearly recorded assumption that is safe and reversible.
+## Keep evidence honest
 
-## Evidence ledger
+Distinguish measured, specified, source-exact, derived, reconstructed, stylistic, and assumed values. Keep consequential calculations reproducible and sources traceable. Do not promote an assumption to a measured fact because a model reproduces it. Track units, reference frames, uncertainty, and the exact surface controlling fit.
 
-Classify every controlling dimension or shape:
+For reconstruction, establish defensible scale anchors and perspective limits. Compare silhouette, relative axes/offsets, adjacency/intersections, opening planes, and negative space in comparable views before finalizing. Identify hidden inferred surfaces. Preserve canonical source geometry rather than stretching it to match perspective or lighting. A watertight solid can still represent the wrong object.
 
-- **Measured:** Taken from the actual part, vehicle, mounting points, scan, or calibrated drawing.
-- **Specified:** Supplied by the user or a current primary manufacturer or vendor source.
-- **Source-exact:** Reused without reconstruction from an accepted production master, calibrated vector source, glyph library, or canonical component.
-- **Derived:** Calculated from measured or specified inputs. Show the calculation.
-- **Reconstructed:** Estimated from photographs or secondary sources. Record the scale anchor, perspective assumptions, range, and confidence.
-- **Stylistic:** Chosen for appearance rather than fit or manufacturing necessity.
-- **Assumed / unverified:** A provisional design input with no confirming measurement or specification. State its basis and the check needed to resolve it; do not relabel it as measured after modeling it.
+For fastening, establish the method and mating hardware: printed or machined thread, insert, captive nut, self-tapping, or clearance as applicable. Separate nominal thread size/pitch/standard and hand/class from bore size, usable engagement, drill depth, and runout. Check surrounding wall/floor, attachment to the base, installation/tool access, and screw bottom-out. Resolve unknown mating geometry before claiming fit.
 
-Do not write false precision. Prefer `nominal 550 mm, estimated ±20 mm` over `551 mm` when photographs support only the former. Distinguish the physical surface that controls fit from a larger shell, envelope, or bounding box.
+## Preserve accepted work
 
-Keep one shared dimensional specification with stable feature names, values, units, datums, tolerances where known, and evidence sources/status. Define each variant's dimension meanings: radius versus diameter, body versus projection versus overall length, and nominal versus finished size. Derive model parameters, variant tables, drawing dimensions, and labels from it. Record discrepancies between sources instead of averaging them or choosing whichever matches the current export. Sanity-check ambiguous inputs against proportions, wall thickness, interference, and tool access before modeling them. A readback proves what was modeled, not what fits the physical part.
+Identify the exact baseline, requested delta, frozen elements, and relevant invariants. Keep the original unless replacement was requested. Locate the source rather than rebuilding from a preview without disclosure.
 
-For threaded features, track nominal diameter, pitch, thread standard, engagement/thread depth, bore diameter, and drill depth separately. An external measurement or overall part length does not establish an internal thread or usable depth. Carry unresolved assumptions into drawings and the handoff; if they control fit or machining, resolve them before claiming readiness.
+Express variants with explicit units, datums, anchors, and parameter meanings. Preserve feature pitch and size when only body size changes; do not stretch the entire part. For color-only changes, prove geometry unchanged. For local geometry changes, compare unaffected features through geometry diffs or overlays; byte hashes alone may change with serialization.
 
-Separate known physical features from proposed design changes. Label a proposed fillet, recess, closure, or surface treatment as a proposal until accepted; do not add one merely to improve the picture. For a drawing-only revision, freeze the model and change sheet layout and annotations without altering the part.
-
-For reconstruction-derived work, prepare a 1:1 paper, cardboard, or inexpensive-material proof against the actual surface before production.
-
-## Revision contract
-
-For a substantial or ambiguous revision, record this contract. For a narrow change, identify the baseline, requested delta, and relevant invariants without requiring a separate document:
-
-```markdown
-Baseline: <file or revision>
-Editable: <only the requested elements>
-Frozen: <accepted geometry, colors, text, dimensions, layers, orientation>
-Invariants: <bounds, centers, stroke or feature thickness, canonical assets>
-Checks: <how the requested delta and non-delta will be proven>
-```
-
-Apply these rules:
-
-- Preserve accepted elements directly. Do not redraw them from memory.
-- Identify the exact base model and revision before editing or adding a format. If unavailable, locate it or report the missing source; do not silently substitute a reconstruction from a preview or dimensions.
-- Reuse canonical components such as glyph alphabets, logos, stripe or tick geometry, hole patterns, bend rules, and generator functions.
-- Define percentage changes with an explicit anchor and axis. "10% larger" is incomplete without the center, fixed edge, or reference frame.
-- For a color-only revision, change only the declared color values and prove geometry is unchanged.
-- For a localized geometry revision, compare unchanged component counts, bounds, and hashes where byte stability is expected. Use overlays or geometry diffs when serialization can change.
-- Keep the previous revision available. Do not overwrite it unless asked.
-- Regenerate previews and validation reports from the production export, not from an earlier source view.
-- Turn critical feedback into an observable acceptance check before revising. Fix its cause in the base model or shared specification, then rebuild all affected variants, labels, and exports. Record the check's result so the same finding does not recur on the next turn.
-- Preserve deliberate occlusion as a layer relationship. Do not shorten, reradius, or move canonical background geometry merely to clear foreground labels when a mask or underprint is the accepted construction.
-
-## Visual review
-
-Render at useful scales and inspect:
-
-- Overall proportions and intended physical fit.
-- Negative space, visual fill, alignment, and optical balance.
-- Small features at actual production size, not only enlarged on screen.
-- Every label, glyph, arrowhead, leader, tick, ring, stripe, hole, slot, and bend marker expected by the source or object inventory.
-- Unintended crossings, tangencies, hidden objects, clipped marks, inconsistent arrowheads, and z-order failures.
-- Mirrored or reverse-cut variants, including readable orientation after application.
-- Requested changes against the baseline and unintended changes outside scope.
-
-When source rights or reproduction restrictions matter, preserve the user's permitted-use boundary in the package and do not broaden it.
+Translate corrective feedback into an observable acceptance check. Fix the authoritative source and rebuild affected outputs. Preserve deliberate physical or artwork relationships rather than distorting accepted geometry to hide a symptom.
