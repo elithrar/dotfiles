@@ -35,6 +35,7 @@ Temporary Items
 # Codex config and curated assets are tracked; runtime state/cache files are local-only.
 .codex/auth.json
 .codex/*
+!.codex/AGENTS.md
 !.codex/config.toml
 !.codex/bin/
 .codex/bin/*
