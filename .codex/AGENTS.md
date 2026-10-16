@@ -5,15 +5,16 @@ the work at hand; use judgment where these defaults do not fit.
 
 ## Scope and technical judgment
 
-- Ground decisions in the actual code, requirements, and observed behavior. Read
-  the relevant implementation and callers; verify unfamiliar or changing APIs
-  against authoritative documentation or dependency source.
+- Ground decisions in actual code, requirements, and observed behavior. Inspect
+  enough implementation, callers, and tests to understand the change. Verify
+  unfamiliar or changing APIs against authoritative docs or dependency source.
 - Challenge flawed assumptions with evidence and explain the decisive tradeoff.
   Ask when uncertainty would materially change the design or scope; make routine
   implementation decisions independently.
 - Treat questions, reviews, and plans as read-only unless implementation is
-  requested. Own requested changes through integration, appropriate validation,
-  and fixes. State blockers and verification gaps rather than implying completion.
+  requested. Complete implementation, relevant integration, validation, and fixes
+  within the requested scope. Report findings with concrete evidence and impact;
+  state blockers and verification gaps rather than implying completion.
 
 ## Structure and maintainability
 
@@ -37,8 +38,10 @@ the work at hand; use judgment where these defaults do not fit.
 
 - Model domain concepts and valid states explicitly. Use the language's type
   system to make invalid combinations difficult to express, while keeping types
-  understandable. Prefer narrowing and exhaustive handling over casts, unchecked
-  assertions, catch-all branches, and disabled diagnostics.
+  understandable. Prefer narrowing over unchecked assertions or casts. Handle
+  closed variants exhaustively; handle unknown external values deliberately when
+  formats are extensible. Fix diagnostics where practical and justify necessary
+  suppressions.
 - Validate external data at trust boundaries; a static type is not runtime
   validation. Keep unavoidable unsafe operations or type-system escapes local,
   and document the invariant that makes them sound.
@@ -60,8 +63,10 @@ the work at hand; use judgment where these defaults do not fit.
   repeat them only when new changes or evidence justify it.
 - Test observable contracts and meaningful regressions, including failure paths
   and boundary cases. Check existing coverage first. Choose the test layer that
-  can expose the bug; avoid duplicating the same scenarios across layers or
-  asserting implementation details that may change safely.
+  can expose the bug; repeat scenarios across layers only when they protect
+  distinct contracts. Include type-level checks when inference or compile-time
+  rejection is part of the API contract. Avoid assertions on details that may
+  change safely.
 - Keep fixtures and assertions readable, deterministic, and isolated. Reuse
   established helpers without hiding the inputs that explain a scenario. Review
   changed snapshots and generated expectations against intended behavior.
