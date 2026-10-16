@@ -113,7 +113,7 @@ setup_repos_volume() (
     [[ ! -e $repos || -d $repos ]] || die "$repos is not a directory."
     tmp=$(mktemp -d)
     locked=false
-    # shellcheck disable=SC2329 # Called by the EXIT trap.
+    # shellcheck disable=SC2329,SC2317 # Called by the EXIT trap (including older ShellCheck).
     cleanup() {
         status=$?
         if [[ $locked == true ]]; then sudo rmdir "$state/lock" || true; fi
@@ -145,8 +145,8 @@ setup_repos_volume() (
     volume_uuid=-
     phase=creating
     if sudo test -e "$state/record" || sudo test -L "$state/record"; then
-        ! sudo test -L "$state/record" && sudo test -f "$state/record" &&
-            [[ $(sudo stat -f '%u:%Lp' "$state/record") == 0:600 ]] || die 'Unsafe ownership record.'
+        if sudo test -L "$state/record" || ! sudo test -f "$state/record" ||
+            [[ $(sudo stat -f '%u:%Lp' "$state/record") != 0:600 ]]; then die 'Unsafe ownership record.'; fi
         # shellcheck disable=SC2024 # Deliberately read root state into a user-owned private temporary file.
         sudo cat "$state/record" > "$tmp/record"
         {
