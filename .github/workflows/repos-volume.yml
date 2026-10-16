@@ -1,0 +1,35 @@
+name: Repos volume script
+permissions:
+  contents: read
+on:
+  pull_request:
+    paths:
+      - install.sh
+      - .config/dotfiles/repos-volume.bash
+      - .github/tests/repos-volume.sh
+      - .github/workflows/repos-volume.yml
+  push:
+    paths:
+      - install.sh
+      - .config/dotfiles/repos-volume.bash
+      - .github/tests/repos-volume.sh
+      - .github/workflows/repos-volume.yml
+jobs:
+  mock-tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax and isolated command mocks (no native volume operations)
+        run: |
+          bash -n install.sh
+          bash -n .config/dotfiles/repos-volume.bash
+          bash -n .github/tests/repos-volume.sh
+          bash .github/tests/repos-volume.sh
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck install.sh .config/dotfiles/repos-volume.bash .github/tests/repos-volume.sh

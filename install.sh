@@ -146,8 +146,12 @@ if [[ -f "${HOME}/.ssh/id_ed25519.pub" ]]; then
     fi
 fi
 
-# Set up repos directory
-if [[ ! -d "${HOME}/repos" ]]; then
+# Prepare macOS storage before any clone or write below ~/repos. Keep this
+# helper beside install.sh in a complete checkout (which may live outside repos).
+if [[ "${OS}" == "Darwin" ]]; then
+    install_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
+    bash "${install_dir}/.config/dotfiles/repos-volume.bash"
+elif [[ ! -d "${HOME}/repos" ]]; then
     mkdir -p "${HOME}/repos"
 fi
 
