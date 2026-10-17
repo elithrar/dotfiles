@@ -4,7 +4,7 @@ model = "gpt-6-astra"
 # Approve for me: automatically review requests that need approval.
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
-default_permissions = "codex-default"
+default_permissions = ":workspace"
 web_search = "live"
 
 personality = "pragmatic"
@@ -18,6 +18,9 @@ notify = ["/Users/matt/repos/dotfiles/.codex/computer-use/Codex Computer Use.app
 [features]
 analytics_plan_history = true
 enable_request_compression = true
+# Use Guardian v2 with the runtime's current reviewer model and policy.
+guardian_approval = true
+guardianv2 = true
 memories = true
 prevent_idle_sleep = true
 
@@ -140,42 +143,6 @@ trust_level = "trusted"
 
 [projects."/Users/matt/repos/offcamber"]
 trust_level = "trusted"
-
-# Codex filesystem and network defaults.
-# Command prefix allow/prompt/forbid rules live in .codex/rules/default.rules.
-[permissions.codex-default]
-description = "Workspace editing with secret denies and Git metadata access."
-extends = ":workspace"
-
-[permissions.codex-default.workspace_roots]
-"/Users/matt/repos" = true
-
-[permissions.codex-default.filesystem]
-glob_scan_max_depth = 8
-"/Users/matt/Library/Preferences/.wrangler" = "write"
-
-[permissions.codex-default.filesystem.":workspace_roots"]
-# The built-in workspace profile protects Git metadata. Trusted repositories
-# need it writable for branches, staging, rebases, commits, and worktrees.
-".git" = "write"
-"**/*.env" = "deny"
-# Keep examples readable. Codex deny rules win over allow/read rules, so avoid
-# broad `.env.*` denies that would also catch `.env.example`.
-"**/*.env.local" = "deny"
-"**/*.env.development" = "deny"
-"**/*.env.development.local" = "deny"
-"**/*.env.test" = "deny"
-"**/*.env.test.local" = "deny"
-"**/*.env.production" = "deny"
-"**/*.env.production.local" = "deny"
-"**/*.env.staging" = "deny"
-"**/*.env.staging.local" = "deny"
-"**/*.env.preview" = "deny"
-"**/*.env.preview.local" = "deny"
-"**/*.dev.vars" = "deny"
-
-[permissions.codex-default.network]
-enabled = true
 
 [tui]
 theme = "orng"
