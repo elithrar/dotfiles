@@ -41,9 +41,6 @@ Temporary Items
 .codex/bin/*
 !.codex/bin/codex
 !.codex/bin/cloudflare-ai-gateway.js
-!.codex/model-catalogs/
-.codex/model-catalogs/*
-!.codex/model-catalogs/cloudflare-ai-gateway.json
 !.codex/rules/
 .codex/rules/*
 !.codex/rules/default.rules

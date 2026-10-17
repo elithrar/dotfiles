@@ -45,7 +45,6 @@ then
   export CODEX_CF_GATEWAY_ADAPTER="$adapter"
   set -- \
     -c 'model_provider="cloudflare-ai-gateway"' \
-    -c "model_catalog_json=\"${codex_home}/model-catalogs/cloudflare-ai-gateway.json\"" \
     -c 'mcp_servers.cf-portal.url="https://portal.mcp.cfdata.org/mcp?codemode=search_and_execute"' \
     -c 'mcp_servers.cf-portal.enabled=false' \
     -c 'mcp_servers.google-workspace.url="https://google-workspace-mcp.cto.cfdata.org/mcp"' \
