@@ -20,6 +20,13 @@ case $command in
     uname) echo Darwin ;;
     id) if [[ $1 == -u ]]; then echo 501; else echo 20; fi ;;
     uuidgen) echo 99999999-8888-7777-6666-555555555555 ;;
+    df)
+        [[ $1 == -P && $2 == "$HOME/repos" && $# == 2 ]] || exit 1
+        [[ ${MOCK_DF_FAIL:-false} != true ]] || exit 1
+        device=/dev/disk7s5
+        if [[ -s $MOCK_ROOT/mounted || -n ${MOCK_OCCUPIED:-} ]]; then device=/dev/disk7s9; fi
+        printf 'Filesystem 512-blocks Used Available Capacity Mounted on\n'
+        printf '%s 100 0 100 0%% /System/Volumes/Data\n' "${MOCK_DF_DEVICE:-$device}" ;;
     sudo)
         if [[ $1 != -v ]]; then "$@"; fi ;;
     chown|mdutil) : ;;
@@ -66,9 +73,15 @@ case $command in
             target=$3
             if [[ $target == /System/Volumes/Data ]]; then
                 printf 'FilesystemType\tapfs\nMountPoint\t/System/Volumes/Data\nAPFSContainerReference\tdisk7\n'
-            elif [[ $target == "$HOME/repos" && ! -s $MOCK_ROOT/mounted ]]; then
-                if [[ ${MOCK_MOUNTPOINT_MISSING:-false} != true ]]; then printf 'MountPoint\t%s\n' "${MOCK_OCCUPIED:-/System/Volumes/Data}"; fi
+            elif [[ $target == /dev/disk7s5 ]]; then
+                if [[ ${MOCK_MOUNTPOINT_MISSING:-false} != true ]]; then printf 'MountPoint\t/System/Volumes/Data\n'; fi
                 printf 'VolumeUUID\t%s\n' "$container"
+            elif [[ $target == /dev/disk7s9 ]]; then
+                printf 'MountPoint\t%s\n' "${MOCK_OCCUPIED:-$(cat "$MOCK_ROOT/mounted")}"
+            elif [[ $target == "$HOME/repos" && ! -s $MOCK_ROOT/mounted ]]; then
+                # Native diskutil rejects ordinary directories. Never invent
+                # containing-volume metadata for this unsupported argument.
+                exit 1
             elif [[ $target == "$volume" || $target == "$HOME/repos" ]]; then
                 [[ -f $MOCK_ROOT/label ]] || exit 1
                 printf 'VolumeUUID\t%s\nFilesystemType\tapfs\nAPFSContainerReference\t%s\nVolumeName\t%s\nDeviceIdentifier\tdisk7s9\nGlobalPermissionsEnabled\t%s\n' "${MOCK_UUID:-$volume}" "${MOCK_CONTAINER_REF:-disk7}" "$(cat "$MOCK_ROOT/label")" "${MOCK_OWNERS:-true}"
@@ -95,7 +108,7 @@ case $command in
 esac
 MOCK
 chmod +x "$suite/bin/mock"
-for name in uname id uuidgen sudo chown chmod mdutil find install stat mock_plistbuddy mock_vifs mount diskutil; do
+for name in uname id uuidgen df sudo chown chmod mdutil find install stat mock_plistbuddy mock_vifs mount diskutil; do
     cp "$suite/bin/mock" "$suite/bin/$name"
 done
 export PATH="$suite/bin:$PATH"
@@ -113,7 +126,7 @@ fresh() {
     export MOCK_ROOT=$suite/case-$count
     export HOME=$MOCK_ROOT/home
     mkdir -p "$HOME"
-    unset MOCK_UUID MOCK_CONTAINER_REF MOCK_CONTAINER_UUID MOCK_INTERRUPT MOCK_BUSY MOCK_OPTIONS MOCK_VIFS_BUSY MOCK_FIND_FAIL MOCK_OCCUPIED MOCK_CONCURRENT_WRITE MOCK_WRITABLE MOCK_OWNERS MOCK_MOUNTPOINT_MISSING
+    unset MOCK_UUID MOCK_CONTAINER_REF MOCK_CONTAINER_UUID MOCK_INTERRUPT MOCK_BUSY MOCK_OPTIONS MOCK_VIFS_BUSY MOCK_FIND_FAIL MOCK_OCCUPIED MOCK_CONCURRENT_WRITE MOCK_WRITABLE MOCK_OWNERS MOCK_MOUNTPOINT_MISSING MOCK_DF_FAIL MOCK_DF_DEVICE
 }
 run() { bash "$suite/helper" > "$MOCK_ROOT/output" 2>&1; }
 pass() { run || { cat "$MOCK_ROOT/output" >&2; exit 1; }; }
@@ -309,5 +322,19 @@ fail 'Cannot identify the underlying mountpoint'
 not_called '<addVolume>'
 not_called 'chown <root:wheel>'
 echo 'ok: missing underlying mountpoint metadata fails closed'
+
+fresh
+mkdir "$HOME/repos"
+export MOCK_DF_FAIL=true
+fail 'Cannot identify the filesystem containing repos'
+not_called '<addVolume>'
+echo 'ok: failed containing-filesystem lookup prevents volume creation'
+
+fresh
+mkdir "$HOME/repos"
+export MOCK_DF_DEVICE=map
+fail 'Unexpected filesystem device for repos'
+not_called '<addVolume>'
+echo 'ok: unsupported containing-filesystem device prevents volume creation'
 
 printf 'All repos volume mock scenarios passed. Native macOS runtime/reboot remains unverified.\n'

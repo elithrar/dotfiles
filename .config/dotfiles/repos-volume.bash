@@ -10,7 +10,13 @@ plist() { /usr/libexec/PlistBuddy -c "Print :$2" "$1"; }
 info() { diskutil info -plist "$1" > "$tmp/info"; }
 empty_mountpoint() {
     [[ ! -L $repos && -d $repos ]] || die "Unexpected mountpoint: $repos"
-    info "$repos"
+    # diskutil accepts a device or volume mountpoint, not an ordinary directory.
+    # Resolve the containing device before inspecting a not-yet-mounted repos.
+    filesystem=$(df -P "$repos" | awk 'NR == 2 { print $1 }') ||
+        die 'Cannot identify the filesystem containing repos.'
+    [[ $filesystem =~ ^/dev/disk[0-9]+(s[0-9]+)*$ ]] ||
+        die 'Unexpected filesystem device for repos.'
+    info "$filesystem"
     underlying_mount=$(plist "$tmp/info" MountPoint) || die 'Cannot identify the underlying mountpoint.'
     [[ -n $underlying_mount ]] || die 'Cannot identify the underlying mountpoint.'
     [[ $underlying_mount != "$repos" ]] || die 'An unexpected filesystem is already mounted at repos.'
