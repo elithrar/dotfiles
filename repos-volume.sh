@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Run as the login user, never with sudo bash. Uses only macOS system tools.
+# Creates/reuses a recorded APFS volume at ~/repos via diskutil and a UUID entry in /etc/fstab.
+# Disables Spotlight indexing and persistent FSEvents logs. Run as your login user; no CLI flags.
+# Mount flags: rw = writable, nobrowse = hidden in Finder, owners = enforce file ownership.
 set -euo pipefail
 PATH=/usr/bin:/bin:/usr/sbin:/sbin
 export PATH

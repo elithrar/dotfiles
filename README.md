@@ -40,7 +40,7 @@ stow --dir="${HOME}/repos/dotfiles" --target="${HOME}" .
 
 ## macOS repos volume
 
-Every macOS installation runs `.config/dotfiles/repos-volume.bash` before
+Every macOS installation runs `repos-volume.sh` before
 creating or cloning anything under `~/repos`. Use a complete checkout; a lone
 download of `install.sh` is insufficient. On a fresh machine, clone into a
 temporary directory outside `~/repos` and run `bash install.sh` there.
@@ -153,8 +153,8 @@ Command semantics are based on Apple's [APFS tools guide](https://developer.appl
 the [`diskutil` manual](https://keith.github.io/xcode-man-pages/diskutil.8.html),
 [Disk Arbitration mount implementation](https://github.com/apple-oss-distributions/DiskArbitration/blob/main/diskarbitrationd/DAMount.c),
 and [per-volume FSEvents storage documentation](https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/FSEvents_ProgGuide/FileSystemEventSecurity/FileSystemEventSecurity.html).
-Validation: `bash -n install.sh .config/dotfiles/repos-volume.bash`,
-`shellcheck install.sh .config/dotfiles/repos-volume.bash .github/tests/repos-volume.sh`,
+Validation: `bash -n install.sh repos-volume.sh`,
+`shellcheck install.sh repos-volume.sh .github/tests/repos-volume.sh`,
 and `bash .github/tests/repos-volume.sh`. The mocks never run host volume or
 mount operations. Native macOS execution and reboot behavior must be checked
 on macOS; Windows mock tests cannot establish them.

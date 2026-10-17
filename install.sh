@@ -150,7 +150,7 @@ fi
 # helper beside install.sh in a complete checkout (which may live outside repos).
 if [[ "${OS}" == "Darwin" ]]; then
     install_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
-    bash "${install_dir}/.config/dotfiles/repos-volume.bash"
+    bash "${install_dir}/repos-volume.sh"
 elif [[ ! -d "${HOME}/repos" ]]; then
     mkdir -p "${HOME}/repos"
 fi
@@ -358,6 +358,12 @@ if ! command -v rustc &>/dev/null; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 else
     print_success "Rust already installed."
+fi
+
+# --- macOS preferences
+if [[ "${OS}" == "Darwin" ]]; then
+    print_info "Configuring macOS computer use"
+    defaults write -g ComputerUseAllowForbiddenTargets -bool YES
 fi
 
 print_success "All done! Visit https://github.com/elithrar/dotfiles for the full source & related configs."
