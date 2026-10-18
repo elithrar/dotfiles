@@ -55,6 +55,21 @@ Temporary Items
 !.codex/pets/maverick/*
 !.codex/pets/arm-commander/
 !.codex/pets/arm-commander/*
+!.codex/pets/sir-finley/
+!.codex/pets/sir-finley/pet.json
+!.codex/pets/sir-finley/spritesheet.png
+!.codex/pets/peon/
+!.codex/pets/peon/pet.json
+!.codex/pets/peon/spritesheet.png
+!.codex/pets/candle-kobold/
+!.codex/pets/candle-kobold/pet.json
+!.codex/pets/candle-kobold/spritesheet.png
+!.codex/pets/hogger/
+!.codex/pets/hogger/pet.json
+!.codex/pets/hogger/spritesheet.png
+!.codex/pets/tinker/
+!.codex/pets/tinker/pet.json
+!.codex/pets/tinker/spritesheet.png
 
 # Database tools config
 .config/configstore/

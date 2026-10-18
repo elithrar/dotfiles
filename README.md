@@ -38,6 +38,20 @@ Use [GNU Stow](https://www.gnu.org/software/stow/manual/stow.html) to automatica
 stow --dir="${HOME}/repos/dotfiles" --target="${HOME}" .
 ```
 
+## Codex custom pets
+
+Custom pets live in `.codex/pets/<id>/`, each with a `pet.json` manifest and
+its referenced sprite sheet. The collection includes PeeWee and the Warcraft
+companions Sir Finley, Peon, Candle Kobold, Hogger, and Tinker. The standard Stow
+command above links these folders into `~/.codex/pets/` with the rest of the
+Codex configuration.
+
+The Warcraft sheets are the installed versions exported on October 18, 2026.
+Sir Finley includes the seven one-pixel horizontal alignment corrections.
+Each is an unmodified transparent v2 PNG atlas, 1536 by 2288 pixels, with
+192 by 208 pixel cells and 73 populated frames. These local manifests use
+portable IDs; they do not contain account-specific pet IDs or download URLs.
+
 ## macOS repos volume
 
 Every macOS installation runs `repos-volume.sh` before
