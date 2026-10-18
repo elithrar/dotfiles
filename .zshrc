@@ -1,5 +1,8 @@
 typeset -U path fpath
 
+# Also covers interactive shells started without a login shell.
+[[ ! -f "$HOME/.config/dotfiles/tool-storage.sh" ]] || source "$HOME/.config/dotfiles/tool-storage.sh"
+
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 
@@ -209,7 +212,7 @@ path=("$HOME/.codeium/windsurf/bin" $path)
 path=("$HOME/.rbenv/shims" $path)
 
 # Rust
-path=("$HOME/.cargo/bin" $path)
+path=("${CARGO_HOME:-$HOME/.cargo}/bin" $path)
 
 # Go
 path=("$GOBIN" $path)

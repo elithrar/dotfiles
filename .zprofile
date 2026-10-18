@@ -1,5 +1,8 @@
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
+# shellcheck source=.config/dotfiles/tool-storage.sh
+[ ! -f "$HOME/.config/dotfiles/tool-storage.sh" ] || . "$HOME/.config/dotfiles/tool-storage.sh"
+
 export CODEX_HOME="/Users/matt/repos/dotfiles/.codex"
 
 # macOS login-only operations (run once per session, not every shell)

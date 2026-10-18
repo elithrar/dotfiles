@@ -103,13 +103,12 @@ Separate filesystems cannot use APFS clones or hard links across their boundary.
 Optional disposable paths can live on this same filesystem:
 
 ```sh
-mkdir -p ~/repos/.worktrees ~/repos/.output ~/repos/.pnpm-store
-pnpm config set store-dir "$HOME/repos/.pnpm-store"
+mkdir -p ~/repos/.worktrees ~/repos/.output
 git -C ~/repos/project worktree add ~/repos/.worktrees/project-topic topic
 ```
 
-These are manual choices; setup does not change existing pnpm settings or
-credential/config homes. Set output directories in the relevant tool or task.
+These worktree/output paths are manual choices. Set output directories in the
+relevant tool or task. Global package storage is configured below.
 No Codex TOML worktree/output keys or unverified desktop backing-state edits
 are added.
 
@@ -169,3 +168,136 @@ on macOS; Windows mock tests cannot establish them.
 ## License
 
 📜 See LICENSE file for details.
+
+
+## Global development tool storage
+
+`install.sh` runs `.config/dotfiles/setup-tool-storage.bash` after preparing
+`~/repos` and before installing tools or linking dotfiles. It relocates existing
+default directories and leaves absolute compatibility symlinks at their old
+paths. Stop package managers, Rust builds, editors and agents before running
+setup: relocation across filesystems is a copy followed by removal, not atomic.
+Back up your installed tools and configuration first.
+
+| Tool | Storage on the repos filesystem |
+| --- | --- |
+| pnpm 11+ | `~/repos/.pnpm`: `store`, `cache` (including dlx), `state`, `global` and `bin` |
+| npm / npx | `~/repos/.npm` cache; `~/repos/.npm-global` prefix for global packages and `bin` |
+| Cargo | `~/repos/.cargo`: registry/git caches, installed binaries, configuration and credentials |
+| rustup | `~/repos/.rustup`: toolchains, downloads, settings and temporary files |
+
+The complete Cargo home moves, including any `credentials.toml`. These homes
+inherit the repos volume's encryption and backup properties described above.
+This is persistent tool state, not a directory to empty as disposable cache.
+Homebrew's Node, npm and pnpm executables remain under the Homebrew prefix;
+`npm install -g` and `pnpm add -g` use the new package destinations.
+Cargo build outputs remain per-project in `target/`; a single shared
+`CARGO_TARGET_DIR` is deliberately not set because concurrent builds can contend
+on its locks and invalidate each other's outputs.
+
+For an existing dotfiles installation, run this from the updated checkout
+**before sourcing the updated shell files or starting another shell**:
+
+```sh
+bash .config/dotfiles/setup-tool-storage.bash
+. .config/dotfiles/tool-storage.sh
+pnpm store path
+pnpm bin -g
+npm config get cache
+npm config get prefix
+rustup show active-toolchain
+cargo --version
+```
+
+The helper requires an already mounted `~/repos` on macOS; it never creates or
+mounts a volume. On Linux it uses an existing writable `~/repos` directory.
+It moves the macOS pnpm defaults from `~/Library/pnpm`,
+`~/Library/Caches/pnpm` and `~/.pnpm-state`; on Linux it uses the corresponding
+XDG data/cache/state defaults. It also moves `~/.npm`, `~/.cargo` and `~/.rustup`.
+It refuses unexpected symlinks, non-directory paths, or a source and destination
+that both exist. It never merges directories. If interrupted, inspect both
+paths; a completed move with a missing compatibility link resumes on rerun, but
+a partial cross-volume copy needs manual reconciliation. Existing links created
+by this helper are accepted on rerun. A stale `~/repos/.tool-storage.lock` after
+a crash needs inspection; remove it with `rmdir` only after confirming no setup
+is running. No tool data is discarded or pruned.
+
+Custom stores/homes and npm's previous global prefix are not automatically
+migrated. Before setup, record `npm config get prefix`, `npm ls -g --depth=0`,
+`pnpm store path`, `pnpm bin -g`, and any custom `CARGO_HOME` / `RUSTUP_HOME`.
+Reconcile custom paths with the table before enabling the new environment.
+Reinstall user-installed npm globals into the new prefix; do not move or delete
+the Homebrew prefix (which also contains Node/npm). Existing projects may need
+`pnpm install` to adopt the new store. Preserve old custom stores until their
+projects and offline installs work. On the inspected Mac, npm's only global
+package was its Homebrew-managed npm itself, and Rust used the default homes.
+
+The shared `.config/dotfiles/tool-storage.sh` is sourced by both `.zprofile`
+and `.zshrc`, and by the installer before Rust installation. It performs no
+filesystem writes and adds the global binary paths without duplicates. It uses
+pnpm's `PNPM_CONFIG_*` variables, npm's `npm_config_cache` / `npm_config_prefix`,
+and `CARGO_HOME` / `RUSTUP_HOME`; it does not rewrite registry/auth config or
+redirect every application's XDG paths. Noninteractive jobs and GUI apps must
+inherit this environment or explicitly source the shared file. Old Rust shell
+setup using `~/.cargo/env` keeps working through the compatibility symlink.
+If switching to a Node version manager, revisit npm's fixed global prefix.
+
+### pnpm worktrees and the global virtual store
+
+Putting the package store on the same filesystem as worktrees permits pnpm's
+same-filesystem imports; a store across APFS volumes requires copying rather
+than hard links. pnpm's *global virtual store* is a separate optimization that
+also shares dependency graph layouts, reducing repeated creation of dependency
+files in new worktrees. Relocating the store alone does not enable it.
+
+For a compatible project on pnpm 11.23+, commit this in `pnpm-workspace.yaml`:
+
+```yaml
+virtualStoreType: global
+```
+
+Validate the project's build, tests, module resolution and file watchers before
+adopting it. Shared dependencies are not private mutable copies. Longer resolved
+paths can affect generated output; the linked benchmark had to disable generated
+debug-path comments to pass Vite's bundle-size check. We do not force this layout
+through a global environment variable for every repository.
+
+The [pnpm worktree benchmark](https://github.com/krishhgg/pnpm-worktree-benchmark)
+reports roughly 6.94x faster warm offline installs with eight generated-monorepo
+worktrees and 3.42x for an adjusted Vite checkout. It compares dependency layouts
+on the normal startup volume, uses prepared stores and disables install lifecycle
+scripts. It does not compare the dedicated APFS volume, first downloads, or
+multiday daemon growth. Those results complement the filesystem comparison:
+avoiding repeated filesystem work can help even when raw volume throughput is
+similar. A follow-up should cross normal/repos storage with project/global
+virtual stores at 1, 2, 4 and 8 workers, pairing repeated cohorts and verifying
+builds, resolved dependency targets, worker/system CPU, physical disk traffic
+and file counts. Report warm installs separately from cold-store downloads;
+keep stores on their corresponding filesystem and include full workflow time.
+
+### Other storage worth considering
+
+- **uv / pip / pipx:** download/build caches, uv-managed Python and tool installs.
+  uv cache placement can also affect linking into environments on another volume.
+- **Go:** `GOPATH` already points to `~/repos/go` in `.zshrc`, so its default
+  module cache is already there; `GOCACHE` still merits a separate move.
+- **Bun:** package cache, global packages and binaries if used alongside pnpm.
+- **Xcode / SwiftPM:** DerivedData, package downloads and build artifacts can be
+  large. Configure Xcode/build commands explicitly; measure simulator/compiler
+  contention separately from filesystem throughput.
+- **sccache / ccache, Gradle and Homebrew downloads:** useful candidates when
+  used heavily. Avoid moving an entire `~/Library/Caches` or every XDG home:
+  they also contain unrelated app state.
+
+These are candidates only; this change moves pnpm, npm and Rust storage.
+Reference: [pnpm configuration](https://pnpm.io/configuring),
+[pnpm store location](https://pnpm.io/settings/store#storedir),
+[pnpm global virtual store](https://pnpm.io/settings/node-modules#virtualstoretype),
+[npm configuration](https://docs.npmjs.com/cli/v11/using-npm/config/),
+[Cargo home](https://doc.rust-lang.org/cargo/guide/cargo-home.html), and
+[rustup environment](https://rust-lang.github.io/rustup/environment-variables.html).
+
+Validation: `bash .github/tests/tool-storage.sh` uses disposable homes and mock
+mount discovery, exercising migration, symlinks, conflicts, interrupted/failed
+moves and repeated shell sourcing. Native pnpm/npm path resolution and an offline
+local-package install should also be checked with a disposable HOME.
