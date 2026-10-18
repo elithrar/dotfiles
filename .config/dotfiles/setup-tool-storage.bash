@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run with package managers, builds, rustup and agents stopped. No sudo needed.
+# Run with package managers, builds, Xcode, rustup and agents stopped. No sudo needed.
 set -euo pipefail
 fail() { printf 'tool storage: %s\n' "$*" >&2; exit 1; }
 [[ $# == 0 ]] || fail 'This helper takes no arguments.'
@@ -14,10 +14,14 @@ if [[ $os == Darwin ]]; then
     pnpm_data=$HOME/Library/pnpm
     pnpm_cache=$HOME/Library/Caches/pnpm
     pnpm_state=$HOME/.pnpm-state
+    go_cache=$HOME/Library/Caches/go-build
+    pip_cache=${XDG_CACHE_HOME:-$HOME/Library/Caches}/pip
 else
     pnpm_data=${XDG_DATA_HOME:-$HOME/.local/share}/pnpm
     pnpm_cache=${XDG_CACHE_HOME:-$HOME/.cache}/pnpm
     pnpm_state=${XDG_STATE_HOME:-$HOME/.local/state}/pnpm
+    go_cache=${XDG_CACHE_HOME:-$HOME/.cache}/go-build
+    pip_cache=${XDG_CACHE_HOME:-$HOME/.cache}/pip
 fi
 
 # Serialize this helper's directory moves. A stale lock after SIGKILL/power loss
@@ -29,19 +33,31 @@ trap 'exit 130' INT
 trap 'exit 143' TERM HUP
 
 check_directory() {
-    [[ ! -L $1 && ( ! -e $1 || -d $1 ) ]] || fail "Unexpected destination: $1"
+    local directory=$1
+    # Nested cache destinations must not escape repos through an ancestor link.
+    while [[ $directory == "$repos/"* ]]; do
+        [[ ! -L $directory && ( ! -e $directory || -d $directory ) ]] || fail "Unexpected destination: $directory"
+        directory=${directory%/*}
+    done
 }
-for directory in "$repos/.npm-global" "$repos/.npm-global/bin" "$repos/.pnpm/bin"; do
+for directory in "$repos/.npm-global" "$repos/.npm-global/bin" "$repos/.pnpm/bin" "$repos/.cache/bun-transpiler"; do
     check_directory "$directory"
 done
 
 sources=("$HOME/.cargo" "$HOME/.rustup" "$HOME/.npm" "$pnpm_data" "$pnpm_cache" "$pnpm_state")
 targets=("$repos/.cargo" "$repos/.rustup" "$repos/.npm" "$repos/.pnpm" "$repos/.pnpm/cache" "$repos/.pnpm/state")
+sources+=("${XDG_CACHE_HOME:-$HOME/.cache}/uv" "$pip_cache" "$go_cache" "$HOME/.bun/install/cache")
+targets+=("$repos/.cache/uv" "$repos/.cache/pip" "$repos/.cache/go-build" "$repos/.cache/bun")
+if [[ $os == Darwin ]]; then
+    # GUI tools also follow the default-path links without inheriting shell env.
+    # Keep SwiftPM configuration/security, Xcode archives and simulators in place.
+    sources+=("$HOME/Library/Caches/org.swift.swiftpm" "$HOME/Library/Developer/Xcode/DerivedData")
+    targets+=("$repos/.cache/swiftpm" "$repos/.cache/xcode/DerivedData")
+fi
 
 check_pair() {
     local original=$1 target=$2
-    [[ ! -L $target ]] || fail "Destination is a symlink: $target"
-    [[ ! -e $target || -d $target ]] || fail "Destination is not a directory: $target"
+    check_directory "$target"
     if [[ -L $original ]]; then
         [[ $(readlink "$original") == "$target" && -d $target ]] || fail "Unexpected or broken source symlink: $original"
     elif [[ -e $original ]]; then
@@ -70,8 +86,8 @@ for i in "${!sources[@]}"; do
     # An interruption after mv can resume here: target exists, original does not.
     ln -s "$target" "$original"
 done
-for directory in "$repos/.npm-global" "$repos/.npm-global/bin" "$repos/.pnpm/bin"; do
+for directory in "$repos/.npm-global" "$repos/.npm-global/bin" "$repos/.pnpm/bin" "$repos/.cache/bun-transpiler"; do
     check_directory "$directory"
 done
-mkdir -p "$repos/.npm-global/bin" "$repos/.pnpm/bin"
+mkdir -p "$repos/.npm-global/bin" "$repos/.pnpm/bin" "$repos/.cache/bun-transpiler"
 printf '%s\n' 'Tool storage prepared under ~/repos. Source tool-storage.sh or start a new shell.'

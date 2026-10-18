@@ -17,11 +17,16 @@ MOCK
 cat > "$suite/bin/mv" <<'MOCK'
 #!/bin/sh
 if [ "${TEST_MOVE_FAIL:-false}" = true ]; then exit 1; fi
+if [ "${TEST_MOVE_PARTIAL:-false}" = true ]; then
+    mkdir -p "$2"
+    cp "$1/original" "$2/original"
+    exit 1
+fi
 exec /bin/mv "$@"
 MOCK
 chmod +x "$suite/bin/"*
 run_setup() {
-    env -u XDG_DATA_HOME -u XDG_CACHE_HOME -u XDG_STATE_HOME HOME="$fixture" PATH="$suite/bin:$PATH" \
+    env -u XDG_DATA_HOME -u XDG_STATE_HOME XDG_CACHE_HOME="${TEST_CACHE_HOME:-}" HOME="$fixture" PATH="$suite/bin:$PATH" \
         bash "$repo/.config/dotfiles/setup-tool-storage.bash" > "$suite/output" 2>&1
 }
 assert_failed() {
@@ -29,7 +34,8 @@ assert_failed() {
 }
 fixture=$suite/migration
 mkdir -p "$fixture/repos" "$fixture/.cargo/bin" "$fixture/.rustup/toolchains" "$fixture/.npm/_cacache" \
-    "$fixture/.local/share/pnpm/store" "$fixture/.cache/pnpm" "$fixture/.local/state/pnpm"
+    "$fixture/.local/share/pnpm/store" "$fixture/.cache/pnpm" "$fixture/.local/state/pnpm" \
+    "$fixture/.cache/uv" "$fixture/.cache/pip" "$fixture/.cache/go-build" "$fixture/.bun/install/cache"
 printf 'cargo\n' > "$fixture/.cargo/bin/rustup"
 chmod 700 "$fixture/.cargo/bin/rustup"
 ln -s rustup "$fixture/.cargo/bin/cargo"
@@ -38,7 +44,12 @@ printf 'toolchain\n' > "$fixture/.rustup/toolchains/version"
 printf 'package\n' > "$fixture/.npm/_cacache/package"
 printf 'store\n' > "$fixture/.local/share/pnpm/store/package"
 printf 'metadata\n' > "$fixture/.cache/pnpm/metadata"
+for cache in uv pip go-build; do printf '%s\n' "$cache" > "$fixture/.cache/$cache/original"; done
+printf 'bun\n' > "$fixture/.bun/install/cache/original"
 run_setup
+for cache in uv pip go-build bun; do [[ $(cat "$fixture/repos/.cache/$cache/original") == "$cache" ]]; done
+[[ $(readlink "$fixture/.cache/uv") == "$fixture/repos/.cache/uv" ]]
+[[ $(readlink "$fixture/.bun/install/cache") == "$fixture/repos/.cache/bun" ]]
 [[ $(cat "$fixture/repos/.cargo/bin/cargo") == cargo ]]
 [[ $(readlink "$fixture/repos/.cargo/broken-link") == missing ]]
 [[ -x $fixture/repos/.cargo/bin/rustup ]]
@@ -82,6 +93,18 @@ printf 'external-cache\n' > "$fixture/.cache/pnpm/original"
 assert_failed 'pnpm home exposes a conflicting cache'
 [[ $(cat "$fixture/repos/.pnpm/cache/original") == home-cache ]]
 [[ $(cat "$fixture/.cache/pnpm/original") == external-cache ]]
+fixture=$suite/cache-ancestor-link
+mkdir -p "$fixture/repos" "$fixture/other" "$fixture/.cargo"
+ln -s "$fixture/other" "$fixture/repos/.cache"
+assert_failed 'cache ancestor symlink'
+[[ ! -e $fixture/repos/.cargo && ! -e $fixture/other/bun-transpiler ]]
+fixture=$suite/xcode-ancestor-link
+mkdir -p "$fixture/repos/.cache" "$fixture/other" "$fixture/.cargo"
+ln -s "$fixture/other" "$fixture/repos/.cache/xcode"
+export TEST_OS=Darwin TEST_MOUNT=$fixture/repos
+assert_failed 'Xcode destination ancestor symlink'
+[[ ! -e $fixture/repos/.cargo && ! -e $fixture/other/DerivedData ]]
+unset TEST_OS TEST_MOUNT
 fixture=$suite/failed-move
 mkdir -p "$fixture/repos" "$fixture/.cargo"
 printf 'preserve\n' > "$fixture/.cargo/original"
@@ -89,6 +112,15 @@ export TEST_MOVE_FAIL=true
 assert_failed 'failed move'
 unset TEST_MOVE_FAIL
 [[ -f $fixture/.cargo/original && ! -L $fixture/.cargo && ! -e $fixture/repos/.cargo ]]
+fixture=$suite/partial-copy
+mkdir -p "$fixture/repos" "$fixture/.cargo"
+printf 'preserve\n' > "$fixture/.cargo/original"
+export TEST_MOVE_PARTIAL=true
+assert_failed 'partial copy'
+unset TEST_MOVE_PARTIAL
+[[ -f $fixture/.cargo/original && ! -L $fixture/.cargo && -f $fixture/repos/.cargo/original ]]
+[[ ! -e $fixture/repos/.tool-storage.lock ]]
+assert_failed 'rerun refuses a partial copy'
 fixture=$suite/interrupted
 mkdir -p "$fixture/repos/.cargo"
 printf 'preserve\n' > "$fixture/repos/.cargo/original"
@@ -99,13 +131,38 @@ mkdir -p "$fixture/repos" "$fixture/.cargo"
 export TEST_OS=Darwin TEST_MOUNT=/System/Volumes/Data
 assert_failed 'unmounted macOS repos'
 [[ ! -e $fixture/repos/.cargo ]]
+unset TEST_OS TEST_MOUNT
+fixture=$suite/xdg-cache
+mkdir -p "$fixture/repos" "$fixture/custom-cache/uv" "$fixture/custom-cache/pip" "$fixture/custom-cache/go-build"
+for cache in uv pip go-build; do printf '%s\n' "$cache" > "$fixture/custom-cache/$cache/original"; done
+export TEST_CACHE_HOME=$fixture/custom-cache
+run_setup
+for cache in uv pip go-build; do [[ $(cat "$fixture/repos/.cache/$cache/original") == "$cache" ]]; done
+unset TEST_CACHE_HOME
 fixture=$suite/mac
-mkdir -p "$fixture/repos" "$fixture/Library/pnpm/store" "$fixture/Library/Caches/pnpm" "$fixture/.pnpm-state"
+mkdir -p "$fixture/repos" "$fixture/Library/pnpm/store" "$fixture/Library/Caches/pnpm" "$fixture/.pnpm-state" \
+    "$fixture/Library/Caches/go-build" "$fixture/Library/Caches/pip" "$fixture/Library/Caches/org.swift.swiftpm" \
+    "$fixture/Library/Developer/Xcode/DerivedData/app" "$fixture/Library/Developer/Xcode/Archives" \
+    "$fixture/Library/Developer/CoreSimulator/Devices" "$fixture/.swiftpm" "$fixture/Library/org.swift.swiftpm/security"
+ln -s "$fixture/Library/Caches/org.swift.swiftpm" "$fixture/.swiftpm/cache"
+printf 'swift-cache\n' > "$fixture/Library/Caches/org.swift.swiftpm/original"
+printf 'build\n' > "$fixture/Library/Developer/Xcode/DerivedData/app/product"
+printf 'archive\n' > "$fixture/Library/Developer/Xcode/Archives/original"
+printf 'simulator\n' > "$fixture/Library/Developer/CoreSimulator/Devices/original"
+printf 'security\n' > "$fixture/Library/org.swift.swiftpm/security/original"
 printf 'store\n' > "$fixture/Library/pnpm/store/package"
-export TEST_MOUNT=$fixture/repos
+export TEST_OS=Darwin TEST_MOUNT=$fixture/repos
 run_setup
 [[ $(cat "$fixture/repos/.pnpm/store/package") == store ]]
 [[ $(readlink "$fixture/Library/Caches/pnpm") == "$fixture/repos/.pnpm/cache" ]]
+[[ $(cat "$fixture/.swiftpm/cache/original") == swift-cache ]]
+[[ $(cat "$fixture/repos/.cache/xcode/DerivedData/app/product") == build ]]
+[[ $(cat "$fixture/Library/Developer/Xcode/Archives/original") == archive ]]
+[[ $(cat "$fixture/Library/Developer/CoreSimulator/Devices/original") == simulator ]]
+[[ $(cat "$fixture/Library/org.swift.swiftpm/security/original") == security ]]
+printf 'gui-write\n' > "$fixture/Library/Developer/Xcode/DerivedData/app/new-file"
+[[ $(cat "$fixture/repos/.cache/xcode/DerivedData/app/new-file") == gui-write ]]
+run_setup
 unset TEST_OS TEST_MOUNT
 
 # Actual npm/pnpm config parsing is exercised separately on a machine with the
@@ -123,6 +180,12 @@ for shell in bash zsh; do
         [ "$RUSTUP_HOME" = "$HOME/repos/.rustup" ]
         [ "$PNPM_CONFIG_GLOBAL_BIN_DIR" = "$HOME/repos/.pnpm/bin" ]
         [ "$npm_config_prefix" = "$HOME/repos/.npm-global" ]
+        [ "$UV_CACHE_DIR" = "$HOME/repos/.cache/uv" ]
+        [ "$PIP_CACHE_DIR" = "$HOME/repos/.cache/pip" ]
+        [ "$GOCACHE" = "$HOME/repos/.cache/go-build" ]
+        [ "$GOMODCACHE" = "$HOME/repos/go/pkg/mod" ]
+        [ "$BUN_INSTALL_CACHE_DIR" = "$HOME/repos/.cache/bun" ]
+        [ "$BUN_RUNTIME_TRANSPILER_CACHE_PATH" = "$HOME/repos/.cache/bun-transpiler" ]
     ' test "$repo"
 done
 printf '%s\n' 'Tool storage migration, conflict, failure, mount and shell tests passed.'

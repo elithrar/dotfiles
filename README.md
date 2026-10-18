@@ -175,7 +175,7 @@ on macOS; Windows mock tests cannot establish them.
 `install.sh` runs `.config/dotfiles/setup-tool-storage.bash` after preparing
 `~/repos` and before installing tools or linking dotfiles. It relocates existing
 default directories and leaves absolute compatibility symlinks at their old
-paths. Stop package managers, Rust builds, editors and agents before running
+paths. Stop package managers, builds, Xcode, editors and agents before running
 setup: relocation across filesystems is a copy followed by removal, not atomic.
 Back up your installed tools and configuration first.
 
@@ -185,6 +185,11 @@ Back up your installed tools and configuration first.
 | npm / npx | `~/repos/.npm` cache; `~/repos/.npm-global` prefix for global packages and `bin` |
 | Cargo | `~/repos/.cargo`: registry/git caches, installed binaries, configuration and credentials |
 | rustup | `~/repos/.rustup`: toolchains, downloads, settings and temporary files |
+| uv / pip | `~/repos/.cache/uv` and `~/repos/.cache/pip` |
+| Go | `~/repos/.cache/go-build`; module cache remains `~/repos/go/pkg/mod` |
+| Bun | `~/repos/.cache/bun` packages and `~/repos/.cache/bun-transpiler` runtime output |
+| Xcode (macOS) | `~/repos/.cache/xcode/DerivedData`, via a symlink at the default DerivedData path |
+| SwiftPM (macOS) | `~/repos/.cache/swiftpm`, via a symlink at `~/Library/Caches/org.swift.swiftpm` |
 
 The complete Cargo home moves, including any `credentials.toml`. These homes
 inherit the repos volume's encryption and backup properties described above.
@@ -208,6 +213,11 @@ npm config get cache
 npm config get prefix
 rustup show active-toolchain
 cargo --version
+uv cache dir
+python3 -m pip cache dir
+go env GOCACHE GOMODCACHE
+# Run in a directory containing package.json:
+bun pm cache
 ```
 
 The helper requires an already mounted `~/repos` on macOS; it never creates or
@@ -215,8 +225,30 @@ mounts a volume. On Linux it uses an existing writable `~/repos` directory.
 It moves the macOS pnpm defaults from `~/Library/pnpm`,
 `~/Library/Caches/pnpm` and `~/.pnpm-state`; on Linux it uses the corresponding
 XDG data/cache/state defaults. It also moves `~/.npm`, `~/.cargo` and `~/.rustup`.
-It refuses unexpected symlinks, non-directory paths, or a source and destination
-that both exist. It never merges directories. If interrupted, inspect both
+The cache extension migrates uv's XDG/default `~/.cache/uv`, pip's platform/XDG
+cache, Go's platform build cache, and `~/.bun/install/cache`. Bun's transpiler
+cache starts fresh at the configured destination; old platform-default
+transpiler cache entries are not discovered or deleted.
+
+On macOS it additionally migrates the default Xcode DerivedData and SwiftPM
+shared cache, leaving links so Xcode and other GUI clients work without shell
+environment inheritance. DerivedData keeps its normal per-project subdirectories;
+this does not combine unrelated build products into a single shared build folder.
+Custom Xcode Locations settings or explicit `-derivedDataPath` / SwiftPM
+`--cache-path` arguments still win and must be configured separately. Xcode
+Archives, simulator devices/runtimes, and SwiftPM configuration/security stay put.
+uv-managed Python installations, uv/pipx tool environments and Bun binaries/global
+packages also keep their existing paths. In particular, installed Python tool
+environments can contain absolute interpreter paths and should not be moved as
+if they were a disposable cache.
+
+Go's `GOPATH`/`GOBIN` settings are also exported by the shared environment, with
+`GOMODCACHE` explicitly below `~/repos/go`. The helper only relocates Go's build
+cache; it does not merge or move an older `~/go/pkg/mod` or a custom module cache.
+Reconcile those separately if they exist.
+
+The helper refuses unexpected symlinks (including destination parents),
+non-directory paths, or a source and destination that both exist. It never merges directories. If interrupted, inspect both
 paths; a completed move with a missing compatibility link resumes on rerun, but
 a partial cross-volume copy needs manual reconciliation. Existing links created
 by this helper are accepted on rerun. A stale `~/repos/.tool-storage.lock` after
@@ -239,9 +271,11 @@ The shared `.config/dotfiles/tool-storage.sh` is sourced by both `.zprofile`
 and `.zshrc`, and by the installer before Rust installation. It performs no
 filesystem writes and adds the global binary paths without duplicates. It uses
 pnpm's `PNPM_CONFIG_*` variables, npm's `npm_config_cache` / `npm_config_prefix`,
-and `CARGO_HOME` / `RUSTUP_HOME`; it does not rewrite registry/auth config or
-redirect every application's XDG paths. Noninteractive jobs and GUI apps must
-inherit this environment or explicitly source the shared file. Old Rust shell
+`CARGO_HOME` / `RUSTUP_HOME`, and the documented uv/pip/Go/Bun cache variables.
+It does not rewrite registry/auth config or redirect every application's XDG
+paths. Programs using the environment settings must inherit them or explicitly
+source the shared file. The default-path Xcode/SwiftPM links work independently
+of shell environment inheritance. Old Rust shell
 setup using `~/.cargo/env` keeps working through the compatibility symlink.
 If switching to a Node version manager, revisit npm's fixed global prefix.
 
@@ -280,30 +314,29 @@ keep stores on their corresponding filesystem and include full workflow time.
 
 ### Other storage worth considering
 
-- **uv / pip / pipx:** download/build caches, uv-managed Python and tool installs.
-  [uv cache placement](https://docs.astral.sh/uv/concepts/cache/#cache-directory)
-  can also affect linking into environments on another volume.
-- **Go:** `GOPATH` already points to `~/repos/go` in `.zshrc`, so its default
-  module cache is already there; [`GOCACHE`](https://pkg.go.dev/cmd/go#hdr-Build_and_test_caching)
-  still merits a separate move.
-- **Bun:** [package cache](https://bun.sh/docs/pm/global-cache), global packages
-  and binaries if used alongside pnpm.
-- **Xcode / SwiftPM:** DerivedData, package downloads and build artifacts can be
-  large. Configure Xcode/build commands explicitly; measure simulator/compiler
-  contention separately from filesystem throughput.
-- **sccache / ccache, Gradle and Homebrew downloads:** useful candidates when
-  used heavily. Avoid moving an entire `~/Library/Caches` or every XDG home:
-  they also contain unrelated app state.
+Compiler caches (`sccache` / `ccache`), Gradle and Homebrew downloads remain
+candidates when used heavily. We do not move an entire `~/Library/Caches` or
+all XDG homes: those also contain unrelated application state. Per-project build
+outputs already live on repos when their projects do; explicit output paths can
+be configured per task instead of forcing a global build directory.
 
-These are candidates only; this change moves pnpm, npm and Rust storage.
 Reference: [pnpm configuration](https://pnpm.io/configuring),
 [pnpm store location](https://pnpm.io/settings/store#storedir),
 [pnpm global virtual store](https://pnpm.io/settings/node-modules#virtualstoretype),
 [npm configuration](https://docs.npmjs.com/cli/v11/using-npm/config/),
 [Cargo home](https://doc.rust-lang.org/cargo/guide/cargo-home.html), and
-[rustup environment](https://rust-lang.github.io/rustup/environment-variables.html).
+[rustup environment](https://rust-lang.github.io/rustup/environment-variables.html),
+[uv cache configuration](https://docs.astral.sh/uv/reference/environment/#uv_cache_dir),
+[pip cache configuration](https://pip.pypa.io/en/stable/topics/caching/),
+[Go caching](https://pkg.go.dev/cmd/go#hdr-Build_and_test_caching),
+[Bun package cache](https://bun.com/docs/pm/global-cache),
+[Bun transpiler cache](https://bun.com/docs/runtime/environment-variables#runtime-transpiler-caching),
+and [Xcode default DerivedData location](https://help.apple.com/xcode/mac/current/en.lproj/deva52afe8a4.html).
 
 Validation: `bash .github/tests/tool-storage.sh` uses disposable homes and mock
 mount discovery, exercising migration, symlinks, conflicts, interrupted/failed
-moves and repeated shell sourcing. Native pnpm/npm path resolution and an offline
-local-package install should also be checked with a disposable HOME.
+moves and repeated shell sourcing. It also checks cache migration on macOS/Linux,
+XDG cache defaults, writes through the Xcode/SwiftPM links and preservation of
+archives, simulator data and SwiftPM security. Native tool path resolution and
+offline/local workloads should also be checked with a disposable HOME; the tests
+do not run a live-cache migration or an Xcode GUI build.
