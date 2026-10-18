@@ -1,7 +1,7 @@
 typeset -U path fpath
 
 # Also covers interactive shells started without a login shell.
-[[ ! -f "$HOME/.config/dotfiles/tool-storage.sh" ]] || source "$HOME/.config/dotfiles/tool-storage.sh"
+[[ ! -f "$HOME/tool-storage.sh" ]] || source "$HOME/tool-storage.sh"
 
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"

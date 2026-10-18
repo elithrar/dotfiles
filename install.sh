@@ -157,9 +157,9 @@ elif [[ ! -d "${HOME}/repos" ]]; then
 fi
 
 # Migrate defaults before enabling the new tool paths.
-bash "${install_dir}/.config/dotfiles/setup-tool-storage.bash"
-# shellcheck source=.config/dotfiles/tool-storage.sh
-. "${install_dir}/.config/dotfiles/tool-storage.sh"
+bash "${install_dir}/setup-tool-storage.sh"
+# shellcheck source=tool-storage.sh
+. "${install_dir}/tool-storage.sh"
 
 # Install Homebrew
 if ! command -v brew &>/dev/null; then

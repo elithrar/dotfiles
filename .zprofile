@@ -1,7 +1,7 @@
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# shellcheck source=.config/dotfiles/tool-storage.sh
-[ ! -f "$HOME/.config/dotfiles/tool-storage.sh" ] || . "$HOME/.config/dotfiles/tool-storage.sh"
+# shellcheck source=tool-storage.sh
+[ ! -f "$HOME/tool-storage.sh" ] || . "$HOME/tool-storage.sh"
 
 export CODEX_HOME="/Users/matt/repos/dotfiles/.codex"
 

@@ -16,12 +16,45 @@ check_target() {
         directory=${directory%/*}
     done
 }
-relocate() {
-    local original=$1 target=$2
+
+if [[ $os == Darwin ]]; then
+    data=$HOME/Library/pnpm
+    cache=$HOME/Library/Caches
+    state=$HOME/.pnpm-state
+    go_cache=$cache/go-build
+    pip_cache=${XDG_CACHE_HOME:-$cache}/pip
+else
+    data=${XDG_DATA_HOME:-$HOME/.local/share}/pnpm
+    cache=${XDG_CACHE_HOME:-$HOME/.cache}
+    state=${XDG_STATE_HOME:-$HOME/.local/state}/pnpm
+    go_cache=$cache/go-build
+    pip_cache=$cache/pip
+fi
+directories=(
+    "$HOME/.cargo" "$repos/.cargo"
+    "$HOME/.rustup" "$repos/.rustup"
+    "$HOME/.npm" "$repos/.npm"
+    "$data" "$repos/.pnpm"
+    "$cache/pnpm" "$repos/.pnpm/cache"
+    "$state" "$repos/.pnpm/state"
+    "${XDG_CACHE_HOME:-$HOME/.cache}/uv" "$repos/.cache/uv"
+    "$pip_cache" "$repos/.cache/pip"
+    "$go_cache" "$repos/.cache/go-build"
+    "$HOME/.bun/install/cache" "$repos/.cache/bun"
+)
+if [[ $os == Darwin ]]; then
+    directories+=(
+        "$cache/org.swift.swiftpm" "$repos/.cache/swiftpm"
+        "$HOME/Library/Developer/Xcode/DerivedData" "$repos/.cache/xcode/DerivedData"
+    )
+fi
+for ((i=0; i<${#directories[@]}; i+=2)); do
+    original=${directories[i]}
+    target=${directories[i+1]}
     check_target "$target"
     if [[ -L $original ]]; then
         [[ $(readlink "$original") == "$target" && -d $target ]] || fail "Unexpected link: $original"
-        return
+        continue
     fi
     if [[ -e $original ]]; then
         [[ -d $original && ! -e $target ]] || fail "Conflicting paths: $original and $target"
@@ -32,33 +65,7 @@ relocate() {
     fi
     mkdir -p "$(dirname "$original")"
     ln -s "$target" "$original"
-}
-
-if [[ $os == Darwin ]]; then
-    data=$HOME/Library/pnpm
-    cache=$HOME/Library/Caches
-    state=$HOME/.pnpm-state
-    go_cache=$cache/go-build
-    pip_cache=${XDG_CACHE_HOME:-$cache}/pip
-    relocate "$cache/org.swift.swiftpm" "$repos/.cache/swiftpm"
-    relocate "$HOME/Library/Developer/Xcode/DerivedData" "$repos/.cache/xcode/DerivedData"
-else
-    data=${XDG_DATA_HOME:-$HOME/.local/share}/pnpm
-    cache=${XDG_CACHE_HOME:-$HOME/.cache}
-    state=${XDG_STATE_HOME:-$HOME/.local/state}/pnpm
-    go_cache=$cache/go-build
-    pip_cache=$cache/pip
-fi
-relocate "$HOME/.cargo" "$repos/.cargo"
-relocate "$HOME/.rustup" "$repos/.rustup"
-relocate "$HOME/.npm" "$repos/.npm"
-relocate "$data" "$repos/.pnpm"
-relocate "$cache/pnpm" "$repos/.pnpm/cache"
-relocate "$state" "$repos/.pnpm/state"
-relocate "${XDG_CACHE_HOME:-$HOME/.cache}/uv" "$repos/.cache/uv"
-relocate "$pip_cache" "$repos/.cache/pip"
-relocate "$go_cache" "$repos/.cache/go-build"
-relocate "$HOME/.bun/install/cache" "$repos/.cache/bun"
+done
 for directory in "$repos/.npm-global/bin" "$repos/.pnpm/bin" "$repos/.cache/bun-transpiler"; do
     check_target "$directory"
     mkdir -p "$directory"

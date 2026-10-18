@@ -5,14 +5,16 @@ on:
   pull_request:
     paths:
       - install.sh
-      - .config/dotfiles/tool-storage.sh
+      - tool-storage.sh
+      - setup-tool-storage.sh
       - repos-volume.sh
       - .github/tests/repos-volume.sh
       - .github/workflows/repos-volume.yml
   push:
     paths:
       - install.sh
-      - .config/dotfiles/tool-storage.sh
+      - tool-storage.sh
+      - setup-tool-storage.sh
       - repos-volume.sh
       - .github/tests/repos-volume.sh
       - .github/workflows/repos-volume.yml
@@ -27,6 +29,8 @@ jobs:
       - name: Syntax and isolated command mocks (no native volume operations)
         run: |
           bash -n install.sh
+          bash -n setup-tool-storage.sh
+          sh -n tool-storage.sh
           bash -n repos-volume.sh
           bash -n .github/tests/repos-volume.sh
           bash .github/tests/repos-volume.sh
@@ -34,4 +38,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: shellcheck -x install.sh repos-volume.sh .github/tests/repos-volume.sh
+      - run: shellcheck -x install.sh setup-tool-storage.sh repos-volume.sh .github/tests/repos-volume.sh

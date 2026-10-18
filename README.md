@@ -173,6 +173,6 @@ on macOS; Windows mock tests cannot establish them.
 ## Tool storage
 
 Caches and Node/Rust installs live in `~/repos`. With tools stopped, run
-`bash .config/dotfiles/setup-tool-storage.bash`, then restow and restart your
+`bash setup-tool-storage.sh`, then restow and restart your
 shell. Existing defaults move with compatibility links; conflicting paths stop
 setup.
