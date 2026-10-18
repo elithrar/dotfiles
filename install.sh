@@ -146,14 +146,18 @@ if [[ -f "${HOME}/.ssh/id_ed25519.pub" ]]; then
     fi
 fi
 
+install_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
+
 # Prepare macOS storage before any clone or write below ~/repos. Keep this
 # helper beside install.sh in a complete checkout (which may live outside repos).
 if [[ "${OS}" == "Darwin" ]]; then
-    install_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
     bash "${install_dir}/repos-volume.sh"
 elif [[ ! -d "${HOME}/repos" ]]; then
     mkdir -p "${HOME}/repos"
 fi
+
+# shellcheck source=tool-storage.sh
+. "${install_dir}/tool-storage.sh" --setup
 
 # Install Homebrew
 if ! command -v brew &>/dev/null; then
@@ -355,7 +359,7 @@ fi
 # Install Rust via rustup
 if ! command -v rustc &>/dev/null; then
     print_info "Installing Rust via rustup"
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
 else
     print_success "Rust already installed."
 fi

@@ -1,5 +1,8 @@
 typeset -U path fpath
 
+# Also covers interactive shells started without a login shell.
+[[ ! -f "$HOME/tool-storage.sh" ]] || source "$HOME/tool-storage.sh"
+
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 
@@ -68,8 +71,6 @@ alias codexa="codex resume --last"
 unalias gb 2>/dev/null
 
 # Go
-export GOPATH=$HOME/repos/go
-export GOBIN=$GOPATH/bin
 alias todo='godoc -notes="TODO" .'
 alias gtvc="go test -v -race -cover ."
 alias godoc-this="godoc -http=:6060; open http://localhost:6060/pkg"
@@ -207,12 +208,6 @@ path=("$HOME/.codeium/windsurf/bin" $path)
 
 # Ruby (rbenv)
 path=("$HOME/.rbenv/shims" $path)
-
-# Rust
-path=("$HOME/.cargo/bin" $path)
-
-# Go
-path=("$GOBIN" $path)
 
 # Bun
 path=("$HOME/.bun/bin" $path)

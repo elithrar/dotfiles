@@ -103,13 +103,12 @@ Separate filesystems cannot use APFS clones or hard links across their boundary.
 Optional disposable paths can live on this same filesystem:
 
 ```sh
-mkdir -p ~/repos/.worktrees ~/repos/.output ~/repos/.pnpm-store
-pnpm config set store-dir "$HOME/repos/.pnpm-store"
+mkdir -p ~/repos/.worktrees ~/repos/.output
 git -C ~/repos/project worktree add ~/repos/.worktrees/project-topic topic
 ```
 
-These are manual choices; setup does not change existing pnpm settings or
-credential/config homes. Set output directories in the relevant tool or task.
+These worktree/output paths are manual choices. Set output directories in the
+relevant tool or task. Global package storage is configured below.
 No Codex TOML worktree/output keys or unverified desktop backing-state edits
 are added.
 
@@ -154,7 +153,7 @@ the [`diskutil` manual](https://keith.github.io/xcode-man-pages/diskutil.8.html)
 [Disk Arbitration mount implementation](https://github.com/apple-oss-distributions/DiskArbitration/blob/main/diskarbitrationd/DAMount.c),
 and [per-volume FSEvents storage documentation](https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/FSEvents_ProgGuide/FileSystemEventSecurity/FileSystemEventSecurity.html).
 Validation: `bash -n install.sh repos-volume.sh`,
-`shellcheck install.sh repos-volume.sh .github/tests/repos-volume.sh`,
+`shellcheck -x install.sh repos-volume.sh .github/tests/repos-volume.sh`,
 and `bash .github/tests/repos-volume.sh`. The mocks never run host volume or
 mount operations. Native macOS execution and reboot behavior must be checked
 on macOS; Windows mock tests cannot establish them.
@@ -169,3 +168,11 @@ on macOS; Windows mock tests cannot establish them.
 ## License
 
 📜 See LICENSE file for details.
+
+
+## Tool storage
+
+Caches and Node/Rust installs live in `~/repos`. With tools stopped, run
+`bash tool-storage.sh --setup`, then restow and restart your
+shell. Existing defaults move with compatibility links; conflicting paths stop
+setup.
