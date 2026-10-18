@@ -1,0 +1,7 @@
+{
+  "id": "peon",
+  "displayName": "Peon",
+  "description": "A good-natured Warcraft-inspired Orc worker with a trusty mining pick.",
+  "spriteVersionNumber": 2,
+  "spritesheetPath": "spritesheet.png"
+}
