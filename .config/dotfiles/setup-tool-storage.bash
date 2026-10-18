@@ -1,93 +1,65 @@
 #!/usr/bin/env bash
-# Run with package managers, builds, Xcode, rustup and agents stopped. No sudo needed.
+# Run with tools stopped; moves defaults and keeps their old paths working.
 set -euo pipefail
-fail() { printf 'tool storage: %s\n' "$*" >&2; exit 1; }
-[[ $# == 0 ]] || fail 'This helper takes no arguments.'
 repos=$HOME/repos
-[[ -d $repos && -w $repos && ! -L $repos ]] || fail 'Prepare a writable ~/repos first with the repos-volume helper on macOS.'
-
+fail() { printf 'tool storage: %s\n' "$*" >&2; exit 1; }
+[[ -d $repos && -w $repos && ! -L $repos ]] || fail "Prepare $repos first."
 os=$(uname -s)
 if [[ $os == Darwin ]]; then
-    [[ $HOME != *[[:space:]]* ]] || fail 'The macOS repos mount requires HOME without whitespace.'
-    mounted_at=$(df -P "$repos" | awk 'NR == 2 { print $NF }')
-    [[ $mounted_at == "$repos" ]] || fail "$repos must be mounted before relocating tools."
-    pnpm_data=$HOME/Library/pnpm
-    pnpm_cache=$HOME/Library/Caches/pnpm
-    pnpm_state=$HOME/.pnpm-state
-    go_cache=$HOME/Library/Caches/go-build
-    pip_cache=${XDG_CACHE_HOME:-$HOME/Library/Caches}/pip
-else
-    pnpm_data=${XDG_DATA_HOME:-$HOME/.local/share}/pnpm
-    pnpm_cache=${XDG_CACHE_HOME:-$HOME/.cache}/pnpm
-    pnpm_state=${XDG_STATE_HOME:-$HOME/.local/state}/pnpm
-    go_cache=${XDG_CACHE_HOME:-$HOME/.cache}/go-build
-    pip_cache=${XDG_CACHE_HOME:-$HOME/.cache}/pip
+    [[ $(df -P "$repos" | awk 'NR == 2 { print $NF }') == "$repos" ]] || fail "$repos is not mounted."
 fi
 
-# Serialize this helper's directory moves. A stale lock after SIGKILL/power loss
-# must be inspected and removed with rmdir, never cleared by a competing run.
-lock=$repos/.tool-storage.lock
-mkdir "$lock" || fail "Another setup may be running. Inspect $lock before removing an abandoned lock."
-trap 'rmdir "$lock"' EXIT
-trap 'exit 130' INT
-trap 'exit 143' TERM HUP
-
-check_directory() {
+check_target() {
     local directory=$1
-    # Nested cache destinations must not escape repos through an ancestor link.
-    while [[ $directory == "$repos/"* ]]; do
-        [[ ! -L $directory && ( ! -e $directory || -d $directory ) ]] || fail "Unexpected destination: $directory"
+    while [[ $directory != "$repos" ]]; do
+        [[ $directory == "$repos/"* && ! -L $directory && ( ! -e $directory || -d $directory ) ]] || fail "Unexpected destination: $directory"
         directory=${directory%/*}
     done
 }
-for directory in "$repos/.npm-global" "$repos/.npm-global/bin" "$repos/.pnpm/bin" "$repos/.cache/bun-transpiler"; do
-    check_directory "$directory"
-done
-
-sources=("$HOME/.cargo" "$HOME/.rustup" "$HOME/.npm" "$pnpm_data" "$pnpm_cache" "$pnpm_state")
-targets=("$repos/.cargo" "$repos/.rustup" "$repos/.npm" "$repos/.pnpm" "$repos/.pnpm/cache" "$repos/.pnpm/state")
-sources+=("${XDG_CACHE_HOME:-$HOME/.cache}/uv" "$pip_cache" "$go_cache" "$HOME/.bun/install/cache")
-targets+=("$repos/.cache/uv" "$repos/.cache/pip" "$repos/.cache/go-build" "$repos/.cache/bun")
-if [[ $os == Darwin ]]; then
-    # GUI tools also follow the default-path links without inheriting shell env.
-    # Keep SwiftPM configuration/security, Xcode archives and simulators in place.
-    sources+=("$HOME/Library/Caches/org.swift.swiftpm" "$HOME/Library/Developer/Xcode/DerivedData")
-    targets+=("$repos/.cache/swiftpm" "$repos/.cache/xcode/DerivedData")
-fi
-
-check_pair() {
+relocate() {
     local original=$1 target=$2
-    check_directory "$target"
+    check_target "$target"
     if [[ -L $original ]]; then
-        [[ $(readlink "$original") == "$target" && -d $target ]] || fail "Unexpected or broken source symlink: $original"
-    elif [[ -e $original ]]; then
-        [[ -d $original ]] || fail "Source is not a directory: $original"
-        [[ ! -e $target ]] || fail "Both $original and $target exist; reconcile them manually. Nothing will be merged or overwritten."
+        [[ $(readlink "$original") == "$target" && -d $target ]] || fail "Unexpected link: $original"
+        return
     fi
-}
-
-# Catch conflicts before the first move, then recheck each pair because moving
-# a pnpm home can expose a preexisting cache/state directory at its destination.
-for i in "${!sources[@]}"; do check_pair "${sources[$i]}" "${targets[$i]}"; done
-for i in "${!sources[@]}"; do
-    original=${sources[$i]}
-    target=${targets[$i]}
-    check_pair "$original" "$target"
-    if [[ -L $original ]]; then continue; fi
-    mkdir -p "$(dirname "$target")" "$(dirname "$original")"
-    if [[ -d $original ]]; then
-        # mv handles the cross-volume copy and removes the original only on
-        # success. A failed/interrupted move may leave both paths: reruns stop
-        # on that conflict instead of merging a partial copy.
+    if [[ -e $original ]]; then
+        [[ -d $original && ! -e $target ]] || fail "Conflicting paths: $original and $target"
+        mkdir -p "$(dirname "$target")"
         mv "$original" "$target"
     else
         mkdir -p "$target"
     fi
-    # An interruption after mv can resume here: target exists, original does not.
+    mkdir -p "$(dirname "$original")"
     ln -s "$target" "$original"
+}
+
+if [[ $os == Darwin ]]; then
+    data=$HOME/Library/pnpm
+    cache=$HOME/Library/Caches
+    state=$HOME/.pnpm-state
+    go_cache=$cache/go-build
+    pip_cache=${XDG_CACHE_HOME:-$cache}/pip
+    relocate "$cache/org.swift.swiftpm" "$repos/.cache/swiftpm"
+    relocate "$HOME/Library/Developer/Xcode/DerivedData" "$repos/.cache/xcode/DerivedData"
+else
+    data=${XDG_DATA_HOME:-$HOME/.local/share}/pnpm
+    cache=${XDG_CACHE_HOME:-$HOME/.cache}
+    state=${XDG_STATE_HOME:-$HOME/.local/state}/pnpm
+    go_cache=$cache/go-build
+    pip_cache=$cache/pip
+fi
+relocate "$HOME/.cargo" "$repos/.cargo"
+relocate "$HOME/.rustup" "$repos/.rustup"
+relocate "$HOME/.npm" "$repos/.npm"
+relocate "$data" "$repos/.pnpm"
+relocate "$cache/pnpm" "$repos/.pnpm/cache"
+relocate "$state" "$repos/.pnpm/state"
+relocate "${XDG_CACHE_HOME:-$HOME/.cache}/uv" "$repos/.cache/uv"
+relocate "$pip_cache" "$repos/.cache/pip"
+relocate "$go_cache" "$repos/.cache/go-build"
+relocate "$HOME/.bun/install/cache" "$repos/.cache/bun"
+for directory in "$repos/.npm-global/bin" "$repos/.pnpm/bin" "$repos/.cache/bun-transpiler"; do
+    check_target "$directory"
+    mkdir -p "$directory"
 done
-for directory in "$repos/.npm-global" "$repos/.npm-global/bin" "$repos/.pnpm/bin" "$repos/.cache/bun-transpiler"; do
-    check_directory "$directory"
-done
-mkdir -p "$repos/.npm-global/bin" "$repos/.pnpm/bin" "$repos/.cache/bun-transpiler"
-printf '%s\n' 'Tool storage prepared under ~/repos. Source tool-storage.sh or start a new shell.'

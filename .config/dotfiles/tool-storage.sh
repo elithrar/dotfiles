@@ -1,6 +1,4 @@
 # shellcheck shell=sh
-# Shared by zsh login/interactive shells and install.sh. Sourcing has no I/O.
-# Run setup-tool-storage.bash before enabling this on an existing machine.
 export PNPM_HOME="$HOME/repos/.pnpm"
 export PNPM_CONFIG_STORE_DIR="$PNPM_HOME/store"
 export PNPM_CONFIG_CACHE_DIR="$PNPM_HOME/cache"
@@ -11,9 +9,6 @@ export npm_config_cache="$HOME/repos/.npm"
 export npm_config_prefix="$HOME/repos/.npm-global"
 export CARGO_HOME="$HOME/repos/.cargo"
 export RUSTUP_HOME="$HOME/repos/.rustup"
-
-# Keep package/build caches on the same filesystem as repository worktrees.
-# uv's installed Python/tool environments retain their stable original paths.
 export UV_CACHE_DIR="$HOME/repos/.cache/uv"
 export PIP_CACHE_DIR="$HOME/repos/.cache/pip"
 export GOPATH="$HOME/repos/go"
@@ -22,9 +17,6 @@ export GOMODCACHE="$GOPATH/pkg/mod"
 export GOCACHE="$HOME/repos/.cache/go-build"
 export BUN_INSTALL_CACHE_DIR="$HOME/repos/.cache/bun"
 export BUN_RUNTIME_TRANSPILER_CACHE_PATH="$HOME/repos/.cache/bun-transpiler"
-
-# pnpm 11+ puts global executables in PNPM_HOME/bin. Keep this idempotent in
-# shells that read both .zprofile and .zshrc, and when sourced by a task runner.
 for _dotfiles_bin in "$PNPM_HOME/bin" "$npm_config_prefix/bin" "$CARGO_HOME/bin" "$GOBIN"; do
     case ":$PATH:" in
         *:"$_dotfiles_bin":*) ;;

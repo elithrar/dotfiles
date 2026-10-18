@@ -156,8 +156,7 @@ elif [[ ! -d "${HOME}/repos" ]]; then
     mkdir -p "${HOME}/repos"
 fi
 
-# Relocate existing default caches/toolchains before enabling their new paths.
-# Stop package managers, Rust builds and agents before running this installer.
+# Migrate defaults before enabling the new tool paths.
 bash "${install_dir}/.config/dotfiles/setup-tool-storage.bash"
 # shellcheck source=.config/dotfiles/tool-storage.sh
 . "${install_dir}/.config/dotfiles/tool-storage.sh"
