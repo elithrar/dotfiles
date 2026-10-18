@@ -200,6 +200,7 @@ For an existing dotfiles installation, run this from the updated checkout
 
 ```sh
 bash .config/dotfiles/setup-tool-storage.bash
+stow --dir="$PWD" --target="$HOME" .
 . .config/dotfiles/tool-storage.sh
 pnpm store path
 pnpm bin -g
@@ -227,7 +228,9 @@ migrated. Before setup, record `npm config get prefix`, `npm ls -g --depth=0`,
 `pnpm store path`, `pnpm bin -g`, and any custom `CARGO_HOME` / `RUSTUP_HOME`.
 Reconcile custom paths with the table before enabling the new environment.
 Reinstall user-installed npm globals into the new prefix; do not move or delete
-the Homebrew prefix (which also contains Node/npm). Existing projects may need
+the Homebrew prefix (which also contains Node/npm). If its `etc/npmrc` contains
+required settings, preserve them in your user `~/.npmrc` before switching
+prefixes. Existing projects may need
 `pnpm install` to adopt the new store. Preserve old custom stores until their
 projects and offline installs work. On the inspected Mac, npm's only global
 package was its Homebrew-managed npm itself, and Rust used the default homes.
@@ -278,10 +281,13 @@ keep stores on their corresponding filesystem and include full workflow time.
 ### Other storage worth considering
 
 - **uv / pip / pipx:** download/build caches, uv-managed Python and tool installs.
-  uv cache placement can also affect linking into environments on another volume.
+  [uv cache placement](https://docs.astral.sh/uv/concepts/cache/#cache-directory)
+  can also affect linking into environments on another volume.
 - **Go:** `GOPATH` already points to `~/repos/go` in `.zshrc`, so its default
-  module cache is already there; `GOCACHE` still merits a separate move.
-- **Bun:** package cache, global packages and binaries if used alongside pnpm.
+  module cache is already there; [`GOCACHE`](https://pkg.go.dev/cmd/go#hdr-Build_and_test_caching)
+  still merits a separate move.
+- **Bun:** [package cache](https://bun.sh/docs/pm/global-cache), global packages
+  and binaries if used alongside pnpm.
 - **Xcode / SwiftPM:** DerivedData, package downloads and build artifacts can be
   large. Configure Xcode/build commands explicitly; measure simulator/compiler
   contention separately from filesystem throughput.
