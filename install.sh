@@ -156,10 +156,8 @@ elif [[ ! -d "${HOME}/repos" ]]; then
     mkdir -p "${HOME}/repos"
 fi
 
-# Migrate defaults before enabling the new tool paths.
-bash "${install_dir}/setup-tool-storage.sh"
 # shellcheck source=tool-storage.sh
-. "${install_dir}/tool-storage.sh"
+. "${install_dir}/tool-storage.sh" --setup
 
 # Install Homebrew
 if ! command -v brew &>/dev/null; then
