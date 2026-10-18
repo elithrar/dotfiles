@@ -5,12 +5,14 @@ on:
   pull_request:
     paths:
       - install.sh
+      - .config/dotfiles/tool-storage.sh
       - repos-volume.sh
       - .github/tests/repos-volume.sh
       - .github/workflows/repos-volume.yml
   push:
     paths:
       - install.sh
+      - .config/dotfiles/tool-storage.sh
       - repos-volume.sh
       - .github/tests/repos-volume.sh
       - .github/workflows/repos-volume.yml
@@ -32,4 +34,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: shellcheck install.sh repos-volume.sh .github/tests/repos-volume.sh
+      - run: shellcheck -x install.sh repos-volume.sh .github/tests/repos-volume.sh

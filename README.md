@@ -153,7 +153,7 @@ the [`diskutil` manual](https://keith.github.io/xcode-man-pages/diskutil.8.html)
 [Disk Arbitration mount implementation](https://github.com/apple-oss-distributions/DiskArbitration/blob/main/diskarbitrationd/DAMount.c),
 and [per-volume FSEvents storage documentation](https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/FSEvents_ProgGuide/FileSystemEventSecurity/FileSystemEventSecurity.html).
 Validation: `bash -n install.sh repos-volume.sh`,
-`shellcheck install.sh repos-volume.sh .github/tests/repos-volume.sh`,
+`shellcheck -x install.sh repos-volume.sh .github/tests/repos-volume.sh`,
 and `bash .github/tests/repos-volume.sh`. The mocks never run host volume or
 mount operations. Native macOS execution and reboot behavior must be checked
 on macOS; Windows mock tests cannot establish them.
