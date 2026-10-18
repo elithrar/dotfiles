@@ -119,7 +119,7 @@ sed -e '/^PATH=\/usr\/bin:/d' \
     -e 's|/usr/sbin/vifs|mock_vifs|g' \
     -e 's|state=/var/db/dotfiles-repos-$uid|state=$MOCK_ROOT/state|' \
     -e 's|/etc/fstab|$MOCK_ROOT/fstab|g' \
-    "$repo/.config/dotfiles/repos-volume.bash" > "$suite/helper"
+    "$repo/repos-volume.sh" > "$suite/helper"
 count=0
 fresh() {
     count=$((count + 1))
