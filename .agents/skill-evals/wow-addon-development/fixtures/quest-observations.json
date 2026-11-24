@@ -1,0 +1,79 @@
+{
+  "source": {
+    "url": "https://quests.questionable.services/native-quests.json",
+    "sha256": "3612c133a96c3603ba12473f77fa88b45c4e0ab9f4e52a01e34007452f940798",
+    "bytes": 2154338,
+    "collectedAt": "2026-11-24T09:03:07.756120+00:00"
+  },
+  "scope": "Selected observations from the full export. The source digest and size identify that full export.",
+  "questIdentity": {
+    "id": 94841,
+    "title": "Lost Shipping Crate",
+    "level": 38,
+    "minimum": 36
+  },
+  "identityObservation": {
+    "source": "nativeCatalogNovember24",
+    "build": 71037,
+    "observedAt": "2026-11-24T07:57:28.742015+00:00",
+    "payloadSha256": "89b8a7c04e6fb3414a4c52a6a9c2e82558de30d5a95d096ae2ebadfd74aa35eb"
+  },
+  "rewardRecords": [
+    {
+      "id": 96063,
+      "name": "Gaseous Gold",
+      "level": 38,
+      "requiredLevel": 36,
+      "categoryId": 16591,
+      "categoryName": "Riverglades",
+      "inChart": false,
+      "guaranteed": [
+        {
+          "id": 274922,
+          "name": "Riverglades Marsh Gas",
+          "quantity": 5
+        }
+      ],
+      "choice": [],
+      "payloadSha256": "4b6a85d78af2c96d92adfe072633a554cb6f82a7fa7b232d98938e03daf65df9",
+      "sourceBuild": 71037,
+      "observedAt": "2026-11-24T07:57:28.742015+00:00"
+    },
+    {
+      "id": 97332,
+      "name": "Twice Misplaced Trust",
+      "level": 41,
+      "requiredLevel": 36,
+      "categoryId": 33,
+      "categoryName": "Stranglethorn Vale",
+      "inChart": false,
+      "guaranteed": [
+        {
+          "id": 2595,
+          "name": "Jug of Badlands Bourbon",
+          "quantity": 1
+        }
+      ],
+      "choice": [
+        {
+          "id": 278017,
+          "name": "Refunded Ring",
+          "quantity": 1
+        },
+        {
+          "id": 278018,
+          "name": "Renegotiated Ring",
+          "quantity": 1
+        },
+        {
+          "id": 278019,
+          "name": "Apology Ring",
+          "quantity": 1
+        }
+      ],
+      "payloadSha256": "5fc5f475fcb7fc37be93259cb107052ef15edad8b7c32ac47d3740c7fc8b7702",
+      "sourceBuild": 71037,
+      "observedAt": "2026-11-24T07:57:28.742015+00:00"
+    }
+  ]
+}

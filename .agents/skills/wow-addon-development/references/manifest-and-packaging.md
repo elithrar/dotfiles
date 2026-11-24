@@ -39,4 +39,6 @@ Put `TrailNotes/TrailNotes.toc` directly inside the ZIP, with implementation and
 
 Use `.pkgmeta` only with a release tool that supports it. It is build configuration, not a client manifest. The [BigWigs Packager documentation](https://github.com/BigWigsMods/packager#readme) covers `package-as`, `ignore`, `externals`, module moves, and multi-client packaging. Pin fetched dependencies and load them explicitly; distribution-site dependency slugs do not replace TOC dependencies.
 
-Inspect the produced ZIP: folder identity, resolved interface/release metadata, all TOC/XML paths, dependency order, and required assets. Extract it into a clean directory for load checks.
+Follow the repository’s release workflow. Trace how its version and tag select the build, how dependencies enter the archive, and which ZIP each distribution channel publishes. For vendored updates, compare the packaged library files with the intended upstream revision, accounting for any documented local patches.
+
+Extract the produced ZIP into a clean directory. Check folder identity, resolved metadata, TOC/XML paths, dependency order, and assets. Run the affected startup or behavior check against that installation with only its declared dependencies. For multiple artifacts, verify the inventory for each target.

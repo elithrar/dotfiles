@@ -2,7 +2,7 @@
 
 ## Measure the affected workload
 
-Reproduce the relevant interaction after warmup and compare the same workload before and after. Record client build, enabled add-ons, profiler state, CPU metric, allocation activity, and retained-object counts. Distinguish temporary garbage, a reusable pool's high-water mark, and continuing growth across repeated cycles.
+Match the measurement to the symptom. For a suspected subscription leak, count active callbacks across repeated open/close cycles. For retained frames, compare counts after warmup and reuse. For an in-game CPU or smoothness claim, compare the same workload before and after, recording client build, enabled add-ons, profiler state, and the timing metric used. Track allocation activity when investigating churn.
 
 Use the target client's profiler documentation through [clients and sources](clients-and-sources.md). Check availability, units, averaging window, and whether profiling is enabled. Ticks are not necessarily seconds; recent, encounter, session, and peak measurements answer different questions. An isolated function measurement does not establish whole-encounter performance.
 

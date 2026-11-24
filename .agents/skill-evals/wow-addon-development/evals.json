@@ -41,6 +41,38 @@
       ],
       "expected_output": "An installable add-on for the declared clients, concise installation and evidence notes, and behavioral checks that exercise the actual implementation. Every requested user path must be reachable; independent review must find no material blocker within the exercised offline boundary.",
       "files": []
+    },
+    {
+      "id": "embedded-consumer-startup",
+      "repositories": {
+        "https://github.com/elithrar/SomethingNeedDoing": "fb39c7989397226e0a29c7e1fece8d6e982da909",
+        "https://github.com/elithrar/AsTheCrowFlies": "267e58690f1dc4eb26731d4e2d680e38977bf76a"
+      },
+      "files": [],
+      "prompt": "AsTheCrowFlies sometimes fails to start with its bundled SomethingNeedDoing library. A clean startup trace shows the game refusing an event registration on the application frame. Diagnose the failure using the supplied checkouts, repair it in the owning project, and deliver a working consumer package. Use local builds for this exercise and report how you verified the player-facing startup path.",
+      "assertions": [
+        "The actual consumer boots from the extracted ZIP when a duplicate native registration would be refused; each live subscriber receives the event once.",
+        "Refusing a required registration after partial startup leaves no active partial bootstrap and reports failure; preexisting registrations retain their owner.",
+        "The fix lives in the owning framework and the embedded files match the tested revision, including any documented packaging transformation."
+      ],
+      "expected_output": "Framework fix, updated consumer ZIP, and focused startup checks."
+    },
+    {
+      "id": "partial-quest-observations",
+      "repositories": {
+        "https://github.com/elithrar/FindAnUpgrade": "12511e5ea8f084da0bb99cce0a45e8cf1d37f7e3"
+      },
+      "files": [
+        "fixtures/quest-observations.json"
+      ],
+      "prompt": "Update the FindAnUpgrade catalog from the attached Forever quest observations. Players should be able to look up the recorded quests and see what is known about their rewards. Use the existing data pipeline and preserve the source evidence so a later maintainer can trace the changes. Build the updated catalog and verify what players can retrieve from it.",
+      "assertions": [
+        "ID 94841 and existing same-title ID 93443 both resolve independently.",
+        "ID 96063 has five units of item 274922 guaranteed and its unobserved choice group remains unknown. ID 97332 has one guaranteed item and a separate group of three choices.",
+        "The build and source observation are traceable; current availability remains unconfirmed. Prior records and costs survive.",
+        "Regeneration is repeatable and the shipped lookup returns the expected fields."
+      ],
+      "expected_output": "Updated source records and generated catalog with evidence and lookup checks."
     }
   ],
   "activation_checks": {
@@ -55,5 +87,6 @@
       "Explain Lua tables."
     ]
   },
-  "activation_check_status": "Description reviewed manually; no automated routing benchmark was run."
+  "activation_check_status": "Description reviewed manually; no automated routing benchmark was run.",
+  "maintenance_method": "Stage each case's starting repositories at the exact revisions in isolated directories, with its input files. Give fresh builders only the prompt, input paths and toolchain instructions. For a comparison, vary only the installed skill revision; keep model, runtime, fixtures, and prompt fixed. Save the first submission before independent grading or repair. Record each assertion for the first submission and again after any repairs. Keep in-client observations separate."
 }

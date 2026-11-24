@@ -10,7 +10,7 @@ Read usable dimensions before clearing valid anchors. Hidden or newly constructe
 
 ## Responsive content
 
-Use content-driven minimums and a useful maximum width, so a panel fits a small viewport without stretching across an ultrawide screen. Derive minimum dimensions from the sidebar, insets, scrollbars, labels, and usable controls. For compact stat grids, balance outer padding and row gaps using measured text blocks; center comparable labels/values when the accepted design calls for it. If the viewport cannot accommodate those dimensions, adapt the arrangement or provide scrolling. Clamping position cannot fix an oversized window.
+Use content-driven minimums and a useful maximum width, so a panel fits a small viewport without stretching across an ultrawide screen. Derive minimum dimensions from the sidebar, insets, scrollbars, labels, and usable controls. For example, a compact stat grid can use measured text blocks to balance its outer padding and row gaps. If the viewport cannot accommodate those dimensions, adapt the arrangement or provide scrolling. Clamping position cannot fix an oversized window.
 
 Resize and restyle existing controls. Do not reconstruct a page tree because its width changed. Coalesce resize updates where useful and always apply the final layout at drag completion. Provide a real resize interaction when requested, using the target client's supported bounds and sizing APIs.
 
@@ -28,4 +28,4 @@ Choose strata and frame levels relative to the surfaces the panel must clear, le
 
 Refit size and position after restoration, resizing, scale changes, and display changes. Keep the drag handle reachable and provide a reset-position path. Apply the same fitting rules regardless of the order of resize and scale operations, and keep persisted dimensions consistent with the applied result.
 
-Check small/large viewports, fractional scales, scaled parents, long content, first open, reopen, and off-screen saved positions. Verify resolved control bounds and reachability; use a real client for rendering and physical input behavior.
+Check small/large viewports, fractional scales, scaled parents, long content, first open, reopen, and off-screen saved positions. Verify resolved control bounds and reachability.

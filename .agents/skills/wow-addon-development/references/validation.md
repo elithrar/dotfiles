@@ -17,17 +17,16 @@ When a live report contradicts passing tests, preserve it as unresolved evidence
 | Change | Useful checks |
 | --- | --- |
 | Packaging/startup | Clean dependencies; listed Lua/XML files and assets; first run; existing saved data; extracted release artifact. |
+| Embedded event dispatcher | Start a real consumer when its app frame already owns the event. Deliver once to each subscriber. Refuse a required registration partway through startup and verify cleanup. Check that registrations owned elsewhere still work. |
 | Launcher/menu | Click and drag-release; lock; hide/recover; reload; menu owner hidden. |
-| Settings | Navigation and reopening; refresh after hidden changes; programmatic callbacks; focus/cancel behavior. |
+| Settings | Navigation and reopening; restore the parent game UI; deliver an old picker callback after same-name profile replacement; confirm a clickable tab accepts mouse input as well as having a handler. |
 | Layout/visuals | Current reference pixels; actual fonts; balanced padding; native dropdown anchors; layering/hit targets; minimum and capped sizes; long text and scroll navigation; fractional scale; changed resolution; safe-area and off-screen restore. |
 | Profiles | Shared/class/spec/instance selection; manual mode; copy/reset/delete; missing identity; latest state after deferral. |
 | Migration/import | Old/future schemas; repeat migration; malformed nested data; Unicode/false; maximum round-trip; atomic failure. |
 | Animation/performance | Equal elapsed time at varied cadence; jitter/reversal; per-frame work; repeated enable/disable and profile changes; bounded objects, timers, events, and history after warmup. |
 | Session state | Idle and delayed callbacks; loading/zoning; reload/reconnect; deliberate/cancelled logout; invalid snapshots; separate elapsed-time and missing-data expectations. |
 
-Reuse existing tests. Add regressions that distinguish the reported failure from the expected result; demonstrate failure on the old behavior when practical. Choose scope from changed behavior and unresolved risks, and broaden or repeat checks when new changes, failures or evidence justify it. When useful, run the actual implementation in a compatible Lua runtime with a small fixture that rejects unknown APIs and models relevant events, callbacks, or geometry. Exercise registered handlers; for persistence changes, verify restoration and initialization order and reload saved results. Keep offline checks proportional to the behavior at risk.
-
-Model relevant native preconditions, template defaults and event sequences from matching client sources; a mock that supplies missing initialization or starts in the desired state hides regressions. Exercise the real entry point through construction and recovery, and challenge the fixture assumptions when tests contradict a user report. Use independent failure inputs and check visible results and reachable controls. A resizable flag, parser pass, or mock returning fixed widths is insufficient evidence for usable layout. Add tests where they protect meaningful behavior.
+Reuse existing tests. Run the actual implementation in a compatible Lua runtime with a fixture that rejects unknown APIs. For a regression, exercise the registered entry point and show the old behavior fails when practical. Model the relevant native preconditions, template defaults and event sequence from matching sources. A fixture that initializes missing state or returns a fixed width can hide the defect. For persistence, restore data in load order and reload the saved result. Check the visible outcome and recovery path.
 
 ## Report the boundary
 

@@ -4,7 +4,7 @@
 
 Use named profiles and a separate context resolver when switching is requested; simple persistence does not require this architecture. Keep global metadata, character-only state, and portable profile settings separate. Libraries such as [AceDB](https://www.wowace.com/projects/ace3/pages/api/ace-db-3-0) provide storage scopes and profile operations, not an automatic class/spec/instance inheritance policy.
 
-Define selection precedence and manual behavior. A useful default is configured instance/context override, then spec or talent group, class, and shared default. Make automatic/manual mode visible and resolve equal-priority matches deterministically. Use stable class tokens, client-qualified spec IDs, and class-qualified talent-group slots; obtain their meaning through the [client adapter](clients-and-sources.md). Treat unavailable startup identity as unresolved and blank optional selectors as absent.
+Define selection precedence and manual behavior. Derive precedence from the product's requirements. For example, an instance assignment may override a specialization assignment. Make automatic/manual mode visible and resolve equal-priority matches deterministically. Use stable class tokens, client-qualified spec IDs, and class-qualified talent-group slots; obtain their meaning through the [client adapter](clients-and-sources.md). Treat unavailable startup identity as unresolved and blank optional selectors as absent.
 
 Keep temporary overrides separate from saved base settings. If layering is needed, define inheritance, explicit `false`, deletion/reset, array replacement, and the destination of edits. Lua's `override or default` cannot preserve a false override, and `pairs()` does not enumerate values supplied only by `__index` defaults.
 
