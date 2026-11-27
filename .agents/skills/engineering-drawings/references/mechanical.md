@@ -4,7 +4,7 @@
 
 Identify the authoritative model/part revision, units, material, process, intended mating interfaces, and finished-state requirements. Preserve accepted geometry on drawing-only changes. Separate known dimensions from photo estimates or hidden inferred geometry.
 
-Derive views from that model where available. Declare first- or third-angle projection consistently; align orthographic views and use sections/details to reveal hidden features. Use an auxiliary view for true shape when needed. An isometric/perspective view can orient the reader but must not substitute for measurable geometry. Do not infer exact dimensions from a pretty render.
+Derive views from that model where available. Declare first- or third-angle projection consistently; align orthographic views and use sections/details to reveal hidden features. Use an auxiliary view for true shape when needed. An isometric/perspective view can orient the reader but must not substitute for measurable geometry. Do not infer exact dimensions from a pretty render. Define vehicle or operator left and right independently of the observer. On panel overlays, locate pieces to real geometry and label fit-up estimates; loose rectangles are not placement instructions.
 
 Check each view against the actual model: silhouette, handedness, axes, hole/slot centers, wall/floor thickness, recesses, bosses, opening planes, and relationships between features. Verify section cutting plane, direction, labels, and material hatching. Ensure hidden lines and center marks describe real geometry. Confirm the views describe the same part, not independently plausible sketches.
 
