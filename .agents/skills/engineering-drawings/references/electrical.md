@@ -13,19 +13,31 @@ For each connection establish:
 - Every pigtail, gauge transition, branch and splice, including integral fuseholder leads. Reconcile actual conductor count and individual barrel ranges; do not assume two wires may share a contact.
 - Independent compatibility of conductor size/material, insulation OD, seal range, housing/contact retention, strip length, applicable crimp, solder, screw/clamp/ferrule method, tooling, and manufacturer torque where specified. Confirm terminal insertion and retention. Never trim strands or invent a universal crimp recipe.
 
+## Draw a terminal strip
+
+Use a strip view when the installer needs to recognise its arrangement. Show the viewing side, strip tag, terminal order, levels and panel/field sides as installed. For a dense box or marshalling panel, a connection table can be the drawing. Align the two sides on one row per terminal and level, following the strip order. A typical strip with cabinet wires and an outgoing cable uses these columns.
+
+`Panel device / terminal | Wire ID | Strip / terminal / level | Cable / core | Field device / terminal`
+
+Adapt the fields for cables on both sides, ferrule markings, or a destination on another drawing. Carry the drawing, sheet and zone at continuations when available. Preserve leading zeros and suffixes. If a diagram and a schedule are both required, trace the same core from either end through the exported representation.
+
+Show integral through-connections, removable bridges and fitted accessories as the hardware is configured. Identify both ends of any bridge and its fitted/open state where applicable. Distinguish a spare terminal from a landed spare core, including its remote-end disposition. Mark an unknown separately from a verified empty port. Show screens, drains and protective conductors to their specified termination or insulation at each end. An earth glyph cannot establish a bond.
+
+Choose symbols from the specified diagram library. Equipment markings, photographs and pictograms can identify a face or component. Use the diagram convention for its electrical behaviour. Define any project-specific mark that changes interpretation, such as a bridge, disconnect or continuation. Keep symbol keys, note flags and BOM balloons distinguishable in monochrome.
+
 ## Check the installed interfaces
 
 - On a prewired relay bank or module, show only documented external leads and terminals. Do not add a field-installed terminal to a preterminated socket or infer its pinout. Same-color wires can have different jobs: label the module, location, jacket marking and function. Explicitly identify a switched positive lead even when it is black.
 - Show the physical wire exits and returns separately from the mounting hardware. Never use a fastener or shell as a return without verifying its bond. Trace the ring and conductor to the specified factory ground, bonded stud or return block. Respect no-cut and no-drill requirements; depict the mating adapter or existing attachment. Label each unused lead and its disposition.
 - Verify both halves of the mating interface. AWG does not identify bullet diameter; a threaded hole is not a diameter gauge. Use measured dimensions or the component drawing and check full seating and retention. Insulating a crimp is not sealing the mating joint. Identify the seal at each interface and verify sleeve pass-over and recovery.
 - Trace the fuse path from the supply to the first split and through each branch. Draw the holders, their integral leads and the splices separately. Branch fuses do not protect the upstream shared feed. If that protection or the lead gauge is unknown, leave an explicit fit-up hold before energizing.
-- Reconcile the **actual** BOM to the final order, not the cart. Mark existing parts and conditional choices separately. Count mating halves, contacts and locks without double-counting kit contents. State fitted and spare quantities separately and do not treat an ordered part as fit-qualified.
+- Reconcile fitted quantities to the assembly. For a procurement list, reconcile ordered quantities to the final order and record any shortfall or surplus against the build. Mark existing parts and conditional choices separately. Count mating halves, contacts and locks against the kit contents. An order establishes purchase only.
 
 ## Prove electrical meaning
 
 Use established symbols consistently; distinguish protective earth, chassis/bond, signal reference, and the actual return conductor. State the drawn switch/relay condition. Show polarity and suppression when consequential. A functional internal symbol must not imply verified physical terminal positions.
 
-Trace power and return through normal and commanded states with a small truth table, including key-off or loss of the enable signal where relevant. Show mutually exclusive modes as separate views or alternative terminations, not as tied feeds. Reuse the physical device IDs in each view and show what stays connected or gets capped. Check applicable off/lost-supply, stuck/welded contact, lost-return, short-circuit, and fuse-open behavior. Distinguish intended shutdown from credible failure recovery. Reassess these after simplification; do not silently expand the requested functionality.
+For switched circuits, trace power and return through normal and commanded states, including key-off or loss of enable where relevant. Put repeated state combinations in a small truth table on the functional sheet or in the test record. Show mutually exclusive modes as separate views or alternative terminations, not as tied feeds. Reuse the physical device IDs in each view and show what stays connected or gets capped. Check applicable off/lost-supply, stuck/welded contact, lost-return, short-circuit, and fuse-open behavior. Distinguish intended shutdown from credible failure recovery. Reassess these after simplification; do not silently expand the requested functionality.
 
 Support load/inrush, voltage drop, switching duty, and protection with source data and calculations. Check the weakest wire, contact, pigtail, splice, and upstream unfused segment against the protective device's behavior. A fuse's printed value or connector catalogue current alone does not validate coordination, temperature, or the assembly rating. Keep unresolved operating limits explicit and restrict commissioning accordingly.
 

@@ -13,7 +13,7 @@ Establish the intended use and accepted baseline before drawing: functional sche
 
 - For wiring and termination work, read [electrical](references/electrical.md).
 - For housings, physical parts, and 2D views of 3D parts, read [mechanical](references/mechanical.md).
-- For a required convention or compliance claim, consult [standards](references/standards.md).
+- For Australian work, an owner drafting standard, or a compliance claim, consult [standards and owner examples](references/standards.md).
 
 Reuse known inputs. Ask only for missing information that controls the next consequential decision. Mark unresolved information where it affects interpretation; continue independent work. A concept may omit unresolved details if clearly limited; a build/inspection drawing may not silently depend on them.
 
@@ -28,16 +28,22 @@ Reuse known inputs. Ask only for missing information that controls the next cons
 
 - Select physical page size, orientation, view scale, and reading size before layout. Use the fewest sheets that remain legible. Keep a small termination assembly coherent on one sheet when practical; split only for clarity, with explicit cross-references.
 - Use a restrained border, actual project/part title, sheet identity, revision, date, and author. Keep a short revision table and blank future rows when useful. Do not invent document numbers, checkers, approval signatures, or certification.
-- Default to monochrome technical linework, consistent symbols, and clear line-weight hierarchy. Use technical uppercase labels and a clean engineering/monospace face unless the accepted convention differs. Preserve case-sensitive units, formulas, and actual identifiers. Identify a fallback honestly; a DIN-like font is not proof of DIN compliance.
-- Distinguish geometry, conductors, hidden features, centers, boundaries, dimensions, and leaders. Terminate leaders precisely. Give the drawing most of the sheet. Keep the termination key compact but readable in a corner. Keep only installation-critical holds on the sheet; retain full release evidence in the review record.
+- Use the owner's lettering and line conventions where specified. Otherwise use technical uppercase labels and a legible engineering or monospace face. Use consistent line weights and symbols that read in monochrome. Preserve the exact case of identifiers and units (e.g. `0.75 mm²`, `24 V`, `mA`) in the export, including uppercase table styles.
+- Distinguish geometry, conductors, hidden features, centres, boundaries, dimensions and leaders. Terminate leaders precisely. Give the drawing most of the sheet. Key unfamiliar symbols near the view or in a compact legend.
 - Verify the actual requested font and permitted embedding, outlining, or redistribution. If unavailable, obtain approval for a substitute unless a fallback is already authorized.
 - Size lettering in physical sheet units. Verify exported glyphs, symbols, and clearances, including font substitution. A font-family declaration or anchor coordinate does not establish the visible result. Move annotations or reroute conductors; never mask an ambiguous connection with a white text box.
-- State units and scales unambiguously; label diagrammatic/not-to-scale views. Keep notes short and actionable. Put lengthy evidence and qualification procedures beside the drawing, not over it.
-- For a BOM sheet, include reference/item, exact part number, quantity with basis/unit, supplier when requested, short description, and essential notes. Account for all required assembly parts, not only headline devices. Identify included kit contents, separate contacts/accessories, and unselected items without double counting. Keep each BOM note under 12 words; refer to a numbered technical note for essential detail that cannot fit.
+- Label diagrammatic views and state scales and units where applicable. Give each table a purpose and explicit headings. Put shared units in the header, keep each identifier intact and repeat headers and the assembly identity across continuations. Check the longest tag, part number and note in the exported cells at the smallest intended print size.
+
+## Decide what belongs on the drawing
+
+- Put a connection in the view or terminal row, a value at its feature or in its column, and a symbol definition in the legend. Use a note when the reader still needs a condition, action or exception. Place it at the affected item. If space or repetition warrants a keyed note, put its number at each applicable location and check the references both ways. Reserve general notes for information that applies throughout the stated sheet or set. Omit an empty notes block unless the template requires it.
+- Use a label for an observed state or view direction. For an instruction, name the object and give a direct verb and an observable result or sourced limit. Keep consequential exclusions, timing and preconditions explicit. For example, where the connector specification sets the sequence, “Fit W2P after both pin contacts lock” tells the assembler when to fit the wedge. Write in the project language and preserve actual terminal markings.
+- On a draft, place a hold beside the affected work. Identify the unresolved fact, what must wait and what resolves it. Put rationale, source comparisons, purchasing history and step-by-step commissioning in the appropriate companion record. Carry across any acceptance limit or use restriction the reader needs on the detached sheet. Remove reminders such as “wire as shown” or “verify all work”. Retain mandated owner wording.
+- For an assembly BOM, identify the assembly and quantity basis. Give item or device reference, description, manufacturer and part number or controlled stock code, quantity and unit. Add supplier when requested. Distinguish fitted quantity, kit contents, setup/spares and order packs. Cross-check each item and separately supplied accessory against the view or parent assembly. Use remarks only for exceptions that affect selection, fit or supply. Honour a requested word limit by keying longer instructions to the affected item.
 
 ## Mandatory release gates
 
-Record each applicable gate as PASS, FAIL, or UNVERIFIED with concise evidence tied to the exact output revision. Use N/A only with a reason. Missing evidence is not PASS; a checklist tick or generator assertion is not evidence.
+For issue of a drawing or an explicit release review, record each applicable gate as PASS, FAIL, or UNVERIFIED with concise evidence tied to the exact output revision. Use N/A only with a reason. Missing evidence is not PASS; a checklist tick or generator assertion is not evidence. For a text proof or partial review, give the located findings, corrections and scope of what was checked. Save the gate record for drawing release.
 
 1. **Purpose and scope:** The document answers the requested build/inspection question; required functions, interfaces, and accepted invariants are retained. A schematic alone fails a request for physical terminations.
 2. **Technical definition:** The relevant electrical/mechanical checks pass. Every controlling connection or feature is unambiguous and supported. Unknowns that can change build or safety prevent build-ready status.
